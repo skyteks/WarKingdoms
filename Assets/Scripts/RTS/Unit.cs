@@ -8,6 +8,7 @@ using UnityEngine.Events;
 public class Unit : MonoBehaviour
 {
     public UnitState state = UnitState.Idle;
+    [Preview]
     public UnitTemplate template;
 
     //references
