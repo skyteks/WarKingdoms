@@ -51,8 +51,6 @@ public class InputManager : Singleton<InputManager>
                     LMBClickedDown = true;
                 }
 
-
-
                 //-------------- LEFT MOUSE BUTTON HELD DOWN --------------
                 if (LMBClickedDown
                    && Vector2.Distance(LMBDownMousePos, currentMousePos) > .1f)
@@ -91,7 +89,7 @@ public class InputManager : Singleton<InputManager>
                             Vector2 screenPos = mainCamera.WorldToScreenPoint(allSelectables[i].transform.position);
                             if (selectionRect.Contains(screenPos))
                             {
-                                GameManager.Instance.AddToSelection(allSelectables[i], false);
+                                GameManager.Instance.AddToSelection(allSelectables[i]);
                             }
                             else
                             {
@@ -115,6 +113,7 @@ public class InputManager : Singleton<InputManager>
                                 Unit newSelectedUnit = hit.collider.GetComponent<Unit>();
                                 if (newSelectedUnit != null && newSelectedUnit.template.faction == GameManager.Instance.faction)
                                 {
+                                    GameManager.Instance.ClearSelection();
                                     GameManager.Instance.AddToSelection(newSelectedUnit);
                                     newSelectedUnit.SetSelected(true);
                                 }
@@ -124,7 +123,6 @@ public class InputManager : Singleton<InputManager>
 
                     LMBClickedDown = false;
                     boxSelectionInitiated = false;
-
                 }
 
                 //-------------- RIGHT MOUSE BUTTON UP --------------
@@ -206,7 +204,7 @@ public class InputManager : Singleton<InputManager>
                 }
                 break;
 
-            case GameManager.GameMode.DialogueMoment:
+            case GameManager.GameMode.Cutscene:
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
                     GameManager.Instance.ResumeTimeline();

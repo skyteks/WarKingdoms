@@ -37,7 +37,7 @@ public class Unit : MonoBehaviour
 
     private void Start()
     {
-        template = Instantiate<UnitTemplate>(template); //we copy the template otherwise it's going to overwrite the original asset!
+        template = template.Clone(); //we copy the template otherwise it's going to overwrite the original asset!
 
         //Set some defaults, including the default state
         SetSelected(false);
@@ -321,7 +321,7 @@ public class Unit : MonoBehaviour
         Destroy(selectionCircle);
         Destroy(navMeshAgent);
         Destroy(GetComponent<Collider>()); //will make it unselectable on click
-        if (animator != null) Destroy(animator, 4f); //give it some time to complete the animation
+        if (animator != null) Destroy(animator, 10f); //give it some time to complete the animation
         Destroy(this);
     }
 

@@ -6,25 +6,22 @@ using UnityEngine.UI;
 public class UIManager : Singleton<UIManager>
 {
     public Image selectionRectangle;
-    //public Image cameraLockedIcon;
+    public GridLayoutGroup selectionLayoutGroup;
+    public GameObject selectedUnitPrefab;
 
-    public Text charNameText, dialogueLineText;
-    public GameObject toggleSpacebarMessage, dialoguePanel;
-
-    private void Start()
+    void Start()
     {
-        selectionRectangle.enabled = false;
-        //cameraLockedIcon.enabled = false;
+        ToggleSelectionRectangle(false);
+    }
+
+    void LateUpdate()
+    {
+        UpdateSelectionUI();
     }
 
     public void ToggleSelectionRectangle(bool active)
     {
         selectionRectangle.enabled = active;
-    }
-
-    public void ToggleCameraLockedIcon(bool active)
-    {
-        //cameraLockedIcon.enabled = active;
     }
 
     public void SetSelectionRectangle(Rect rectSize)
@@ -34,22 +31,20 @@ public class UIManager : Singleton<UIManager>
         selectionRectangle.rectTransform.sizeDelta = new Vector2(rectSize.width, rectSize.height);
     }
 
-    public void SetDialogue(string charName, string lineOfDialogue, int sizeOfDialogue)
+    public void UpdateSelectionUI()
     {
-        charNameText.text = charName;
-        dialogueLineText.text = lineOfDialogue;
-        dialogueLineText.fontSize = sizeOfDialogue;
+        Unit[] selectedUnits = GameManager.Instance.GetSelectionUnits();
 
-        ToggleDialoguePanel(true);
-    }
+        Transform[] oldChildren = selectionLayoutGroup.transform.GetAllChildren();
+        foreach (var oldChild in oldChildren) Destroy(oldChild.gameObject);
+        selectionLayoutGroup.transform.DetachChildren();
 
-    public void TogglePressSpacebarMessage(bool active)
-    {
-        toggleSpacebarMessage.SetActive(active);
-    }
-
-    public void ToggleDialoguePanel(bool active)
-    {
-        dialoguePanel.SetActive(active);
+        foreach (Unit unit in selectedUnits)
+        {
+            Transform newChild = Instantiate<GameObject>(selectedUnitPrefab, selectionLayoutGroup.transform).transform;
+            newChild.Find("Portrait").GetComponent<Image>().sprite = unit.template.icon;
+            newChild.Find("Healthbar").GetComponent<Image>().fillAmount = (float)unit.template.health / (float)unit.template.original.health;
+            newChild.Find("Healthbar").GetComponentInChildren<Text>().text = unit.template.health + " / " + unit.template.original.health;
+        }
     }
 }

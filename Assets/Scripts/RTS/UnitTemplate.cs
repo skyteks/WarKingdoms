@@ -5,6 +5,15 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "SpecificUnit", menuName = "RTS Test/Unit Template", order = 1)]
 public class UnitTemplate : ScriptableObject
 {
+    public enum Faction
+    {
+        Faction1,
+        Faction2,
+        Faction3,
+    }
+
+    public UnitTemplate original { get; private set; }
+
     public Faction faction;
 
     [Preview]
@@ -25,10 +34,10 @@ public class UnitTemplate : ScriptableObject
     [Tooltip("When guarding, if any enemy enters this range it will be attacked")]
     public float guardDistance = 5f;
 
-    public enum Faction
+    public UnitTemplate Clone()
     {
-        Faction1,
-        Faction2,
-        Faction3,
+        UnitTemplate clone = Instantiate<UnitTemplate>(this);
+        clone.original = this;
+        return clone;
     }
 }

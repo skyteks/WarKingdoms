@@ -74,8 +74,8 @@ public class FindGameObjects : EditorWindow
             case SelectionType.Scenes:
                 return GameObject.FindObjectsOfType<GameObject>();
             case SelectionType.Everywhere:
-                //(GameObject[])
-                return (GameObject.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[]);
+                //return (GameObject.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[]);
+                return Resources.FindObjectsOfTypeAll<GameObject>();
         }
     }
 

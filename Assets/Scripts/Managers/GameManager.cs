@@ -3,14 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.Playables;
+using UnityEngine.Events;
 
 public class GameManager : Singleton<GameManager>
 {
+    public enum GameMode
+    {
+        Gameplay,
+        Cutscene,
+    }
+
     public GameMode gameMode = GameMode.Gameplay;
     public UnitTemplate.Faction faction;
 
     private Platoon selectedPlatoon;
     private PlayableDirector activeDirector;
+
+    public UnityEvent updatedPlatoon;
 
     private void Awake()
     {
@@ -36,31 +45,36 @@ public class GameManager : Singleton<GameManager>
         return selectedPlatoon.units.Select(x => x.transform).ToArray();
     }
 
-    public void AddToSelection(Unit[] newSelectedUnits, bool clearPrevious = true)
+    public Unit[] GetSelectionUnits()
     {
-        if (clearPrevious)
-            ClearSelection();
+        return selectedPlatoon.units.ToArray();
+    }
 
+    public void AddToSelection(Unit[] newSelectedUnits)
+    {
         selectedPlatoon.AddUnits(newSelectedUnits);
         for (int i = 0; i < newSelectedUnits.Length; i++)
         {
             newSelectedUnits[i].SetSelected(true);
         }
+
+        updatedPlatoon.Invoke();
     }
 
-    public void AddToSelection(Unit newSelectedUnit, bool clearPrevious = true)
+    public void AddToSelection(Unit newSelectedUnit)
     {
-        if (clearPrevious)
-            ClearSelection();
-
         selectedPlatoon.AddUnit(newSelectedUnit);
         newSelectedUnit.SetSelected(true);
+
+        updatedPlatoon.Invoke();
     }
 
     public void RemoveFromSelection(Unit u)
     {
         selectedPlatoon.RemoveUnit(u);
         u.SetSelected(false);
+
+        updatedPlatoon.Invoke();
     }
 
     public void ClearSelection()
@@ -71,6 +85,8 @@ public class GameManager : Singleton<GameManager>
         }
 
         selectedPlatoon.Clear();
+
+        updatedPlatoon.Invoke();
     }
 
     public void SentSelectedUnitsTo(Vector3 pos)
@@ -95,23 +111,13 @@ public class GameManager : Singleton<GameManager>
     {
         activeDirector = whichOne;
         activeDirector.Pause();
-        gameMode = GameMode.DialogueMoment; //InputManager will be waiting for a spacebar to resume
-        UIManager.Instance.TogglePressSpacebarMessage(true);
+        gameMode = GameMode.Cutscene; //InputManager will be waiting for a spacebar to resume
     }
 
     //Called by the InputManager
     public void ResumeTimeline()
     {
-        UIManager.Instance.TogglePressSpacebarMessage(false);
-        UIManager.Instance.ToggleDialoguePanel(false);
         activeDirector.Resume();
         gameMode = GameMode.Gameplay;
-    }
-
-    public enum GameMode
-    {
-        Gameplay,
-        //Cutscene,
-        DialogueMoment, //waiting for input
     }
 }
