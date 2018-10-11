@@ -4,42 +4,42 @@ using UnityEngine;
 [Serializable]
 public class AICommand
 {
-	public CommandType commandType;
+    public enum CommandType
+    {
+        GoToAndIdle,
+        GoToAndGuard,
+        AttackTarget, //attacks a specific target, then becomes Guarding
+        Stop,
+        //Flee,
+        Die,
+    }
 
-	public Vector3 destination;
-	public Unit target;
+    public CommandType commandType;
 
-	public AICommand(CommandType ty, Vector3 v, Unit ta)
-	{
-		commandType = ty;
-		destination = v;
-		target = ta;
-	}
+    public Vector3 destination;
+    public Unit target;
 
-	public AICommand(CommandType ty, Vector3 v)
-	{
-		commandType = ty;
-		destination = v;
-	}
+    //public AICommand(CommandType ty, Vector3 v, Unit ta)
+    //{
+    //    commandType = ty;
+    //    destination = v;
+    //    target = ta;
+    //}
 
-	public AICommand(CommandType ty, Unit ta)
-	{
-		commandType = ty;
-		target = ta;
-	}
+    public AICommand(CommandType ty, Vector3 v)
+    {
+        commandType = ty;
+        destination = v;
+    }
 
-	public AICommand(CommandType ty)
-	{
-		commandType = ty;
-	}
+    public AICommand(CommandType ty, Unit ta)
+    {
+        commandType = ty;
+        target = ta;
+    }
 
-	public enum CommandType
-	{
-		GoToAndIdle,
-		GoToAndGuard,
-		AttackTarget, //attacks a specific target, then becomes Guarding
-		Stop,
-		//Flee,
-		Die,
-	}
+    public AICommand(CommandType ty)
+    {
+        commandType = ty;
+    }
 }

@@ -2,13 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 [Serializable]
 public class Platoon : MonoBehaviour
 {
+    public enum FormationModes
+    {
+        Circle,
+        Rectangle,
+    }
+
+    public FormationModes formationMode;
+
     public List<Unit> units = new List<Unit>();
 
-    private Vector3[] tempPositions; //an array to do position calculations, doesn't necessary represent the position of the units at the moment
     private float formationOffset = 3f;
 
     private void Start()
@@ -19,17 +27,38 @@ public class Platoon : MonoBehaviour
         }
     }
 
+    void OnDrawGizmosSelected()
+    {
+        for (int i = 0; i < units.Count; i++)
+        {
+            if (units[i] != null)
+            {
+                Gizmos.color = new Color(.8f, .8f, 1f, 1f);
+                Gizmos.DrawCube(units[i].transform.position, new Vector3(1f, .1f, 1f));
+            }
+        }
+    }
+
     //Executes a command on all Units
     public void ExecuteCommand(AICommand command)
     {
-        tempPositions = GetFormationPositions(command.destination);
+        if (units.Count == 1)
+        {
+            units[0].ExecuteCommand(command);
+            return;
+        }
+        Vector3 destination = command.destination;
+        Vector3 origin = units.Select(unit => unit.transform.position).FindCentroid();
+        Quaternion rotation = Quaternion.LookRotation((destination - origin).normalized);
+        Vector3[] offsets = GetFormationOffsets(command.destination);
+        for (int i = 0; i < offsets.Length; i++) offsets[i] = destination + rotation * offsets[i];
         for (int i = 0; i < units.Count; i++)
         {
             if (units.Count > 1)
             {
                 //change the position for the command for each unit
                 //so they move to a formation position rather than in the exact same place
-                command.destination = tempPositions[i];
+                command.destination = offsets[i];
             }
 
             units[i].ExecuteCommand(command);
@@ -43,9 +72,9 @@ public class Platoon : MonoBehaviour
     }
 
     //Adds an array of Units to the Platoon, and returns the new length
-    public int AddUnits(Unit[] unitsToAdd)
+    public int AddUnits(IList<Unit> unitsToAdd)
     {
-        for (int i = 0; i < unitsToAdd.Length; i++)
+        for (int i = 0; i < unitsToAdd.Count; i++)
         {
             AddUnit(unitsToAdd[i]);
         }
@@ -79,40 +108,72 @@ public class Platoon : MonoBehaviour
     //Returns the current position of the units
     public Vector3[] GetCurrentPositions()
     {
-        tempPositions = new Vector3[units.Count];
+        Vector3[] positions = new Vector3[units.Count];
 
         for (int i = 0; i < units.Count; i++)
         {
-            tempPositions[i] = units[i].transform.position;
+            positions[i] = units[i].transform.position;
         }
 
-        return tempPositions;
+        return positions;
     }
 
     //Returns an array of positions to be used to send units into a circular formation
-    public Vector3[] GetFormationPositions(Vector3 formationCenter)
+    public Vector3[] GetFormationOffsets(Vector3 formationCenter)
     {
         //TODO: accomodate bigger numbers
-        //float currentOffset = formationOffset;
-        tempPositions = new Vector3[units.Count];
+        float currentOffset = formationOffset;
+        Vector3[] offsets = new Vector3[units.Count];
 
-        float increment = 360f / units.Count;
-        for (int k = 0; k < units.Count; k++)
+        switch (formationMode)
         {
-            float angle = increment * k;
-            Vector3 offset = new Vector3(formationOffset * Mathf.Cos(angle * Mathf.Deg2Rad), 0f, formationOffset * Mathf.Sin(angle * Mathf.Deg2Rad));
-            tempPositions[k] = formationCenter + offset;
+            default:
+            case FormationModes.Circle:
+                float increment = 360f / units.Count;
+                for (int i = 0; i < units.Count; i++)
+                {
+                    float angle = increment * i;
+                    offsets[i] = new Vector3(
+                        currentOffset * angle.Cos(),
+                        0f,
+                        currentOffset * angle.Sin()
+                    );
+                }
+                break;
+            case FormationModes.Rectangle:
+                float root = Mathf.Sqrt(units.Count);
+                if (root % 1f == 0f)
+                {
+                    int i = 0;
+                    float half = (root - 1f) * 0.5f * currentOffset;
+                    for (int y = 0; y < root && i < units.Count; y++)
+                    {
+                        for (int x = 0; x < root && i < units.Count; x++, i++)
+                        {
+                            offsets[i] = new Vector3(
+                                x * currentOffset - half,
+                                0f,
+                                y * currentOffset - half
+                            );
+                        }
+                    }
+                }
+                else
+                {
+
+                }
+                break;
         }
 
-        return tempPositions;
+        return offsets;
     }
 
     //Forces the position of the units. Useful in Edit mode only (Play mode would use the NavMeshAgent)
-    public void SetPositions(Vector3[] _newPositions)
+    public void SetPositions(Vector3[] newPositions)
     {
         for (int i = 0; i < units.Count; i++)
         {
-            units[i].transform.position = _newPositions[i];
+            units[i].transform.position = newPositions[i];
         }
     }
 
@@ -140,15 +201,10 @@ public class Platoon : MonoBehaviour
         RemoveUnit(whoDied); //will also remove the handler
     }
 
-    private void OnDrawGizmosSelected()
+    
+
+    void Update()
     {
-        for (int i = 0; i < units.Count; i++)
-        {
-            if (units[i] != null)
-            {
-                Gizmos.color = new Color(.8f, .8f, 1f, 1f);
-                Gizmos.DrawCube(units[i].transform.position, new Vector3(1f, .1f, 1f));
-            }
-        }
+        if (Input.GetKeyDown(KeyCode.K)) ExecuteCommand(new AICommand(AICommand.CommandType.GoToAndGuard, Vector3.zero));
     }
 }

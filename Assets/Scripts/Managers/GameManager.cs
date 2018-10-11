@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using UnityEngine.Playables;
-using UnityEngine.Events;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -17,9 +15,7 @@ public class GameManager : Singleton<GameManager>
     public UnitTemplate.Faction faction;
 
     private Platoon selectedPlatoon;
-    private PlayableDirector activeDirector;
-
-    public UnityEvent updatedPlatoon;
+    private UnityEngine.Playables.PlayableDirector activeDirector;
 
     private void Awake()
     {
@@ -45,20 +41,17 @@ public class GameManager : Singleton<GameManager>
         return selectedPlatoon.units.Select(x => x.transform).ToArray();
     }
 
-    public Unit[] GetSelectionUnits()
+    public IList<Unit> GetSelectionUnits()
     {
-        return selectedPlatoon.units.ToArray();
+        return selectedPlatoon.units;
     }
 
-    public void AddToSelection(Unit[] newSelectedUnits)
+    public void AddToSelection(IList<Unit> newSelectedUnits)
     {
         selectedPlatoon.AddUnits(newSelectedUnits);
-        for (int i = 0; i < newSelectedUnits.Length; i++)
-        {
-            newSelectedUnits[i].SetSelected(true);
-        }
+        foreach (Unit unit in newSelectedUnits) unit.SetSelected(true);
 
-        updatedPlatoon.Invoke();
+        UIManager.Instance.AddToSelection(newSelectedUnits);
     }
 
     public void AddToSelection(Unit newSelectedUnit)
@@ -66,27 +59,24 @@ public class GameManager : Singleton<GameManager>
         selectedPlatoon.AddUnit(newSelectedUnit);
         newSelectedUnit.SetSelected(true);
 
-        updatedPlatoon.Invoke();
+        UIManager.Instance.AddToSelection(newSelectedUnit);
     }
 
-    public void RemoveFromSelection(Unit u)
+    public void RemoveFromSelection(Unit unitToRemove)
     {
-        selectedPlatoon.RemoveUnit(u);
-        u.SetSelected(false);
+        selectedPlatoon.RemoveUnit(unitToRemove);
+        unitToRemove.SetSelected(false);
 
-        updatedPlatoon.Invoke();
+        UIManager.Instance.RemoveFromSelection(unitToRemove);
+
     }
 
     public void ClearSelection()
     {
-        for (int i = 0; i < selectedPlatoon.units.Count; i++)
-        {
-            selectedPlatoon.units[i].SetSelected(false);
-        }
-
+        foreach (Unit unit in selectedPlatoon.units) unit.SetSelected(false);
         selectedPlatoon.Clear();
 
-        updatedPlatoon.Invoke();
+        UIManager.Instance.ClearSelection();
     }
 
     public void SentSelectedUnitsTo(Vector3 pos)
@@ -101,13 +91,13 @@ public class GameManager : Singleton<GameManager>
         IssueCommand(newCommand);
     }
 
-    public Unit[] GetAllSelectableUnits()
+    public IList<Unit> GetAllSelectableUnits()
     {
         return FindObjectsOfType<Unit>().Where(unit => unit.template.faction == faction).ToArray();//GameObject.FindGameObjectsWithTag("Locals").Select(x => x.GetComponent<Unit>()).ToArray();
     }
 
     //Called by the TimeMachine Clip (of type Pause)
-    public void PauseTimeline(PlayableDirector whichOne)
+    public void PauseTimeline(UnityEngine.Playables.PlayableDirector whichOne)
     {
         activeDirector = whichOne;
         activeDirector.Pause();

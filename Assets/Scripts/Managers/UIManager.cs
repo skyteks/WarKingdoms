@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,11 +13,12 @@ public class UIManager : Singleton<UIManager>
     void Start()
     {
         ToggleSelectionRectangle(false);
+        ClearSelection();
     }
 
     void LateUpdate()
     {
-        UpdateSelectionUI();
+        UpdateSelection();
     }
 
     public void ToggleSelectionRectangle(bool active)
@@ -31,20 +33,44 @@ public class UIManager : Singleton<UIManager>
         selectionRectangle.rectTransform.sizeDelta = new Vector2(rectSize.width, rectSize.height);
     }
 
-    public void UpdateSelectionUI()
+    public void UpdateSelection()
     {
-        Unit[] selectedUnits = GameManager.Instance.GetSelectionUnits();
-
-        Transform[] oldChildren = selectionLayoutGroup.transform.GetAllChildren();
-        foreach (var oldChild in oldChildren) Destroy(oldChild.gameObject);
-        selectionLayoutGroup.transform.DetachChildren();
-
-        foreach (Unit unit in selectedUnits)
+        for (int i = 0; i < selectionLayoutGroup.transform.childCount; i++)
         {
-            Transform newChild = Instantiate<GameObject>(selectedUnitPrefab, selectionLayoutGroup.transform).transform;
-            newChild.Find("Portrait").GetComponent<Image>().sprite = unit.template.icon;
-            newChild.Find("Healthbar").GetComponent<Image>().fillAmount = (float)unit.template.health / (float)unit.template.original.health;
-            newChild.Find("Healthbar").GetComponentInChildren<Text>().text = unit.template.health + " / " + unit.template.original.health;
+            Transform child = selectionLayoutGroup.transform.GetChild(i);
+            Unit unit = child.GetComponent<UnitReference>().reference;
+
+            child.Find("Portrait").GetComponent<Image>().sprite = unit.template.icon;
+            child.Find("Healthbar").GetComponent<Image>().fillAmount = (float)unit.template.health / (float)unit.template.original.health;
+            child.Find("Healthbar").GetComponentInChildren<Text>().text = unit.template.health + " / " + unit.template.original.health;
         }
+    }
+    public void AddToSelection(IList<Unit> newSelectedUnits)
+    {
+        foreach (Unit unit in newSelectedUnits) AddToSelection(unit);
+    }
+
+    public void AddToSelection(Unit newSelectedUnit)
+    {
+        UnitReference holder = Instantiate<GameObject>(selectedUnitPrefab, selectionLayoutGroup.transform).AddComponent<UnitReference>();
+        holder.reference = newSelectedUnit;
+        holder.GetComponent<Button>().onClick.AddListener(holder.SendEvent);
+        holder.sendEvent.AddListener(GameManager.Instance.RemoveFromSelection);
+    }
+
+    public void RemoveFromSelection(Unit unitToRemove)
+    {
+        Transform child = selectionLayoutGroup.transform.GetAllChildren().Where(holder => holder.GetComponent<UnitReference>().reference == unitToRemove).FirstOrDefault();
+        if (child == null) return;
+        child.SetParent(null);
+        Destroy(child.gameObject);
+        child.gameObject.SetActive(false);
+    }
+
+    public void ClearSelection()
+    {
+        Transform[] children = selectionLayoutGroup.transform.GetAllChildren();
+        foreach (var child in children) Destroy(child.gameObject);
+        selectionLayoutGroup.transform.DetachChildren();
     }
 }

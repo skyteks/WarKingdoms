@@ -30,9 +30,9 @@ public class InputManager : Singleton<InputManager>
         mainCamera = GameObject.FindObjectOfType<Camera>();
 
 #if !UNITY_EDITOR
-		//to restore the mouseMovesCamera parameter (which in the player has to be always true)
-		//in case someone forgot it on false in the Editor :)
-		mouseMovesCamera = true;
+        //to restore the mouseMovesCamera parameter (which in the player has to be always true)
+        //in case someone forgot it on false in the Editor :)
+        mouseMovesCamera = true;
 #endif
     }
 
@@ -74,7 +74,6 @@ public class InputManager : Singleton<InputManager>
                     UIManager.Instance.SetSelectionRectangle(selectionRect);
                 }
 
-
                 //-------------- LEFT MOUSE BUTTON UP --------------
                 if (Input.GetMouseButtonUp(0))
                 {
@@ -83,8 +82,8 @@ public class InputManager : Singleton<InputManager>
                     if (boxSelectionInitiated)
                     {
                         //consider the mouse release as the end of a box selection
-                        Unit[] allSelectables = GameManager.Instance.GetAllSelectableUnits();
-                        for (int i = 0; i < allSelectables.Length; i++)
+                        IList<Unit> allSelectables = GameManager.Instance.GetAllSelectableUnits();
+                        for (int i = 0; i < allSelectables.Count; i++)
                         {
                             Vector2 screenPos = mainCamera.WorldToScreenPoint(allSelectables[i].transform.position);
                             if (selectionRect.Contains(screenPos))
@@ -146,7 +145,6 @@ public class InputManager : Singleton<InputManager>
                         GetMouseOnGroundPlane(out commandPoint);
                         GameManager.Instance.SentSelectedUnitsTo(commandPoint);
                     }
-
                 }
 
                 //-------------- GAMEPLAY CAMERA MOVEMENT --------------
