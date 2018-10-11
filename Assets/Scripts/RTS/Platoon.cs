@@ -46,22 +46,27 @@ public class Platoon : MonoBehaviour
         {
             units[0].ExecuteCommand(command);
             return;
+            //yield break;
         }
+        //change the position for the command for each unit
+        //so they move to a formation position rather than in the exact same place
         Vector3 destination = command.destination;
         Vector3 origin = units.Select(unit => unit.transform.position).FindCentroid();
         Quaternion rotation = Quaternion.LookRotation((destination - origin).normalized);
-        Vector3[] offsets = GetFormationOffsets(command.destination);
-        for (int i = 0; i < offsets.Length; i++) offsets[i] = destination + rotation * offsets[i];
-        for (int i = 0; i < units.Count; i++)
-        {
-            if (units.Count > 1)
-            {
-                //change the position for the command for each unit
-                //so they move to a formation position rather than in the exact same place
-                command.destination = offsets[i];
-            }
+        Vector3[] offsets = GetFormationOffsets(destination);
+        //for (int i = 0; i < offsets.Length; i++) offsets[i] = destination + rotation * offsets[i];
 
-            units[i].ExecuteCommand(command);
+        List<Unit> sortedUnits = units.OrderBy(unit => Vector3.Distance(unit.transform.position, origin)).ToList();
+
+        List<Vector3> remainingOffsets = offsets.ToList();
+
+        for (int i = 0; i < sortedUnits.Count; i++)
+        {
+            Vector3 nextOffset = remainingOffsets.OrderBy(offset => Vector3.Distance(sortedUnits[i].transform.position, origin + rotation * offset)).First();
+            remainingOffsets.Remove(nextOffset);
+            command.destination = destination + rotation * nextOffset;
+            sortedUnits[i].ExecuteCommand(command);
+            //yield return null;
         }
     }
 
@@ -141,14 +146,14 @@ public class Platoon : MonoBehaviour
                 }
                 break;
             case FormationModes.Rectangle:
-                float root = Mathf.Sqrt(units.Count);
-                if (root % 1f == 0f)
+                float sqrt = Mathf.Sqrt(units.Count);
+                if (sqrt % 1f == 0f)
                 {
                     int i = 0;
-                    float half = (root - 1f) * 0.5f * currentOffset;
-                    for (int y = 0; y < root && i < units.Count; y++)
+                    float half = (sqrt - 1f) * 0.5f * currentOffset;
+                    for (int y = 0; y < sqrt && i < units.Count; y++)
                     {
-                        for (int x = 0; x < root && i < units.Count; x++, i++)
+                        for (int x = 0; x < sqrt && i < units.Count; x++, i++)
                         {
                             offsets[i] = new Vector3(
                                 x * currentOffset - half,
@@ -158,9 +163,26 @@ public class Platoon : MonoBehaviour
                         }
                     }
                 }
+                else if (units.Count % 2 == 0)
+                {
+                    int w = Mathf.RoundToInt(sqrt + 1f - (sqrt % 1f));
+                    int h = Mathf.RoundToInt(sqrt - (sqrt % 1f));
+                    int i = 0;
+                    for (int y = 0; y < h && i < units.Count; y++)
+                    {
+                        for (int x = 0; x < w && i < units.Count; x++, i++)
+                        {
+                            offsets[i] = new Vector3(
+                                x * currentOffset - (w - 1f) * 0.5f * currentOffset,
+                                0f,
+                                y * currentOffset - (h - 1f) * 0.5f * currentOffset
+                            );
+                        }
+                    }
+                }
                 else
                 {
-
+                    
                 }
                 break;
         }
@@ -199,12 +221,5 @@ public class Platoon : MonoBehaviour
     private void UnitDeadHandler(Unit whoDied)
     {
         RemoveUnit(whoDied); //will also remove the handler
-    }
-
-    
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.K)) ExecuteCommand(new AICommand(AICommand.CommandType.GoToAndGuard, Vector3.zero));
     }
 }

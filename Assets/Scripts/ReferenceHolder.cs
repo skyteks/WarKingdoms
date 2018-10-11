@@ -5,14 +5,11 @@ using UnityEngine.Events;
 
 public abstract class ReferenceHolder<T> : MonoBehaviour where T : Object
 {
-    [System.Serializable]
-    public class ObjectEvent : UnityEvent<T> { }
-
     public T reference;
-    public ObjectEvent sendEvent = new ObjectEvent();
+    public UnityAction<T> OnSend;
 
     public void SendEvent()
     {
-        if (sendEvent != null) sendEvent.Invoke(reference);
+        if (OnSend != null) OnSend.Invoke(reference);
     }
 }

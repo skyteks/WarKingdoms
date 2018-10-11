@@ -29,6 +29,7 @@ public class GameManager : Singleton<GameManager>
     public void IssueCommand(AICommand cmd)
     {
         selectedPlatoon.ExecuteCommand(cmd);
+        //StartCoroutine(selectedPlatoon.ExecuteCommand(cmd));
     }
 
     public int GetSelectionLength()
@@ -60,6 +61,18 @@ public class GameManager : Singleton<GameManager>
         newSelectedUnit.SetSelected(true);
 
         UIManager.Instance.AddToSelection(newSelectedUnit);
+    }
+
+    public void SetSelection(IList<Unit> newSelectedUnits)
+    {
+        ClearSelection();
+        AddToSelection(newSelectedUnits);
+    }
+
+    public void SetSelection(Unit newSelectedUnit)
+    {
+        ClearSelection();
+        AddToSelection(newSelectedUnit);
     }
 
     public void RemoveFromSelection(Unit unitToRemove)

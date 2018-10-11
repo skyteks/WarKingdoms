@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class InputManager : Singleton<InputManager>
 {
@@ -27,7 +28,7 @@ public class InputManager : Singleton<InputManager>
 
     private void Awake()
     {
-        mainCamera = GameObject.FindObjectOfType<Camera>();
+        mainCamera = Camera.main;//GameObject.FindObjectOfType<Camera>();
 
 #if !UNITY_EDITOR
         //to restore the mouseMovesCamera parameter (which in the player has to be always true)
@@ -44,7 +45,7 @@ public class InputManager : Singleton<InputManager>
                 currentMousePos = Input.mousePosition;
 
                 //-------------- LEFT MOUSE BUTTON DOWN --------------
-                if (Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
                 {
                     LMBDownMousePos = currentMousePos;
                     timeOfClick = Time.unscaledTime;
@@ -77,10 +78,10 @@ public class InputManager : Singleton<InputManager>
                 //-------------- LEFT MOUSE BUTTON UP --------------
                 if (Input.GetMouseButtonUp(0))
                 {
-                    GameManager.Instance.ClearSelection();
-
                     if (boxSelectionInitiated)
                     {
+                        GameManager.Instance.ClearSelection();
+
                         //consider the mouse release as the end of a box selection
                         IList<Unit> allSelectables = GameManager.Instance.GetAllSelectableUnits();
                         for (int i = 0; i < allSelectables.Count; i++)
@@ -101,6 +102,11 @@ public class InputManager : Singleton<InputManager>
                     }
                     else
                     {
+                        if (!EventSystem.current.IsPointerOverGameObject())
+                        {
+                            GameManager.Instance.ClearSelection();
+                        }
+
                         if (Time.unscaledTime < timeOfClick + CLICK_TOLERANCE)
                         {
                             //consider the mouse release as a click
@@ -112,8 +118,7 @@ public class InputManager : Singleton<InputManager>
                                 Unit newSelectedUnit = hit.collider.GetComponent<Unit>();
                                 if (newSelectedUnit != null && newSelectedUnit.template.faction == GameManager.Instance.faction)
                                 {
-                                    GameManager.Instance.ClearSelection();
-                                    GameManager.Instance.AddToSelection(newSelectedUnit);
+                                    GameManager.Instance.SetSelection(newSelectedUnit);
                                     newSelectedUnit.SetSelected(true);
                                 }
                             }
@@ -125,8 +130,9 @@ public class InputManager : Singleton<InputManager>
                 }
 
                 //-------------- RIGHT MOUSE BUTTON UP --------------
-                if (Input.GetMouseButtonUp(1)
-                   && GameManager.Instance.GetSelectionLength() != 0)
+                if (Input.GetMouseButtonDown(1)
+                    && GameManager.Instance.GetSelectionLength() > 0
+                    && !EventSystem.current.IsPointerOverGameObject())
                 {
                     RaycastHit hit;
                     Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
@@ -156,7 +162,7 @@ public class InputManager : Singleton<InputManager>
 
                     //This check doesn't allow the camera to move with the mouse if we're currently framing a platoon
                     if (mouseMovesCamera
-                       && !CameraManager.Instance.IsFramingPlatoon)
+                        && !CameraManager.Instance.IsFramingPlatoon)
                     {
                         Vector3 mousePosition = Input.mousePosition;
                         mousePosition.x -= Screen.width / 2f;

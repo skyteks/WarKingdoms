@@ -7,6 +7,17 @@ using UnityEngine.Events;
 
 public class Unit : MonoBehaviour
 {
+    public enum UnitState
+    {
+        Idle,
+        Guarding,
+        Attacking,
+        MovingToTarget,
+        MovingToSpotIdle,
+        MovingToSpotGuard,
+        Dead,
+    }
+
     public UnitState state = UnitState.Idle;
     [Preview]
     public UnitTemplate template;
@@ -14,7 +25,7 @@ public class Unit : MonoBehaviour
     //references
     private NavMeshAgent navMeshAgent;
     private Animator animator;
-    private SpriteRenderer selectionCircle;
+    private SpriteRenderer selectionCircle, miniMapCircle;
 
     //private bool isSelected; //is the Unit currently selected by the Player
     private Unit targetOfAttack;
@@ -29,10 +40,11 @@ public class Unit : MonoBehaviour
         navMeshAgent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         selectionCircle = transform.Find("SelectionCircle").GetComponent<SpriteRenderer>();
+        miniMapCircle = transform.Find("MiniMapCircle").GetComponent<SpriteRenderer>();
 
         //Randomization of NavMeshAgent speed. More fun!
-        float rndmFactor = navMeshAgent.speed * .15f;
-        navMeshAgent.speed += Random.Range(-rndmFactor, rndmFactor);
+        //float rndmFactor = navMeshAgent.speed * .15f;
+        //navMeshAgent.speed += Random.Range(-rndmFactor, rndmFactor);
     }
 
     private void Start()
@@ -120,6 +132,22 @@ public class Unit : MonoBehaviour
 
         float navMeshAgentSpeed = navMeshAgent.velocity.magnitude;
         if (animator != null) animator.SetFloat("Speed", navMeshAgentSpeed * .05f);
+    }
+
+    void OnDrawGizmos()
+    {
+        if (navMeshAgent != null
+            && navMeshAgent.isOnNavMesh
+            && navMeshAgent.hasPath)
+        {
+            UnityEditor.Handles.color = Random.onUnitSphere.ToVector4(1f).ToColor();
+            UnityEditor.Handles.DrawLine(transform.position, navMeshAgent.destination);
+        }
+
+        UnityEditor.Handles.color = Color.cyan;
+        UnityEditor.Handles.DrawWireDisc(transform.position, Vector3.up, template.engageDistance);
+        UnityEditor.Handles.color = Color.black;
+        UnityEditor.Handles.DrawWireDisc(transform.position, Vector3.up, template.guardDistance);
     }
 
     public void ExecuteCommand(AICommand c)
@@ -319,15 +347,16 @@ public class Unit : MonoBehaviour
 
         //Remove unneeded Components
         Destroy(selectionCircle);
+        Destroy(miniMapCircle);
         Destroy(navMeshAgent);
         Destroy(GetComponent<Collider>()); //will make it unselectable on click
         if (animator != null) Destroy(animator, 10f); //give it some time to complete the animation
         Destroy(this);
     }
 
-    private bool IsDeadOrNull(Unit u)
+    private bool IsDeadOrNull(Unit unit)
     {
-        return (u == null || u.state == UnitState.Dead);
+        return (unit == null || unit.state == UnitState.Dead);
     }
 
     private Unit GetNearestHostileUnit()
@@ -361,33 +390,8 @@ public class Unit : MonoBehaviour
     {
         //Set transparency dependent on selection
         Color newColor = (template.faction == GameManager.Instance.faction) ? Color.green : Color.red;
+        miniMapCircle.color = newColor;
         newColor.a = (selected) ? 1f : .3f;
         selectionCircle.color = newColor;
-    }
-
-    public enum UnitState
-    {
-        Idle,
-        Guarding,
-        Attacking,
-        MovingToTarget,
-        MovingToSpotIdle,
-        MovingToSpotGuard,
-        Dead,
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (navMeshAgent != null
-            && navMeshAgent.isOnNavMesh
-            && navMeshAgent.hasPath)
-        {
-            UnityEditor.Handles.DrawLine(transform.position, navMeshAgent.destination);
-        }
-
-        UnityEditor.Handles.color = Color.cyan;
-        UnityEditor.Handles.DrawWireDisc(transform.position, Vector3.up, template.engageDistance);
-        UnityEditor.Handles.color = Color.black;
-        UnityEditor.Handles.DrawWireDisc(transform.position, Vector3.up, template.guardDistance);
     }
 }

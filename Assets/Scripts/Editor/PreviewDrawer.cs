@@ -4,7 +4,7 @@ using UnityEditor;
 [CustomPropertyDrawer(typeof(PreviewAttribute))]
 public class PreviewDrawer : PropertyDrawer
 {
-    private bool foldout = true;
+    private bool foldout;
 
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {

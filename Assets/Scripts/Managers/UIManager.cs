@@ -55,7 +55,7 @@ public class UIManager : Singleton<UIManager>
         UnitReference holder = Instantiate<GameObject>(selectedUnitPrefab, selectionLayoutGroup.transform).AddComponent<UnitReference>();
         holder.reference = newSelectedUnit;
         holder.GetComponent<Button>().onClick.AddListener(holder.SendEvent);
-        holder.sendEvent.AddListener(GameManager.Instance.RemoveFromSelection);
+        holder.OnSend += GameManager.Instance.SetSelection;
     }
 
     public void RemoveFromSelection(Unit unitToRemove)
