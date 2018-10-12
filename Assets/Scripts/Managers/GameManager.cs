@@ -11,6 +11,8 @@ public class GameManager : Singleton<GameManager>
         Cutscene,
     }
 
+    public static Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+
     public GameMode gameMode = GameMode.Gameplay;
     public UnitTemplate.Faction faction;
 

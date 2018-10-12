@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class InputManager : Singleton<InputManager>
 {
     [Header("Camera")]
+    public Camera mainCamera;
     public bool mouseMovesCamera = true;
     public Vector2 mouseDeadZone = new Vector2(.8f, .8f);
     public float keyboardSpeed = 4f;
@@ -16,8 +18,6 @@ public class InputManager : Singleton<InputManager>
     public LayerMask unitsLayerMask;
     public LayerMask enemiesLayerMask;
 
-    private Camera mainCamera;
-    private Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
     //private Vector3 initialSelectionWorldPos, currentSelectionWorldPos; //world coordinates //currently unused
     private Vector2 LMBDownMousePos, currentMousePos; //screen coordinates
     private Rect selectionRect; //screen coordinates
@@ -26,9 +26,9 @@ public class InputManager : Singleton<InputManager>
 
     private const float CLICK_TOLERANCE = .5f; //the player has this time to release the mouse button for it to be registered as a click
 
-    private void Awake()
+    void Awake()
     {
-        mainCamera = Camera.main;//GameObject.FindObjectOfType<Camera>();
+        if (mainCamera == null) mainCamera = Camera.main;//GameObject.FindObjectOfType<Camera>();
 
 #if !UNITY_EDITOR
         //to restore the mouseMovesCamera parameter (which in the player has to be always true)
@@ -37,7 +37,7 @@ public class InputManager : Singleton<InputManager>
 #endif
     }
 
-    private void Update()
+    void Update()
     {
         switch (GameManager.Instance.gameMode)
         {
@@ -148,7 +148,7 @@ public class InputManager : Singleton<InputManager>
                     else
                     {
                         Vector3 commandPoint;
-                        GetMouseOnGroundPlane(out commandPoint);
+                        CameraManager.GetCameraPointOnGroundPlane(mainCamera, Input.mousePosition, out commandPoint);
                         GameManager.Instance.SentSelectedUnitsTo(commandPoint);
                     }
                 }
@@ -217,20 +217,5 @@ public class InputManager : Singleton<InputManager>
         }
     }
 
-    private bool GetMouseOnGroundPlane(out Vector3 thePoint)
-    {
-        thePoint = Vector3.zero;
-
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        float rayDistance;
-        if (groundPlane.Raycast(ray, out rayDistance))
-        {
-            thePoint = ray.GetPoint(rayDistance);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
+    
 }

@@ -101,6 +101,11 @@ public static class Vector_Extension
         return new Vector4(color.r, color.g, color.b, color.a);
     }
 
+    public static Color ToColor(this Vector3 vector3, float a = 1f)
+    {
+        return new Color(vector3.x, vector3.y, vector3.z, a);
+    }
+
     public static Color ToColor(this Vector4 vector4)
     {
         return new Color(vector4.x, vector4.y, vector4.z, vector4.w);
@@ -119,6 +124,11 @@ public static class Vector_Extension
     public static Vector2 ToVector2XZ(this Vector3 vector3)
     {
         return new Vector2(vector3.x, vector3.z);
+    }
+
+    public static Vector3 ToVector3XZY(this Vector3 vector3)
+    {
+        return new Vector3(vector3.x, vector3.z, vector3.y);
     }
 
     public static Vector3 ToVector3(this Vector2 vector2, float z = 0f)

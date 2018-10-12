@@ -140,7 +140,7 @@ public class Unit : MonoBehaviour
             && navMeshAgent.isOnNavMesh
             && navMeshAgent.hasPath)
         {
-            UnityEditor.Handles.color = Random.onUnitSphere.ToVector4(1f).ToColor();
+            //UnityEditor.Handles.color = Random.onUnitSphere.ToVector4(1f).ToColor();
             UnityEditor.Handles.DrawLine(transform.position, navMeshAgent.destination);
         }
 
