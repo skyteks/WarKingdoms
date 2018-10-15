@@ -108,7 +108,12 @@ public class GameManager : Singleton<GameManager>
 
     public Unit[] GetAllSelectableUnits()
     {
-        return FindObjectsOfType<Unit>().Where(unit => unit.template.faction == faction).ToArray();//GameObject.FindGameObjectsWithTag("Locals").Select(x => x.GetComponent<Unit>()).ToArray();
+        return FindObjectsOfType<Unit>().Where(unit => unit.template.faction == faction).ToArray();
+    }
+
+    public Unit[] GetAllNonSelectableUnits()
+    {
+        return FindObjectsOfType<Unit>().Where(unit => unit.template.faction != faction).ToArray();
     }
 
     //Called by the TimeMachine Clip (of type Pause)
