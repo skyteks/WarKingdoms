@@ -6,6 +6,7 @@ using UnityEngine;
 public class CameraManager : Singleton<CameraManager>
 {
     public Camera mainCamera;
+    public Camera miniMapCamera;
     public MeshFilter viewPort;
 
     [Range(0.1f, 100f)]
@@ -33,24 +34,32 @@ public class CameraManager : Singleton<CameraManager>
         mainCamera.transform.Translate(amount.x, 0f, amount.y, Space.World);
     }
 
+    public void MoveGameplayCameraTo(Vector3 point)
+    {
+        Vector3 middlePoint;
+        GetCameraViewPointOnGroundPlane(mainCamera, new Vector3(0.5f, 0.5f, 0f), out middlePoint);
+        point -= middlePoint - mainCamera.transform.position.ToWithY(middlePoint.y);
+        mainCamera.transform.position = point.ToWithY(mainCamera.transform.position.y);
+    }
+
     private void CreateViewPortPlaneMesh()
     {
         Vector2 resolution = new Vector2(Screen.width, Screen.height);
         Vector3 hitPoint;
-        GetCameraPointOnGroundPlane(mainCamera, resolution.ToScale(mainCamera.rect.position), out hitPoint);
+        GetCameraScreenPointOnGroundPlane(mainCamera, resolution.ToScale(mainCamera.rect.position), out hitPoint);
         Vector3 bottomLeft = hitPoint;
-        GetCameraPointOnGroundPlane(mainCamera, resolution.ToScale(mainCamera.rect.position + mainCamera.rect.width * Vector2.right), out hitPoint);
+        GetCameraScreenPointOnGroundPlane(mainCamera, resolution.ToScale(mainCamera.rect.position + mainCamera.rect.width * Vector2.right), out hitPoint);
         Vector3 bottomRight = hitPoint;
-        GetCameraPointOnGroundPlane(mainCamera, resolution.ToScale(mainCamera.rect.position + mainCamera.rect.height * Vector2.up), out hitPoint);
+        GetCameraScreenPointOnGroundPlane(mainCamera, resolution.ToScale(mainCamera.rect.position + mainCamera.rect.height * Vector2.up), out hitPoint);
         Vector3 topLeft = hitPoint;
-        GetCameraPointOnGroundPlane(mainCamera, resolution.ToScale(mainCamera.rect.position + mainCamera.rect.size), out hitPoint);
+        GetCameraScreenPointOnGroundPlane(mainCamera, resolution.ToScale(mainCamera.rect.position + mainCamera.rect.size), out hitPoint);
         Vector3 topRight = hitPoint;
 
-        Color debugRayColor = Color.blue;
-        Debug.DrawLine(mainCamera.transform.position, bottomLeft, debugRayColor);
-        Debug.DrawLine(mainCamera.transform.position, bottomRight, debugRayColor);
-        Debug.DrawLine(mainCamera.transform.position, topLeft, debugRayColor);
-        Debug.DrawLine(mainCamera.transform.position, topRight, debugRayColor);
+        //Color debugRayColor = Color.blue;
+        //Debug.DrawLine(mainCamera.transform.position, bottomLeft, debugRayColor);
+        //Debug.DrawLine(mainCamera.transform.position, bottomRight, debugRayColor);
+        //Debug.DrawLine(mainCamera.transform.position, topLeft, debugRayColor);
+        //Debug.DrawLine(mainCamera.transform.position, topRight, debugRayColor);
 
         Vector3 leftLine = (topLeft - bottomLeft).normalized / 2f;
         Vector3 rightLine = (topRight - bottomRight).normalized / 2f;
@@ -92,11 +101,28 @@ public class CameraManager : Singleton<CameraManager>
         mesh.SetIndices(indexArray, MeshTopology.Quads, 0);
     }
 
-    public static bool GetCameraPointOnGroundPlane(Camera camera, Vector3 screenPoint, out Vector3 hitPoint)
+    public static bool GetCameraScreenPointOnGroundPlane(Camera camera, Vector3 screenPoint, out Vector3 hitPoint)
     {
         hitPoint = Vector3.zero;
 
         Ray ray = camera.ScreenPointToRay(screenPoint);
+        float rayDistance;
+        if (GameManager.groundPlane.Raycast(ray, out rayDistance))
+        {
+            hitPoint = ray.GetPoint(rayDistance);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public static bool GetCameraViewPointOnGroundPlane(Camera camera, Vector3 viewportPoint, out Vector3 hitPoint)
+    {
+        hitPoint = Vector3.zero;
+
+        Ray ray = camera.ViewportPointToRay(viewportPoint);
         float rayDistance;
         if (GameManager.groundPlane.Raycast(ray, out rayDistance))
         {

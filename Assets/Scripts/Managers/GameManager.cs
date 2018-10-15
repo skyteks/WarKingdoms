@@ -106,7 +106,7 @@ public class GameManager : Singleton<GameManager>
         IssueCommand(newCommand);
     }
 
-    public IList<Unit> GetAllSelectableUnits()
+    public Unit[] GetAllSelectableUnits()
     {
         return FindObjectsOfType<Unit>().Where(unit => unit.template.faction == faction).ToArray();//GameObject.FindGameObjectsWithTag("Locals").Select(x => x.GetComponent<Unit>()).ToArray();
     }

@@ -38,7 +38,7 @@ public class UIManager : Singleton<UIManager>
         for (int i = 0; i < selectionLayoutGroup.transform.childCount; i++)
         {
             Transform child = selectionLayoutGroup.transform.GetChild(i);
-            Unit unit = child.GetComponent<UnitReference>().reference;
+            Unit unit = child.GetComponent<UnitButton>().unit;
 
             child.Find("Portrait").GetComponent<Image>().sprite = unit.template.icon;
             child.Find("Healthbar").GetComponent<Image>().fillAmount = (float)unit.template.health / (float)unit.template.original.health;
@@ -52,15 +52,13 @@ public class UIManager : Singleton<UIManager>
 
     public void AddToSelection(Unit newSelectedUnit)
     {
-        UnitReference holder = Instantiate<GameObject>(selectedUnitPrefab, selectionLayoutGroup.transform).AddComponent<UnitReference>();
-        holder.reference = newSelectedUnit;
-        holder.GetComponent<Button>().onClick.AddListener(holder.SendEvent);
-        holder.OnSend += GameManager.Instance.SetSelection;
+        GameObject holder = Instantiate<GameObject>(selectedUnitPrefab, selectionLayoutGroup.transform);
+        holder.GetComponent<UnitButton>().unit = newSelectedUnit;
     }
 
     public void RemoveFromSelection(Unit unitToRemove)
     {
-        Transform child = selectionLayoutGroup.transform.GetAllChildren().Where(holder => holder.GetComponent<UnitReference>().reference == unitToRemove).FirstOrDefault();
+        Transform child = selectionLayoutGroup.transform.GetAllChildren().Where(holder => holder.GetComponent<UnitButton>().unit == unitToRemove).FirstOrDefault();
         if (child == null) return;
         child.SetParent(null);
         Destroy(child.gameObject);

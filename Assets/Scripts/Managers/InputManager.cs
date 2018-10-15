@@ -119,7 +119,6 @@ public class InputManager : Singleton<InputManager>
                                 if (newSelectedUnit != null && newSelectedUnit.template.faction == GameManager.Instance.faction)
                                 {
                                     GameManager.Instance.SetSelection(newSelectedUnit);
-                                    newSelectedUnit.SetSelected(true);
                                 }
                             }
                         }
@@ -143,13 +142,15 @@ public class InputManager : Singleton<InputManager>
                         if (targetOfAttack != null && targetOfAttack.template.faction != GameManager.Instance.faction)
                         {
                             GameManager.Instance.AttackTarget(targetOfAttack);
+                            Debug.DrawLine(ray.origin, hit.point, Color.red, 1f);
                         }
                     }
                     else
                     {
                         Vector3 commandPoint;
-                        CameraManager.GetCameraPointOnGroundPlane(mainCamera, Input.mousePosition, out commandPoint);
+                        CameraManager.GetCameraScreenPointOnGroundPlane(mainCamera, Input.mousePosition, out commandPoint);
                         GameManager.Instance.SentSelectedUnitsTo(commandPoint);
+                        Debug.DrawLine(ray.origin, commandPoint, Color.green, 1f);
                     }
                 }
 
@@ -217,5 +218,5 @@ public class InputManager : Singleton<InputManager>
         }
     }
 
-    
+
 }

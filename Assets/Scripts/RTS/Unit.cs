@@ -146,7 +146,7 @@ public class Unit : MonoBehaviour
 
         UnityEditor.Handles.color = Color.cyan;
         UnityEditor.Handles.DrawWireDisc(transform.position, Vector3.up, template.engageDistance);
-        UnityEditor.Handles.color = Color.black;
+        UnityEditor.Handles.color = Color.gray;
         UnityEditor.Handles.DrawWireDisc(transform.position, Vector3.up, template.guardDistance);
     }
 
@@ -268,6 +268,16 @@ public class Unit : MonoBehaviour
         if (animator != null) animator.SetBool("DoAttack", true);
         while (!IsDeadOrNull(targetOfAttack))
         {
+            //Check if the target moved away for some reason
+            if (Vector3.Distance(targetOfAttack.transform.position, transform.position) > template.engageDistance)
+            {
+                if (animator != null) animator.SetBool("DoAttack", false);
+
+                MoveToAttack(targetOfAttack);
+
+                yield break;
+            }
+
             yield return new WaitForSeconds(1f / template.attackSpeed);
 
             //check is performed after the wait, because somebody might have killed the target in the meantime
@@ -286,15 +296,7 @@ public class Unit : MonoBehaviour
                 yield break;
             }
 
-            //Check if the target moved away for some reason
-            if (Vector3.Distance(targetOfAttack.transform.position, transform.position) > template.engageDistance)
-            {
-                if (animator != null) animator.SetBool("DoAttack", false);
-
-                MoveToAttack(targetOfAttack);
-
-                yield break;
-            }
+            //Too far away check moved to before waittime
 
             targetOfAttack.SufferAttack(template.attackPower);
         }
