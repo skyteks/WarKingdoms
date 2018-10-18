@@ -116,7 +116,7 @@ public class InputManager : Singleton<InputManager>
                             if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitsLayerMask))
                             {
                                 Unit newSelectedUnit = hit.collider.GetComponent<Unit>();
-                                if (newSelectedUnit != null && newSelectedUnit.template.faction == GameManager.Instance.faction)
+                                if (newSelectedUnit != null && newSelectedUnit.faction == GameManager.Instance.faction)
                                 {
                                     GameManager.Instance.SetSelection(newSelectedUnit);
                                 }
@@ -140,7 +140,7 @@ public class InputManager : Singleton<InputManager>
                     if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitsLayerMask))
                     {
                         Unit targetOfAttack = hit.collider.GetComponent<Unit>();
-                        if (targetOfAttack != null && targetOfAttack.template.faction != GameManager.Instance.faction)
+                        if (targetOfAttack != null && targetOfAttack.faction != GameManager.Instance.faction)
                         {
                             GameManager.Instance.AttackTarget(targetOfAttack);
                             Debug.DrawLine(ray.origin, hit.point, Color.red, 1f);

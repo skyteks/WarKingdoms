@@ -18,7 +18,7 @@ public class GameManager : Singleton<GameManager>
     [Space]
 #endif
     public GameMode gameMode = GameMode.Gameplay;
-    public UnitTemplate.Faction faction;
+    public Unit.Faction faction;
 
     private Platoon selectedPlatoon;
     private UnityEngine.Playables.PlayableDirector activeDirector;
@@ -118,7 +118,7 @@ public class GameManager : Singleton<GameManager>
 
     public List<Unit> GetAllNonSelectableUnits()
     {
-        return FindObjectsOfType<Unit>().Where(unit => unit.template.faction != faction).ToList();
+        return FindObjectsOfType<Unit>().Where(unit => unit.faction != faction).ToList();
     }
 
     //Called by the TimeMachine Clip (of type Pause)

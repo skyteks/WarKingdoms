@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
@@ -36,7 +37,7 @@ public class FieldOfView : MonoBehaviour
     public Unit unit;
 
     [Range(0f, 360f)]
-    public float viewAngle;
+    public float viewAngle = 360f;
     public float viewRadius
     {
         get
@@ -58,12 +59,28 @@ public class FieldOfView : MonoBehaviour
     [Range(0f, 1f)]
     public float maskCutawayDistance;
     public bool maskCutawayHorizontalyOnly;
+    public LayerMask overlapTestMask;
     private MeshFilter viewMeshFilter;
     private Mesh viewMesh;
+    private List<Transform> lastObstacles = new List<Transform>(0);
+    private Vector3 lastPosition;
+    private Vector3 lastForward;
 
     void Awake()
     {
         viewMeshFilter = GetComponent<MeshFilter>();
+    }
+
+    private void OnEnable()
+    {
+        MeshRenderer render = GetComponent<MeshRenderer>();
+        if (render != null) render.enabled = true;
+    }
+
+    private void OnDisable()
+    {
+        MeshRenderer render = GetComponent<MeshRenderer>();
+        if (render != null) render.enabled = false;
     }
 
     void Start()
@@ -74,7 +91,48 @@ public class FieldOfView : MonoBehaviour
 
     void LateUpdate()
     {
-        DrawFieldOfView();
+        bool draw = false;
+        if (overlapTestMask == overlapTestMask.ToEverything() || overlapTestMask == overlapTestMask.ToNothing()) draw = true;
+
+        List<Transform> obstacles = null;
+        if (!draw)
+        {
+            obstacles = FindVisibleTargets(overlapTestMask, true);
+
+            draw = lastObstacles.Count != obstacles.Count;
+            if (!draw)
+            {
+                draw = !obstacles.ScrambledEquals(lastObstacles);
+            }
+        }
+        if (draw) lastObstacles = obstacles;
+
+        if (!draw)
+        {
+            if (obstacles.Count > 1)
+            {
+                draw |= Vector3.Distance(lastPosition, transform.position) > 0.1f;
+                draw |= Vector3.Angle(lastForward, transform.forward) > 0.5f;
+            }
+        }
+        if (draw)
+        {
+            lastPosition = transform.position;
+            lastForward = transform.forward;
+        }
+
+        if (draw)
+        {
+            SetLastFrameValues();
+            DrawFieldOfView();
+            //print("Regenerated FieldOfView mesh");
+        }
+    }
+
+    private void SetLastFrameValues()
+    {
+        lastPosition = transform.position;
+        lastForward = transform.forward;
     }
 
 #if UNITY_EDITOR
@@ -101,28 +159,38 @@ public class FieldOfView : MonoBehaviour
         for (; ; )
         {
             yield return Yielders.Get(delay);
-            FindVisibleTargets();
+            visibleTargets = FindVisibleTargets(targetMask);
         }
     }
 
-    private void FindVisibleTargets()
+    private List<Transform> FindVisibleTargets(LayerMask mask, bool justInRange = false)
     {
-        visibleTargets.Clear();
-        Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
+        Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, mask);
+        List<Transform> visibleTargetsInViewRadius;
+        if (justInRange)
+        {
+            visibleTargetsInViewRadius = targetsInViewRadius.Select(target => target.transform).ToList();
+            visibleTargetsInViewRadius.Remove(unit.transform);
+            return visibleTargetsInViewRadius;
+        }
+        else visibleTargetsInViewRadius = new List<Transform>(targetsInViewRadius.Length);
+
         for (int i = 0; i < targetsInViewRadius.Length; i++)
         {
             Transform target = targetsInViewRadius[i].transform;
+            if (target == unit.transform) continue;
+
             Vector3 dirToTarget = (target.position - transform.position).normalized;
-            if (Vector3.Angle(transform.forward, dirToTarget) < viewAngle / 2f)
+            if (viewAngle == 360f || Vector3.Angle(transform.forward, dirToTarget) < viewAngle / 2f)
             {
                 float distToTarget = Vector3.Distance(transform.position, target.position);
-
                 if (!Physics.Raycast(transform.position, dirToTarget, distToTarget, obstacleMask))
                 {
-                    visibleTargets.Add(target);
+                    visibleTargetsInViewRadius.Add(target);
                 }
             }
         }
+        return visibleTargetsInViewRadius;
     }
 
     private void DrawFieldOfView()

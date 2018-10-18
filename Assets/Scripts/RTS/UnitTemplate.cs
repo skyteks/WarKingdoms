@@ -2,19 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "SpecificUnit", menuName = "RTS Test/Unit Template", order = 1)]
+[CreateAssetMenu(fileName = "new Unit Template", menuName = "RTS/Unit Template", order = 1)]
 public class UnitTemplate : ScriptableObject
 {
-    public enum Faction
-    {
-        Faction1,
-        Faction2,
-        Faction3,
-    }
+    
 
     public UnitTemplate original { get; private set; }
-
-    public Faction faction;
 
     [Preview]
     public Sprite icon;

@@ -17,6 +17,18 @@ public class ViewPort : MonoBehaviour
         viewportMeshFilter = GetComponent<MeshFilter>();
     }
 
+    private void OnEnable()
+    {
+        MeshRenderer render = GetComponent<MeshRenderer>();
+        if (render != null) render.enabled = true;
+    }
+
+    private void OnDisable()
+    {
+        MeshRenderer render = GetComponent<MeshRenderer>();
+        if (render != null) render.enabled = false;
+    }
+
     void LateUpdate()
     {
         if (GameManager.Instance.gameMode == GameManager.GameMode.Gameplay)

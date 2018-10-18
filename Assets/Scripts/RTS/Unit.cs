@@ -18,12 +18,19 @@ public class Unit : MonoBehaviour
         Dead,
     }
 
-    public static Dictionary<UnitTemplate.Faction, List<Unit>> globalUnits;
+    public enum Faction
+    {
+        Neutral,
+        Faction1,
+        Faction2,
+    }
+
+    public static Dictionary<Faction, List<Unit>> globalUnits;
 
     static Unit()
     {
-        globalUnits = new Dictionary<UnitTemplate.Faction, List<Unit>>();
-        var factions = System.Enum.GetValues(typeof(UnitTemplate.Faction)).Cast<UnitTemplate.Faction>();
+        globalUnits = new Dictionary<Faction, List<Unit>>();
+        var factions = System.Enum.GetValues(typeof(Faction)).Cast<Faction>();
         foreach (var faction in factions)
         {
             globalUnits.Add(faction, new List<Unit>());
@@ -31,9 +38,10 @@ public class Unit : MonoBehaviour
     }
 
     public UnitState state = UnitState.Idle;
+    public Faction faction;
+    public float visionFadeTime = 1f;
     [Preview]
     public UnitTemplate template;
-    public float visionFadeTime = 1f;
 
     //references
     private NavMeshAgent navMeshAgent;
@@ -63,7 +71,7 @@ public class Unit : MonoBehaviour
 
     private void Start()
     {
-        globalUnits[template.faction].Add(this);
+        globalUnits[faction].Add(this);
 
         template = template.Clone(); //we copy the template otherwise it's going to overwrite the original asset!
 
@@ -71,15 +79,15 @@ public class Unit : MonoBehaviour
         SetSelected(false);
         Idle();
 
-        //visionCircle.material.color = visionCircle.material.color.ToWithA(0f);
-        //if (template.faction == GameManager.Instance.faction)
-        //{
-        //    StartCoroutine(VisionFade(visionFadeTime, false));
-        //}
-        //else
-        //{
-        //    visionCircle.enabled = false;
-        //}
+        visionCircle.material.color = visionCircle.material.color.ToWithA(0f);
+        if (faction == GameManager.Instance.faction)
+        {
+            StartCoroutine(VisionFade(visionFadeTime, false));
+        }
+        else
+        {
+            visionCircle.GetComponent<FieldOfView>().enabled = false;
+        }
     }
 
     void Update()
@@ -326,7 +334,7 @@ public class Unit : MonoBehaviour
                 break;
             }
 
-            if (targetOfAttack.template.faction == template.faction)
+            if (targetOfAttack.faction == faction)
             {
                 break;
             }
@@ -389,16 +397,9 @@ public class Unit : MonoBehaviour
         gameObject.tag = "Untagged";
         gameObject.layer = 0;
 
-        globalUnits[template.faction].Remove(this);
+        globalUnits[faction].Remove(this);
 
         //Remove unneeded Components
-        ParticleSystem ps = visionCircle.GetComponent<ParticleSystem>();
-        if (ps != null)
-        {
-            ps.Emit(1);
-            ps.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-            Destroy(ps, ps.main.startLifetimeMultiplier);
-        }
         //Destroy(sightCircle);
         StartCoroutine(VisionFade(visionFadeTime, true));
         Destroy(selectionCircle);
@@ -432,7 +433,7 @@ public class Unit : MonoBehaviour
 
     private Unit GetNearestHostileUnit()
     {
-        hostiles = FindObjectsOfType<Unit>().Where(unit => unit.template.faction != template.faction).ToArray();//GameObject.FindGameObjectsWithTag(template.GetOtherFaction().ToString()).Select(x => x.GetComponent<Unit>()).ToArray();
+        hostiles = FindObjectsOfType<Unit>().Where(unit => unit.faction != faction).ToArray();//GameObject.FindGameObjectsWithTag(template.GetOtherFaction().ToString()).Select(x => x.GetComponent<Unit>()).ToArray();
 
         Unit nearestEnemy = null;
         float nearestEnemyDistance = 1000f;
@@ -460,7 +461,7 @@ public class Unit : MonoBehaviour
     public void SetSelected(bool selected)
     {
         //Set transparency dependent on selection
-        Color newColor = (template.faction == GameManager.Instance.faction) ? Color.green : Color.red;
+        Color newColor = (faction == GameManager.Instance.faction) ? Color.green : Color.red;
         miniMapCircle.material.color = newColor;
         newColor.a = (selected) ? 1f : .3f;
         selectionCircle.material.color = newColor;

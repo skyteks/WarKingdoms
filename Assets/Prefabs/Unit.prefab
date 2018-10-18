@@ -296,7 +296,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1509708391563678}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4798272592709608}
@@ -882,8 +882,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 0
-  template: {fileID: 11400000, guid: 7eaf13cc549d085438c8b48343ae395c, type: 2}
+  faction: 1
   visionFadeTime: 1
+  template: {fileID: 11400000, guid: 7eaf13cc549d085438c8b48343ae395c, type: 2}
 --- !u!114 &114716483690880562
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -909,6 +910,9 @@ MonoBehaviour:
   edgeDistanceTreshholdDegrees: 80
   maskCutawayDistance: 0.3
   maskCutawayHorizontalyOnly: 1
+  overlapTestMask:
+    serializedVersion: 2
+    m_Bits: 4294953471
 --- !u!136 &136947702010847266
 CapsuleCollider:
   m_ObjectHideFlags: 1
