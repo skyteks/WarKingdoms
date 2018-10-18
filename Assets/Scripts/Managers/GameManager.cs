@@ -13,6 +13,10 @@ public class GameManager : Singleton<GameManager>
 
     public static Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
 
+#if UNITY_EDITOR
+    public bool editorFrameRateLock30 = true;
+    [Space]
+#endif
     public GameMode gameMode = GameMode.Gameplay;
     public UnitTemplate.Faction faction;
 
@@ -24,7 +28,7 @@ public class GameManager : Singleton<GameManager>
         selectedPlatoon = GetComponent<Platoon>();
         Cursor.lockState = CursorLockMode.Confined;
 #if UNITY_EDITOR
-        Application.targetFrameRate = 30; //just to keep things "smooth" during presentations
+        if (editorFrameRateLock30) Application.targetFrameRate = 30;//just to keep things "smooth" during presentations
 #endif
     }
 

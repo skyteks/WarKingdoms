@@ -172,7 +172,7 @@ public class InputManager : Singleton<InputManager>
 
                     //This check doesn't allow the camera to move with the mouse if we're currently framing a platoon
                     if (mouseMovesCamera
-                        && !CameraManager.Instance.IsFramingPlatoon)
+                        && !CameraManager.Instance.isFramingPlatoon)
                     {
                         Vector3 mousePosition = Input.mousePosition;
                         mousePosition.x -= Screen.width / 2f;
