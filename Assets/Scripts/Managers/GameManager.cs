@@ -96,7 +96,7 @@ public class GameManager : Singleton<GameManager>
 
     public void SentSelectedUnitsTo(Vector3 pos)
     {
-        AICommand newCommand = new AICommand(AICommand.CommandType.GoToAndGuard, pos);
+        AICommand newCommand = new AICommand(AICommand.CommandType.GoToAndIdle, pos);
         IssueCommand(newCommand);
     }
 
@@ -106,14 +106,15 @@ public class GameManager : Singleton<GameManager>
         IssueCommand(newCommand);
     }
 
-    public Unit[] GetAllSelectableUnits()
+    public List<Unit> GetAllSelectableUnits()
     {
-        return FindObjectsOfType<Unit>().Where(unit => unit.template.faction == faction).ToArray();
+        //return FindObjectsOfType<Unit>().Where(unit => unit.template.faction == faction).ToList();
+        return Unit.globalUnits[faction];
     }
 
-    public Unit[] GetAllNonSelectableUnits()
+    public List<Unit> GetAllNonSelectableUnits()
     {
-        return FindObjectsOfType<Unit>().Where(unit => unit.template.faction != faction).ToArray();
+        return FindObjectsOfType<Unit>().Where(unit => unit.template.faction != faction).ToList();
     }
 
     //Called by the TimeMachine Clip (of type Pause)
@@ -129,5 +130,14 @@ public class GameManager : Singleton<GameManager>
     {
         activeDirector.Resume();
         gameMode = GameMode.Gameplay;
+    }
+
+    public void QuitGame()
+    {
+        Debug.Log("quit game");
+        Application.Quit();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
     }
 }

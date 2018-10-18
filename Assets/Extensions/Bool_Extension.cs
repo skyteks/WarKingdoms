@@ -9,7 +9,7 @@ public static class Bool_Extension
         return boolean ? 1f : 0f;
     }
 
-    public static float ToFloatLeadingSign(this bool boolean)
+    public static float ToSignFloat(this bool boolean)
     {
         return boolean ? 1f : -1f;
     }
@@ -19,7 +19,7 @@ public static class Bool_Extension
         return boolean ? 1 : 0;
     }
 
-    public static int ToIntLeadingSign(this bool boolean)
+    public static int ToSignInt(this bool boolean)
     {
         return boolean ? 1 : -1;
     }

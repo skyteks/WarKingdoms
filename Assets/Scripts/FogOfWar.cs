@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class FogOfWar : MonoBehaviour
 {
-    public Texture2D fogTexture;
-
+    public Texture2D readWriteTexture;
     [Range(0f, 1f)]
     public float fogScatterSpeed = 0.2f;
     [Range(0f, 1f)]
@@ -14,22 +13,25 @@ public class FogOfWar : MonoBehaviour
 
     private Color[] pixels;
 
-    private int layerVisible;
-    private int layerHidden;
+    private int layerDefaultVisible;
+    private int layerDefaultHidden;
+    private int layerMiniMapVisible;
+    private int layerMiniMapHidden;
+
+    private int textureWidth;
+    private int textureHeight;
 
     void Start()
     {
-        pixels = fogTexture.GetPixels();
-        for (int i = 0; i < pixels.Length; i++)
-        {
-            pixels[i] = Color.black;
-        }
+        textureHeight = readWriteTexture.height;
+        textureWidth = readWriteTexture.width;
 
-        fogTexture.SetPixels(pixels);
-        fogTexture.Apply();
+        ResetTexture();
 
-        layerVisible = LayerMask.NameToLayer("Default");
-        layerHidden = LayerMask.NameToLayer("Default Hidden");
+        layerDefaultVisible = LayerMask.NameToLayer("Default");
+        layerDefaultHidden = LayerMask.NameToLayer("Default Hidden");
+        layerMiniMapVisible = LayerMask.NameToLayer("MiniMap Only");
+        layerMiniMapHidden = LayerMask.NameToLayer("MiniMap Hidden");
     }
 
     void Update()
@@ -41,40 +43,65 @@ public class FogOfWar : MonoBehaviour
             pixels[i] = tmp;
         }
 
-        UpdateUnitPositions();
-        fogTexture.SetPixels(pixels);
-        fogTexture.Apply();
+        UpdateUnitsSight();
+        readWriteTexture.SetPixels(pixels);
+        readWriteTexture.Apply();
 
-        UpdateUnitVisibility();
+        UpdateUnitsVisibility();
     }
 
-    private void UpdateUnitPositions()
+    [ContextMenu("Reset Texture")]
+    private void ResetTexture()
     {
-        Unit[] units = GameManager.Instance.GetAllSelectableUnits();
+        pixels = readWriteTexture.GetPixels();
+        for (int i = 0; i < pixels.Length; i++)
+        {
+            pixels[i] = Color.black;
+        }
+
+        readWriteTexture.SetPixels(pixels);
+        readWriteTexture.Apply();
+    }
+
+    private void UpdateUnitsSight()
+    {
+        var units = GameManager.Instance.GetAllSelectableUnits();
         foreach (Unit unit in units)
         {
             Vector2Int uv = WorldToTextureUV(unit.transform.position);
-            int radius = Mathf.RoundToInt((unit.template.guardDistance / (transform.localScale.x + transform.localScale.z) * 2f) * fogTexture.height);
+            int radius = Mathf.RoundToInt((unit.template.guardDistance / (transform.localScale.x + transform.localScale.z) * 2f) * readWriteTexture.height);
             ClearRadius(uv, radius);
         }
     }
 
-    private void UpdateUnitVisibility()
+    private void UpdateUnitsVisibility()
     {
-        Unit[] units = GameManager.Instance.GetAllNonSelectableUnits();
+        var units = GameManager.Instance.GetAllNonSelectableUnits();
         foreach (Unit unit in units)
         {
             Vector2Int uv = WorldToTextureUV(unit.transform.position);
             //int index = GetPixelIndexOnUV(uv);
-            Color pixel = fogTexture.GetPixel(uv.x, uv.y);
+            Color pixel = readWriteTexture.GetPixel(uv.x, uv.y);
+            Debug.Log(pixel.ToString());
+            float visibility = pixel.a;
             IEnumerable<GameObject> parts = unit.GetComponentsInChildren<Transform>().Where(form =>
-                form.gameObject.layer == layerVisible ||
-                form.gameObject.layer == layerHidden
+                form.gameObject.layer == layerDefaultVisible ||
+                form.gameObject.layer == layerDefaultHidden ||
+                form.gameObject.layer == layerMiniMapVisible ||
+                form.gameObject.layer == layerMiniMapHidden
             ).Select(form => form.gameObject);
             foreach (GameObject part in parts)
             {
-                if (pixel.a < hiddenAlpha) part.layer = layerVisible;
-                else part.layer = layerHidden;
+                if (part.layer == layerDefaultVisible || part.layer == layerDefaultHidden)
+                {
+                    if (visibility < hiddenAlpha) part.layer = layerDefaultVisible;
+                    else part.layer = layerDefaultHidden;
+                }
+                else
+                {
+                    if (visibility < hiddenAlpha) part.layer = layerMiniMapVisible;
+                    else part.layer = layerMiniMapHidden;
+                }
             }
         }
     }
@@ -85,9 +112,12 @@ public class FogOfWar : MonoBehaviour
         {
             for (int x = -radius; x < radius; x++)
             {
+                Vector2Int tmp = uv;
                 if (Mathf.Sqrt(x * x + y * y) <= radius)
                 {
-                    int index = GetPixelIndexOnUV(uv + new Vector2Int(x, y));
+                    tmp.x += x;
+                    tmp.y += y;
+                    int index = GetPixelIndexOnUV(tmp);
                     pixels[index] = Color.clear;
                 }
             }
@@ -97,16 +127,16 @@ public class FogOfWar : MonoBehaviour
     private Vector2Int WorldToTextureUV(Vector3 position)
     {
         return new Vector2Int(
-                    Mathf.RoundToInt((position.x / transform.localScale.x) * fogTexture.width) + (fogTexture.width / 2),
-                    Mathf.RoundToInt((position.z / transform.localScale.z) * fogTexture.height) + (fogTexture.height / 2)
+                    Mathf.RoundToInt((position.x / transform.localScale.x) * textureWidth) + (textureWidth / 2),
+                    Mathf.RoundToInt((position.z / transform.localScale.z) * textureHeight) + (textureHeight / 2)
                 );
     }
 
     private int GetPixelIndexOnUV(Vector2Int uv)
     {
-        int xPixel = Mathf.Clamp(Mathf.RoundToInt(uv.x), 0, fogTexture.width - 1);
-        int yPixel = Mathf.Clamp(Mathf.RoundToInt(uv.y), 0, fogTexture.height - 1);
-        int index = xPixel + yPixel * fogTexture.width;
+        int xPixel = Mathf.Clamp(uv.x, 0, textureWidth - 1);
+        int yPixel = Mathf.Clamp(uv.y, 0, textureHeight - 1);
+        int index = xPixel + yPixel * textureWidth;
         return index;
     }
 }

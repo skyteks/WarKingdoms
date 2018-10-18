@@ -82,7 +82,7 @@ public static class Float_Extension
         return deg;
     }
 
-    public static float LeadingSign(this float value)
+    public static float Sign(this float value)
     {
         return value < 0f ? -1f : 1f;
     }

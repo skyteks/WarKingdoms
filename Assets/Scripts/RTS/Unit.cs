@@ -18,14 +18,27 @@ public class Unit : MonoBehaviour
         Dead,
     }
 
+    public static Dictionary<UnitTemplate.Faction, List<Unit>> globalUnits;
+
+    static Unit()
+    {
+        globalUnits = new Dictionary<UnitTemplate.Faction, List<Unit>>();
+        var factions = System.Enum.GetValues(typeof(UnitTemplate.Faction)).Cast<UnitTemplate.Faction>();
+        foreach (var faction in factions)
+        {
+            globalUnits.Add(faction, new List<Unit>());
+        }
+    }
+
     public UnitState state = UnitState.Idle;
     [Preview]
     public UnitTemplate template;
+    public float visionFadeTime = 1f;
 
     //references
     private NavMeshAgent navMeshAgent;
     private Animator animator;
-    private SpriteRenderer selectionCircle, miniMapCircle;
+    private MeshRenderer selectionCircle, miniMapCircle, visionCircle;
 
     //private bool isSelected; //is the Unit currently selected by the Player
     private Unit targetOfAttack;
@@ -39,8 +52,9 @@ public class Unit : MonoBehaviour
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
-        selectionCircle = transform.Find("SelectionCircle").GetComponent<SpriteRenderer>();
-        miniMapCircle = transform.Find("MiniMapCircle").GetComponent<SpriteRenderer>();
+        selectionCircle = transform.Find("SelectionCircle").GetComponent<MeshRenderer>();
+        miniMapCircle = transform.Find("MiniMapCircle").GetComponent<MeshRenderer>();
+        visionCircle = transform.Find("FieldOfView").GetComponent<MeshRenderer>();
 
         //Randomization of NavMeshAgent speed. More fun!
         //float rndmFactor = navMeshAgent.speed * .15f;
@@ -49,11 +63,23 @@ public class Unit : MonoBehaviour
 
     private void Start()
     {
+        globalUnits[template.faction].Add(this);
+
         template = template.Clone(); //we copy the template otherwise it's going to overwrite the original asset!
 
         //Set some defaults, including the default state
         SetSelected(false);
-        Guard();
+        Stop();
+
+        visionCircle.material.color = visionCircle.material.color.ToWithA(0f);
+        if (template.faction == GameManager.Instance.faction)
+        {
+            StartCoroutine(VisionFade(visionFadeTime, false));
+        }
+        else
+        {
+            visionCircle.enabled = false;
+        }
     }
 
     void Update()
@@ -101,7 +127,6 @@ public class Unit : MonoBehaviour
                         navMeshAgent.SetDestination(targetOfAttack.transform.position); //update target position in case it's moving
                     }
                 }
-
                 break;
 
             case UnitState.Guarding:
@@ -115,6 +140,7 @@ public class Unit : MonoBehaviour
                     }
                 }
                 break;
+
             case UnitState.Attacking:
                 //check if target has been killed by somebody else
                 if (IsDeadOrNull(targetOfAttack))
@@ -128,12 +154,25 @@ public class Unit : MonoBehaviour
                     transform.forward = Vector3.Lerp(transform.forward, desiredForward, Time.deltaTime * 10f);
                 }
                 break;
+            case UnitState.Dead:
+                if (template.health != 0)
+                {
+                    Die();
+                }
+                return;
         }
 
         float navMeshAgentSpeed = navMeshAgent.velocity.magnitude;
         if (animator != null) animator.SetFloat("Speed", navMeshAgentSpeed * .05f);
+
+        float scalingCorrection = template.guardDistance * 2f * 1.05f;
+        if (visionCircle.transform.localScale.x != template.guardDistance * scalingCorrection)
+        {
+            visionCircle.transform.localScale = Vector3.one * scalingCorrection;
+        }
     }
 
+#if UNITY_EDITOR
     void OnDrawGizmos()
     {
         if (navMeshAgent != null
@@ -149,6 +188,7 @@ public class Unit : MonoBehaviour
         UnityEditor.Handles.color = Color.gray;
         UnityEditor.Handles.DrawWireDisc(transform.position, Vector3.up, template.guardDistance);
     }
+#endif
 
     public void ExecuteCommand(AICommand c)
     {
@@ -322,14 +362,16 @@ public class Unit : MonoBehaviour
 
         if (template.health <= 0)
         {
-            template.health = 0;
             Die();
         }
     }
 
     //called in SufferAttack, but can also be from a Timeline clip
+    [ContextMenu("Die")]
     private void Die()
     {
+        template.health = 0;
+
         state = UnitState.Dead; //still makes sense to set it, because somebody might be interacting with this script before it is destroyed
         if (animator != null) animator.SetTrigger("DoDeath");
 
@@ -347,13 +389,40 @@ public class Unit : MonoBehaviour
         gameObject.tag = "Untagged";
         gameObject.layer = 0;
 
+        globalUnits[template.faction].Remove(this);
+
         //Remove unneeded Components
+        ParticleSystem ps = visionCircle.GetComponent<ParticleSystem>();
+        if (ps != null)
+        {
+            ps.Emit(1);
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            Destroy(ps, ps.main.startLifetimeMultiplier);
+        }
+        //Destroy(sightCircle);
+        StartCoroutine(VisionFade(visionFadeTime, true));
         Destroy(selectionCircle);
         Destroy(miniMapCircle);
         Destroy(navMeshAgent);
         Destroy(GetComponent<Collider>()); //will make it unselectable on click
         if (animator != null) Destroy(animator, 10f); //give it some time to complete the animation
-        Destroy(this);
+    }
+
+    private IEnumerator VisionFade(float fadeTime, bool fadeOut)
+    {
+        Color newColor = visionCircle.material.color;
+        float deadline = Time.time + fadeTime;
+        while (Time.time < deadline)
+        {
+            //newColor = sightCircle.material.color;
+            newColor.a = newColor.a + Time.deltaTime * fadeTime * -fadeOut.ToSignFloat();
+            visionCircle.material.color = newColor;
+            yield return null;
+        }
+        if (fadeOut)
+        {
+            Destroy(visionCircle);
+        }
     }
 
     private bool IsDeadOrNull(Unit unit)
@@ -392,8 +461,8 @@ public class Unit : MonoBehaviour
     {
         //Set transparency dependent on selection
         Color newColor = (template.faction == GameManager.Instance.faction) ? Color.green : Color.red;
-        miniMapCircle.color = newColor;
+        miniMapCircle.material.color = newColor;
         newColor.a = (selected) ? 1f : .3f;
-        selectionCircle.color = newColor;
+        selectionCircle.material.color = newColor;
     }
 }

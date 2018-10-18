@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[ExecuteInEditMode]
 public class CameraManager : Singleton<CameraManager>
 {
     public Camera mainCamera;
@@ -95,6 +96,7 @@ public class CameraManager : Singleton<CameraManager>
 
         if (viewPort.sharedMesh == null) viewPort.sharedMesh = new Mesh();
         Mesh mesh = viewPort.sharedMesh;
+        mesh.name = "View Port Mesh";
         mesh.Clear();
         mesh.SetVertices(vertexArray);
         mesh.SetNormals(normalArray);

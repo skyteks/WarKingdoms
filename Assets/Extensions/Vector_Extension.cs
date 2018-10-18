@@ -202,6 +202,14 @@ public static class Vector_Extension
         return vector;
     }
 
+    public static Color ToScaleWithoutAlpha(this Color color, float scale)
+    {
+        color.r *= scale;
+        color.g *= scale;
+        color.b *= scale;
+        return color;
+    }
+
     public static bool IsNaN(this Vector2 vector)
     {
         return float.IsNaN(vector.x) || float.IsNaN(vector.y);

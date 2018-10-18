@@ -8,7 +8,7 @@ public class InputManager : Singleton<InputManager>
 {
     [Header("Camera")]
     public Camera mainCamera;
-    public bool mouseMovesCamera = true;
+    public bool mouseMovesCamera { get; set; }
     public Vector2 mouseDeadZone = new Vector2(.8f, .8f);
     public float keyboardSpeed = 4f;
     public float mouseSpeed = 2f;
@@ -136,6 +136,7 @@ public class InputManager : Singleton<InputManager>
                     RaycastHit hit;
                     Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
+                    bool moveCommand = false;
                     if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitsLayerMask))
                     {
                         Unit targetOfAttack = hit.collider.GetComponent<Unit>();
@@ -144,8 +145,16 @@ public class InputManager : Singleton<InputManager>
                             GameManager.Instance.AttackTarget(targetOfAttack);
                             Debug.DrawLine(ray.origin, hit.point, Color.red, 1f);
                         }
+                        else
+                        {
+                            moveCommand = true;
+                        }
                     }
                     else
+                    {
+                        moveCommand = true;
+                    }
+                    if (moveCommand)
                     {
                         Vector3 commandPoint;
                         CameraManager.GetCameraScreenPointOnGroundPlane(mainCamera, Input.mousePosition, out commandPoint);
