@@ -174,29 +174,50 @@ public class InputManager : Singleton<InputManager>
                     if (mouseMovesCamera
                         && !CameraManager.Instance.isFramingPlatoon)
                     {
-                        Vector3 mousePosition = Input.mousePosition;
-                        mousePosition.x -= Screen.width / 2f;
-                        mousePosition.y -= Screen.height / 2f;
+                        Vector2 resolution = new Vector2(Screen.width, Screen.height);
+                        Vector2 mouseDeadZoneInvert = Vector2.one - mouseDeadZone;
 
-                        //horizontal
-                        float horizontalDeadZone = Screen.width * mouseDeadZone.x;
-                        float absoluteXValue = Mathf.Abs(mousePosition.x);
-                        if (absoluteXValue > horizontalDeadZone)
+                        float multiplier = 0.001f;//0.01f;
+                        if (Input.mousePosition.x < Screen.width * mouseDeadZoneInvert.x)
                         {
-                            //camera needs to move horizontally
-                            amountToMove.x = (absoluteXValue - horizontalDeadZone) * Mathf.Sign(mousePosition.x) * .01f * mouseSpeed;
+                            amountToMove.x = (Input.mousePosition.x - Screen.width * mouseDeadZoneInvert.x) * multiplier * mouseSpeed;
+                            mouseIsMovingCamera = true;
+                        }
+                        if (Input.mousePosition.x > Screen.width * mouseDeadZone.x)
+                        {
+                            amountToMove.x = (Input.mousePosition.x - Screen.width * mouseDeadZone.x) * multiplier * mouseSpeed;
                             mouseIsMovingCamera = true;
                         }
 
-                        //vertical
-                        float verticalDeadZone = Screen.height * mouseDeadZone.y;
-                        float absoluteYValue = Mathf.Abs(mousePosition.y);
-                        if (absoluteYValue > verticalDeadZone)
+                        if (Input.mousePosition.y < Screen.height * mouseDeadZoneInvert.y)
                         {
-                            //camera needs to move horizontally
-                            amountToMove.y = (absoluteYValue - verticalDeadZone) * Mathf.Sign(mousePosition.y) * .01f * mouseSpeed;
+                            amountToMove.y = (Input.mousePosition.y - Screen.height * mouseDeadZoneInvert.y) * multiplier * mouseSpeed;
                             mouseIsMovingCamera = true;
                         }
+                        if (Input.mousePosition.y > Screen.height * mouseDeadZone.y)
+                        {
+                            amountToMove.y = (Input.mousePosition.y - Screen.height * mouseDeadZone.y) * multiplier * mouseSpeed;
+                            mouseIsMovingCamera = true;
+                        }
+
+                        ////horizontal
+                        //float horizontalDeadZone = Screen.width * mouseDeadZone.x;
+                        //float absoluteXValue = Mathf.Abs(mousePosition.x);
+                        //if (absoluteXValue > horizontalDeadZone)
+                        //{
+                        //    //camera needs to move horizontally
+                        //    amountToMove.x = (absoluteXValue - horizontalDeadZone) * Mathf.Sign(mousePosition.x) * .01f * mouseSpeed;
+                        //    mouseIsMovingCamera = true;
+                        //}
+                        ////vertical
+                        //float verticalDeadZone = Screen.height * mouseDeadZone.y;
+                        //float absoluteYValue = Mathf.Abs(mousePosition.y);
+                        //if (absoluteYValue > verticalDeadZone)
+                        //{
+                        //    //camera needs to move horizontally
+                        //    amountToMove.y = (absoluteYValue - verticalDeadZone) * Mathf.Sign(mousePosition.y) * .01f * mouseSpeed;
+                        //    mouseIsMovingCamera = true;
+                        //}
                     }
 
                     //Keyboard movements only happen if mouse is not causing the camera to move already
