@@ -57,6 +57,7 @@ public class FieldOfView : MonoBehaviour
     public float edgeDistanceTreshholdDegrees = 80f;
     [Range(0f, 1f)]
     public float maskCutawayDistance;
+    public bool maskCutawayHorizontalyOnly;
     private MeshFilter viewMeshFilter;
     private Mesh viewMesh;
 
@@ -82,7 +83,7 @@ public class FieldOfView : MonoBehaviour
     {
         if (Application.isPlaying) return;
         if (viewMeshFilter == null) viewMeshFilter = GetComponent<MeshFilter>();
-        if (viewMeshFilter.sharedMesh == null) SetMesh();
+        if (viewMeshFilter.sharedMesh == null || viewMeshFilter.mesh == null || viewMesh == null) SetMesh();
         DrawFieldOfView();
     }
 #endif
@@ -226,7 +227,8 @@ public class FieldOfView : MonoBehaviour
         if (Physics.Raycast(transform.position, dir, out hit, viewRadius, obstacleMask))
         {
             //Debug.DrawLine(transform.position, hit.point, Color.black);
-            return new ViewCastInfo(true, hit.point + -hit.normal * maskCutawayDistance, hit.distance, globalAngle);
+            Vector3 cutaway = -hit.normal.ToScale(new Vector3(1f, 1f, (!maskCutawayHorizontalyOnly).ToFloat())) * maskCutawayDistance;
+            return new ViewCastInfo(true, hit.point + cutaway, hit.distance, globalAngle);
         }
         else
         {
