@@ -67,7 +67,7 @@ public class FieldOfView : MonoBehaviour
 
     void Start()
     {
-        CreateMesh();
+        SetMesh();
         //StartCoroutine(FindTargetsWithDelay(0.2f));
     }
 
@@ -76,19 +76,23 @@ public class FieldOfView : MonoBehaviour
         DrawFieldOfView();
     }
 
-    //void OnDrawGizmos()
-    //{
-    //    if (Application.isPlaying) return;
-    //    if (viewMeshFilter == null) viewMeshFilter = GetComponent<MeshFilter>();
-    //    if (viewMesh == null) CreateMesh();
-    //    DrawFieldOfView();
-    //}
-
+#if UNITY_EDITOR
+    [ContextMenu("Create Mesh")]
     private void CreateMesh()
     {
+        if (Application.isPlaying) return;
+        if (viewMeshFilter == null) viewMeshFilter = GetComponent<MeshFilter>();
+        if (viewMeshFilter.sharedMesh == null) SetMesh();
+        DrawFieldOfView();
+    }
+#endif
+
+    private void SetMesh()
+    {
         viewMesh = new Mesh();
-        viewMesh.name = "View Mesh";
-        viewMeshFilter.mesh = viewMesh;
+        viewMesh.name = "View Mesh (Generated)";
+        if (Application.isPlaying) viewMeshFilter.mesh = viewMesh;
+        else viewMeshFilter.sharedMesh = viewMesh;
     }
 
     private IEnumerator FindTargetsWithDelay(float delay)
@@ -112,7 +116,7 @@ public class FieldOfView : MonoBehaviour
             {
                 float distToTarget = Vector3.Distance(transform.position, target.position);
 
-                if (!Physics.Raycast(transform.position, dirToTarget, distToTarget, obstacleMask)) ;
+                if (!Physics.Raycast(transform.position, dirToTarget, distToTarget, obstacleMask))
                 {
                     visibleTargets.Add(target);
                 }
@@ -157,14 +161,17 @@ public class FieldOfView : MonoBehaviour
         Vector3[] vertices = new Vector3[vertexCount];
         int[] indices = new int[(vertexCount - 2) * 3];
         Vector2[] uvs = new Vector2[vertexCount];
+        Vector3[] normals = new Vector3[vertexCount];
 
         vertices[0] = Vector3.zero;
         uvs[0] = Vector2.zero;
+        normals[0] = Vector3.up;
         for (int i = 0; i < vertexCount - 1; i++)
         {
             Vector3 vertex = transform.InverseTransformPoint(viewPoints[i]);
             vertices[i + 1] = vertex;
             uvs[i + 1] = vertex.ToVector2XZ() / viewRadius / 2f;
+            normals[i + 1] = Vector3.up;
             if (i < vertexCount - 2)
             {
                 indices[i * 3] = 0;
@@ -177,7 +184,8 @@ public class FieldOfView : MonoBehaviour
         viewMesh.vertices = vertices;
         viewMesh.triangles = indices;
         viewMesh.uv = uvs;
-        viewMesh.RecalculateNormals();
+        viewMesh.normals = normals;
+        //viewMesh.RecalculateNormals();
     }
 
     private EdgeInfo FindEdge(ViewCastInfo minViewCast, ViewCastInfo maxViewCast)

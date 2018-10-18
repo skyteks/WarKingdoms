@@ -96,7 +96,7 @@ public class CameraManager : Singleton<CameraManager>
 
         if (viewPort.sharedMesh == null) viewPort.sharedMesh = new Mesh();
         Mesh mesh = viewPort.sharedMesh;
-        mesh.name = "View Port Mesh";
+        mesh.name = "View Port Mesh (Generated)";
         mesh.Clear();
         mesh.SetVertices(vertexArray);
         mesh.SetNormals(normalArray);

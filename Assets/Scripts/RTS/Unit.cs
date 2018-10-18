@@ -69,17 +69,17 @@ public class Unit : MonoBehaviour
 
         //Set some defaults, including the default state
         SetSelected(false);
-        Stop();
+        Idle();
 
-        visionCircle.material.color = visionCircle.material.color.ToWithA(0f);
-        if (template.faction == GameManager.Instance.faction)
-        {
-            StartCoroutine(VisionFade(visionFadeTime, false));
-        }
-        else
-        {
-            visionCircle.enabled = false;
-        }
+        //visionCircle.material.color = visionCircle.material.color.ToWithA(0f);
+        //if (template.faction == GameManager.Instance.faction)
+        //{
+        //    StartCoroutine(VisionFade(visionFadeTime, false));
+        //}
+        //else
+        //{
+        //    visionCircle.enabled = false;
+        //}
     }
 
     void Update()
@@ -97,7 +97,7 @@ public class Unit : MonoBehaviour
             case UnitState.MovingToSpotIdle:
                 if (navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance + .1f)
                 {
-                    Stop();
+                    Idle();
                 }
                 break;
 
@@ -165,11 +165,11 @@ public class Unit : MonoBehaviour
         float navMeshAgentSpeed = navMeshAgent.velocity.magnitude;
         if (animator != null) animator.SetFloat("Speed", navMeshAgentSpeed * .05f);
 
-        float scalingCorrection = template.guardDistance * 2f * 1.05f;
-        if (visionCircle.transform.localScale.x != template.guardDistance * scalingCorrection)
-        {
-            visionCircle.transform.localScale = Vector3.one * scalingCorrection;
-        }
+        //float scalingCorrection = template.guardDistance * 2f * 1.05f;
+        //if (visionCircle.transform.localScale.x != template.guardDistance * scalingCorrection)
+        //{
+        //    visionCircle.transform.localScale = Vector3.one * scalingCorrection;
+        //}
     }
 
 #if UNITY_EDITOR
@@ -209,7 +209,7 @@ public class Unit : MonoBehaviour
                 break;
 
             case AICommand.CommandType.Stop:
-                Stop();
+                Idle();
                 break;
 
             case AICommand.CommandType.AttackTarget:
@@ -245,7 +245,7 @@ public class Unit : MonoBehaviour
     }
 
     //stop and stay Idle
-    private void Stop()
+    private void Idle()
     {
         state = UnitState.Idle;
         targetOfAttack = null;

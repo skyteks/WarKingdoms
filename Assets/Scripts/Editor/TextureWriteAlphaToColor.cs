@@ -12,7 +12,7 @@ public class TextureWriteAlphaToColor : EditorWindow
     private Coroutine coroutine;
 
 
-    [MenuItem("Tools/Texture/WriteAlphaToColor")]
+    //[MenuItem("Tools/Texture/WriteAlphaToColor")]
     private static void ShowWindow()
     {
         GetWindow<TextureWriteAlphaToColor>().Show();
@@ -105,7 +105,7 @@ public class TextureWriteAlphaToColor : EditorWindow
         texture.Apply();
         yield return null;
 
-        byte[] bytes = texture.EncodeToPNG();
+        //byte[] bytes = texture.EncodeToPNG();
         string path = AssetDatabase.GetAssetPath(texture.GetInstanceID());
         AssetDatabase.DeleteAsset(path);
         AssetDatabase.CreateAsset(texture, path);
