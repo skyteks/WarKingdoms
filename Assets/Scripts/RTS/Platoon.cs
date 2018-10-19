@@ -9,15 +9,16 @@ public class Platoon : MonoBehaviour
 {
     public enum FormationModes
     {
+        SquareGrid,
+        HexGrid,
         Circle,
-        Rectangle,
     }
 
     public FormationModes formationMode;
-
+    [Range(1f, 4f)]
+    public float formationOffset = 3f;
+    [HideInInspector]
     public List<Unit> units = new List<Unit>();
-
-    private float formationOffset = 3f;
 
     private void Start()
     {
@@ -53,7 +54,7 @@ public class Platoon : MonoBehaviour
         Vector3 destination = command.destination;
         Vector3 origin = units.Select(unit => unit.transform.position).FindCentroid();
         Quaternion rotation = Quaternion.LookRotation((destination - origin).normalized);
-        Vector3[] offsets = GetFormationOffsets(destination);
+        Vector3[] offsets = GetFormationOffsets();
         //for (int i = 0; i < offsets.Length; i++) offsets[i] = destination + rotation * offsets[i];
 
         List<Unit> sortedUnits = units.OrderBy(unit => Vector3.Distance(unit.transform.position, origin)).ToList();
@@ -124,71 +125,111 @@ public class Platoon : MonoBehaviour
     }
 
     //Returns an array of positions to be used to send units into a circular formation
-    public Vector3[] GetFormationOffsets(Vector3 formationCenter)
+    public Vector3[] GetFormationOffsets()
     {
-        //TODO: accomodate bigger numbers
-        float currentOffset = formationOffset;
-        Vector3[] offsets = new Vector3[units.Count];
+        int count = units.Count;
+        Vector3[] offsets = new Vector3[count];
 
+        int caseCounter = 0;
         switch (formationMode)
         {
             default:
             case FormationModes.Circle:
-                float increment = 360f / units.Count;
-                for (int i = 0; i < units.Count; i++)
                 {
-                    float angle = increment * i;
-                    offsets[i] = new Vector3(
-                        currentOffset * angle.Cos(),
-                        0f,
-                        currentOffset * angle.Sin()
-                    );
-                }
-                break;
-            case FormationModes.Rectangle:
-                float sqrt = Mathf.Sqrt(units.Count);
-                if (sqrt % 1f == 0f)
-                {
-                    int i = 0;
-                    float half = (sqrt - 1f) * 0.5f * currentOffset;
-                    for (int y = 0; y < sqrt && i < units.Count; y++)
+                    offsets[0] = Vector3.zero;
+                    int remaining = count - 1;
+
+                    //float circumfence = 2f * Mathf.PI * formationOffset;
+                    //int spaces = Mathf.FloorToInt(circumfence / formationOffset);
+                    //float cirumfenceOffset = circumfence / (float)spaces;
+
+                    float increment = 360f / remaining;
+                    for (int i = 0; i < remaining; i++)
                     {
-                        for (int x = 0; x < sqrt && i < units.Count; x++, i++)
-                        {
-                            offsets[i] = new Vector3(
-                                x * currentOffset - half,
-                                0f,
-                                y * currentOffset - half
-                            );
-                        }
-                    }
-                }
-                else
-                {
-                    int w = Mathf.RoundToInt(sqrt);
-                    float rest = units.Count / (float)w;
-                    int h = Mathf.FloorToInt(rest) + (rest % 1f != 0f).ToInt();
-                    int i = 0;
-                    for (int y = h - 1; y >= 0 && i < units.Count; y--)
-                    {
-                        float x = 0;
-                        int remaining = (units.Count - i);
-                        if (remaining < w)
-                        {
-                            int missing = w - remaining;
-                            x += missing / 2f;
-                        }
-                        for (; x < w && i < units.Count; x++, i++)
-                        {
-                            offsets[i] = new Vector3(
-                                x * currentOffset - (w - 1f) * 0.5f * currentOffset,
-                                0f,
-                                y * currentOffset - (h - 1f) * 0.5f * currentOffset
-                            );
-                        }
+                        float angle = increment * i;
+                        offsets[i] = new Vector3(
+                            formationOffset * angle.Cos(),
+                            0f,
+                            formationOffset * angle.Sin()
+                        );
                     }
                 }
                 break;
+            case FormationModes.SquareGrid:
+                {
+                    float sqrt = Mathf.Sqrt(count);
+                    int i = 0;
+                    if (sqrt % 1f == 0f)
+                    {
+                        float halfSquareDiameter = (sqrt - 1f) * 0.5f * formationOffset;
+                        //for (int y = 0; y < sqrt && i < count; y++)
+                        for (int y = Mathf.FloorToInt(sqrt) - 1; y >= 0 && i < count; y--)
+                        {
+                            for (int x = 0; x < sqrt && i < count; x++, i++)
+                            {
+                                offsets[i] = new Vector3(
+                                    x * formationOffset - halfSquareDiameter,
+                                    0f,
+                                    y * formationOffset - halfSquareDiameter
+                                );
+                                Debug.Log(offsets[i]);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        int w = Mathf.RoundToInt(sqrt);
+                        float rest = count / (float)w;
+                        int h = Mathf.FloorToInt(rest) + (rest % 1f != 0f).ToInt();
+                        for (int y = h - 1; y >= 0 && i < count; y--)
+                        {
+                            float x = 0;
+                            int remaining = (count - i);
+                            if (remaining < w && formationMode == FormationModes.SquareGrid)
+                            {
+                                int missing = w - remaining;
+                                x += missing / 2f;
+                            }
+                            for (; x < w && i < count; x++, i++)
+                            {
+                                offsets[i] = new Vector3(
+                                    x * formationOffset - (w - 1f) * 0.5f * formationOffset,
+                                    0f,
+                                    y * formationOffset - (h - 1f) * 0.5f * formationOffset
+                                );
+                            }
+                        }
+                    }
+                }
+                if (formationMode == FormationModes.HexGrid)
+                {
+                    caseCounter++;
+                    goto case FormationModes.HexGrid;
+                }
+                break;
+            case FormationModes.HexGrid:
+                {
+                    if (caseCounter == 0) goto case FormationModes.SquareGrid;
+
+                    float halfFormationOffset = formationOffset / 2f;
+                    float triangleHeightOffset = Mathf.Sqrt(Mathf.Pow(formationOffset, 2f) - Mathf.Pow(halfFormationOffset, 2f));
+
+                    float lastY = offsets[0].z;
+                    bool toggle = true;
+                    for (int i = 0; i < count; i++)
+                    {
+                        Vector3 offset = offsets[i];
+                        if (offset.z != lastY)
+                        {
+                            toggle = !toggle;
+                        }
+                        lastY = offset.z;
+                        offset.x += halfFormationOffset * toggle.ToSignFloat() * 0.5f;
+                        offset.z = (offset.z / formationOffset) * triangleHeightOffset;
+                        offsets[i] = offset;
+                    }
+                    break;
+                }
         }
 
         return offsets;

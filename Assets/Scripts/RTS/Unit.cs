@@ -40,7 +40,6 @@ public class Unit : MonoBehaviour
             globalUnits.Add(faction, new List<Unit>());
         }
 
-        
     }
 
     public UnitState state = UnitState.Idle;
@@ -59,7 +58,6 @@ public class Unit : MonoBehaviour
     private Unit[] hostiles;
     private float lastGuardCheckTime, guardCheckInterval = 1f;
     private bool agentReady = false;
-
     public UnityAction<Unit> OnDie;
 
     void Awake()
