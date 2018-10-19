@@ -163,14 +163,22 @@ public class Platoon : MonoBehaviour
                         }
                     }
                 }
-                else if (units.Count % 2 == 0)
+                else
                 {
-                    int w = Mathf.RoundToInt(sqrt + 1f - (sqrt % 1f));
-                    int h = Mathf.RoundToInt(sqrt - (sqrt % 1f));
+                    int w = Mathf.RoundToInt(sqrt);
+                    float rest = units.Count / (float)w;
+                    int h = Mathf.FloorToInt(rest) + (rest % 1f != 0f).ToInt();
                     int i = 0;
-                    for (int y = 0; y < h && i < units.Count; y++)
+                    for (int y = h - 1; y >= 0 && i < units.Count; y--)
                     {
-                        for (int x = 0; x < w && i < units.Count; x++, i++)
+                        float x = 0;
+                        int remaining = (units.Count - i);
+                        if (remaining < w)
+                        {
+                            int missing = w - remaining;
+                            x += missing / 2f;
+                        }
+                        for (; x < w && i < units.Count; x++, i++)
                         {
                             offsets[i] = new Vector3(
                                 x * currentOffset - (w - 1f) * 0.5f * currentOffset,
@@ -179,10 +187,6 @@ public class Platoon : MonoBehaviour
                             );
                         }
                     }
-                }
-                else
-                {
-                    
                 }
                 break;
         }

@@ -8,9 +8,9 @@ public class InputManager : Singleton<InputManager>
 {
     [Header("Camera")]
     public Camera mainCamera;
-    public bool mouseMovesCamera { get; set; }
+    public bool mouseMovesCamera = true;
     public Vector2 mouseDeadZone = new Vector2(.8f, .8f);
-    public float keyboardSpeed = 4f;
+    public float keyboardSpeed = 2f;
     public float mouseSpeed = 2f;
 
     [Space]
@@ -30,10 +30,8 @@ public class InputManager : Singleton<InputManager>
     {
         if (mainCamera == null) mainCamera = Camera.main;//GameObject.FindObjectOfType<Camera>();
 
-#if !UNITY_EDITOR
-        //to restore the mouseMovesCamera parameter (which in the player has to be always true)
-        //in case someone forgot it on false in the Editor :)
-        mouseMovesCamera = true;
+#if UNITY_EDITOR
+        mouseMovesCamera = false;
 #endif
     }
 
