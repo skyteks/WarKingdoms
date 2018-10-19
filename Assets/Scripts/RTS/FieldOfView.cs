@@ -48,10 +48,6 @@ public class FieldOfView : MonoBehaviour
 
     public LayerMask targetMask;
     public LayerMask obstacleMask;
-
-    [HideInInspector]
-    public List<Transform> visibleTargets = new List<Transform>();
-
     public float meshResolution;
     public int edgeResolveIterations;
     [Range(0f, 90f)]
@@ -62,6 +58,7 @@ public class FieldOfView : MonoBehaviour
     public LayerMask overlapTestMask;
     private MeshFilter viewMeshFilter;
     private Mesh viewMesh;
+    private List<Transform> lastVisibleTargets = new List<Transform>(0);
     private List<Transform> lastObstacles = new List<Transform>(0);
     private Vector3 lastPosition;
     private Vector3 lastForward;
@@ -75,6 +72,8 @@ public class FieldOfView : MonoBehaviour
     {
         MeshRenderer render = GetComponent<MeshRenderer>();
         if (render != null) render.enabled = true;
+
+        StartCoroutine(FindTargetsWithDelay(0.1f));
     }
 
     private void OnDisable()
@@ -86,13 +85,24 @@ public class FieldOfView : MonoBehaviour
     void Start()
     {
         SetMesh();
-        //StartCoroutine(FindTargetsWithDelay(0.2f));
+        GenerateMesh();
     }
 
     void LateUpdate()
     {
+        if (ShouldRegenerateMesh())
+        {
+            GenerateMesh();
+            //print("Regenerated FieldOfView mesh");
+        }
+    }
+
+    private bool ShouldRegenerateMesh()
+    {
+        if (overlapTestMask == overlapTestMask.ToEverything()) return true;
+        if (overlapTestMask == overlapTestMask.ToNothing()) return false;
+
         bool draw = false;
-        if (overlapTestMask == overlapTestMask.ToEverything() || overlapTestMask == overlapTestMask.ToNothing()) draw = true;
 
         List<Transform> obstacles = null;
         if (!draw)
@@ -105,14 +115,17 @@ public class FieldOfView : MonoBehaviour
                 draw = !obstacles.ScrambledEquals(lastObstacles);
             }
         }
-        if (draw) lastObstacles = obstacles;
+        if (draw)
+        {
+            lastObstacles = obstacles;
+        }
 
         if (!draw)
         {
             if (obstacles.Count > 1)
             {
-                draw |= Vector3.Distance(lastPosition, transform.position) > 0.1f;
-                draw |= Vector3.Angle(lastForward, transform.forward) > 0.5f;
+                draw |= Vector3.Distance(lastPosition, transform.position) > 0.01f;
+                draw |= Vector3.Angle(lastForward, transform.forward) > 0.1f;
             }
         }
         if (draw)
@@ -121,18 +134,7 @@ public class FieldOfView : MonoBehaviour
             lastForward = transform.forward;
         }
 
-        if (draw)
-        {
-            SetLastFrameValues();
-            DrawFieldOfView();
-            //print("Regenerated FieldOfView mesh");
-        }
-    }
-
-    private void SetLastFrameValues()
-    {
-        lastPosition = transform.position;
-        lastForward = transform.forward;
+        return draw;
     }
 
 #if UNITY_EDITOR
@@ -142,7 +144,7 @@ public class FieldOfView : MonoBehaviour
         if (Application.isPlaying) return;
         if (viewMeshFilter == null) viewMeshFilter = GetComponent<MeshFilter>();
         if (viewMeshFilter.sharedMesh == null || viewMeshFilter.mesh == null || viewMesh == null) SetMesh();
-        DrawFieldOfView();
+        GenerateMesh();
     }
 #endif
 
@@ -159,7 +161,25 @@ public class FieldOfView : MonoBehaviour
         for (; ; )
         {
             yield return Yielders.Get(delay);
-            visibleTargets = FindVisibleTargets(targetMask);
+            List<Transform> visibleTargets = FindVisibleTargets(targetMask);
+
+            var goneTargets = lastVisibleTargets.Except(visibleTargets);
+            foreach (var unseen in goneTargets)
+            {
+                Unit unit = unseen.GetComponent<Unit>();
+                if (unit == null) continue;
+                if (unit.faction == GameManager.Instance.faction) continue;
+                unit.SetVisibility(false);
+            }
+            foreach (var seen in visibleTargets)
+            {
+                Unit unit = seen.GetComponent<Unit>();
+                if (unit == null) continue;
+                if (unit.faction == GameManager.Instance.faction) continue;
+                unit.SetVisibility(true);
+            }
+
+            lastVisibleTargets = visibleTargets;
         }
     }
 
@@ -193,7 +213,7 @@ public class FieldOfView : MonoBehaviour
         return visibleTargetsInViewRadius;
     }
 
-    private void DrawFieldOfView()
+    private void GenerateMesh()
     {
         int stepCount = Mathf.RoundToInt(viewAngle * meshResolution);
         float stepAngle = viewAngle / stepCount;
@@ -221,7 +241,6 @@ public class FieldOfView : MonoBehaviour
                     }
                 }
             }
-
             viewPoints.Add(newViewCast.point);
             oldViewCast = newViewCast;
         }

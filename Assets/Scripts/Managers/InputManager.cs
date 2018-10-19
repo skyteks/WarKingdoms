@@ -174,29 +174,32 @@ public class InputManager : Singleton<InputManager>
                     if (mouseMovesCamera
                         && !CameraManager.Instance.isFramingPlatoon)
                     {
-                        Vector2 resolution = new Vector2(Screen.width, Screen.height);
                         Vector2 mouseDeadZoneInvert = Vector2.one - mouseDeadZone;
 
-                        float multiplier = 0.001f;//0.01f;
-                        if (Input.mousePosition.x < Screen.width * mouseDeadZoneInvert.x)
+                        float multiplier = 0.01f;
+                        float deadzone = Screen.width * mouseDeadZoneInvert.x;
+                        if (Input.mousePosition.x < deadzone)
                         {
-                            amountToMove.x = (Input.mousePosition.x - Screen.width * mouseDeadZoneInvert.x) * multiplier * mouseSpeed;
+                            amountToMove.x = (Input.mousePosition.x - deadzone) * multiplier * mouseSpeed;
                             mouseIsMovingCamera = true;
                         }
-                        if (Input.mousePosition.x > Screen.width * mouseDeadZone.x)
+                        deadzone = Screen.width * mouseDeadZone.x;
+                        if (Input.mousePosition.x > deadzone)
                         {
-                            amountToMove.x = (Input.mousePosition.x - Screen.width * mouseDeadZone.x) * multiplier * mouseSpeed;
+                            amountToMove.x = (Input.mousePosition.x - deadzone) * multiplier * mouseSpeed;
                             mouseIsMovingCamera = true;
                         }
 
-                        if (Input.mousePosition.y < Screen.height * mouseDeadZoneInvert.y)
+                        deadzone = Screen.height * mouseDeadZoneInvert.y;
+                        if (Input.mousePosition.y < deadzone)
                         {
-                            amountToMove.y = (Input.mousePosition.y - Screen.height * mouseDeadZoneInvert.y) * multiplier * mouseSpeed;
+                            amountToMove.y = (Input.mousePosition.y - deadzone) * multiplier * mouseSpeed;
                             mouseIsMovingCamera = true;
                         }
-                        if (Input.mousePosition.y > Screen.height * mouseDeadZone.y)
+                        deadzone = Screen.height * mouseDeadZone.y;
+                        if (Input.mousePosition.y > deadzone)
                         {
-                            amountToMove.y = (Input.mousePosition.y - Screen.height * mouseDeadZone.y) * multiplier * mouseSpeed;
+                            amountToMove.y = (Input.mousePosition.y - deadzone) * multiplier * mouseSpeed;
                             mouseIsMovingCamera = true;
                         }
 

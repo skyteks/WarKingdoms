@@ -22,10 +22,10 @@ public class FieldOfViewEditor : Editor
         Handles.DrawLine(fow.transform.position, fow.transform.position + viewAngleA * fow.viewRadius);
         Handles.DrawLine(fow.transform.position, fow.transform.position + viewAngleB * fow.viewRadius);
 
-        Handles.color = Color.Lerp(Color.yellow, Color.red, 0.5f);
-        foreach (Transform visibleTarget in fow.visibleTargets)
-        {
-            Handles.DrawLine(fow.transform.position, visibleTarget.transform.position);
-        }
+        //Handles.color = Color.Lerp(Color.yellow, Color.red, 0.5f);
+        //foreach (Transform visibleTarget in fow.lastVisibleTargets)
+        //{
+        //    Handles.DrawLine(fow.transform.position, visibleTarget.transform.position);
+        //}
     }
 }

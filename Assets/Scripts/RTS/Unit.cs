@@ -26,6 +26,10 @@ public class Unit : MonoBehaviour
     }
 
     public static Dictionary<Faction, List<Unit>> globalUnits;
+    private static int layerDefaultVisible;
+    private static int layerDefaultHidden;
+    private static int layerMiniMapVisible;
+    private static int layerMiniMapHidden;
 
     static Unit()
     {
@@ -35,6 +39,8 @@ public class Unit : MonoBehaviour
         {
             globalUnits.Add(faction, new List<Unit>());
         }
+
+        
     }
 
     public UnitState state = UnitState.Idle;
@@ -67,6 +73,11 @@ public class Unit : MonoBehaviour
         //Randomization of NavMeshAgent speed. More fun!
         //float rndmFactor = navMeshAgent.speed * .15f;
         //navMeshAgent.speed += Random.Range(-rndmFactor, rndmFactor);
+
+        layerDefaultVisible = LayerMask.NameToLayer("Default");
+        layerDefaultHidden = LayerMask.NameToLayer("Default Hidden");
+        layerMiniMapVisible = LayerMask.NameToLayer("MiniMap Only");
+        layerMiniMapHidden = LayerMask.NameToLayer("MiniMap Hidden");
     }
 
     private void Start()
@@ -83,10 +94,12 @@ public class Unit : MonoBehaviour
         if (faction == GameManager.Instance.faction)
         {
             StartCoroutine(VisionFade(visionFadeTime, false));
+            SetVisibility(true);
         }
         else
         {
             visionCircle.GetComponent<FieldOfView>().enabled = false;
+            SetVisibility(false);
         }
     }
 
@@ -465,5 +478,37 @@ public class Unit : MonoBehaviour
         miniMapCircle.material.color = newColor;
         newColor.a = (selected) ? 1f : .3f;
         selectionCircle.material.color = newColor;
+    }
+
+    public void SetVisibility(bool visibility)
+    {
+        if (visibility)
+        {
+            if (gameObject.layer == layerDefaultVisible) return;
+        }
+        else
+        {
+            if (gameObject.layer == layerDefaultHidden) return;
+        }
+
+        IEnumerable<GameObject> parts = GetComponentsInChildren<Transform>().Where(form =>
+            form.gameObject.layer == layerDefaultVisible ||
+            form.gameObject.layer == layerDefaultHidden ||
+            form.gameObject.layer == layerMiniMapVisible ||
+            form.gameObject.layer == layerMiniMapHidden
+        ).Select(form => form.gameObject);
+        foreach (GameObject part in parts)
+        {
+            if (part.layer == layerDefaultVisible || part.layer == layerDefaultHidden)
+            {
+                if (visibility) part.layer = layerDefaultVisible;
+                else part.layer = layerDefaultHidden;
+            }
+            else
+            {
+                if (visibility) part.layer = layerMiniMapVisible;
+                else part.layer = layerMiniMapHidden;
+            }
+        }
     }
 }
