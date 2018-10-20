@@ -172,7 +172,6 @@ public class Platoon : MonoBehaviour
                                     0f,
                                     y * formationOffset - halfSquareDiameter
                                 );
-                                Debug.Log(offsets[i]);
                             }
                         }
                     }
