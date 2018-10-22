@@ -6,6 +6,8 @@ public class CameraManager : Singleton<CameraManager>
 {
     public Camera mainCamera;
     public Camera miniMapCamera;
+    public Rect panLimitBorders = new Rect(-100f, -100f, 200f, 200f);
+    public Range scrollLimitBorders = new Range(20f, 50f);
 
     public bool isFramingPlatoon { get; private set; } //from the outside it's read-only
     public Camera gameplayCamera
@@ -22,9 +24,18 @@ public class CameraManager : Singleton<CameraManager>
         if (mainCamera == null) mainCamera = Camera.main;//GameObject.FindObjectOfType<Camera>();
     }
 
-    public void MoveGameplayCamera(Vector2 amount)
+    public void MoveGameplayCamera(Vector3 amount)
     {
-        mainCamera.transform.Translate(amount.x, 0f, amount.y, Space.World);
+        float scrollAmount = amount.y;
+        amount.y = 0f;
+        Vector3 position = mainCamera.transform.position;
+        position += amount;
+        Vector3 scrollPosition = position + -mainCamera.transform.forward * scrollAmount;
+        if (scrollPosition.y >= scrollLimitBorders.Min && scrollPosition.y <= scrollLimitBorders.Max) position = scrollPosition;
+        position.x = Mathf.Clamp(position.x, panLimitBorders.xMin, panLimitBorders.xMax);
+        position.y = Mathf.Clamp(position.y, scrollLimitBorders.Min, scrollLimitBorders.Max);
+        position.z = Mathf.Clamp(position.z, panLimitBorders.yMin, panLimitBorders.yMax);
+        mainCamera.transform.position = position;
     }
 
     public void MoveGameplayCameraTo(Vector3 point)

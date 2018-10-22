@@ -55,7 +55,6 @@ public class FieldOfView : MonoBehaviour
     [Range(0f, 1f)]
     public float maskCutawayDistance;
     public bool maskCutawayHorizontalyOnly;
-    public LayerMask overlapTestMask;
     private MeshFilter viewMeshFilter;
     private Mesh viewMesh;
     private List<Transform> lastVisibleTargets = new List<Transform>(0);
@@ -85,7 +84,6 @@ public class FieldOfView : MonoBehaviour
     void Start()
     {
         SetMesh();
-        GenerateMesh();
     }
 
     void LateUpdate()
@@ -93,26 +91,49 @@ public class FieldOfView : MonoBehaviour
         if (ShouldRegenerateMesh())
         {
             GenerateMesh();
-            //print("Regenerated FieldOfView mesh");
         }
     }
 
+    void OnDrawGizmosSelected()
+    {
+        int stepCount = Mathf.RoundToInt(viewAngle * meshResolution);
+        float stepAngle = viewAngle / stepCount;
+
+        for (int i = 0; i < stepCount + 1; i++)
+        {
+            float angle = transform.eulerAngles.y - viewAngle / 2f + stepAngle * i;
+            Vector3 dir = DirFromAngle(angle, true);
+            Debug.DrawRay(transform.position, dir * viewRadius, Color.blue);
+        }
+    }
+
+#if UNITY_EDITOR
+    [ContextMenu("Create Mesh")]
+    private void CreateMesh()
+    {
+        if (Application.isPlaying) return;
+        if (viewMeshFilter == null) viewMeshFilter = GetComponent<MeshFilter>();
+        if (viewMeshFilter.sharedMesh == null || viewMeshFilter.mesh == null || viewMesh == null) SetMesh();
+        GenerateMesh();
+    }
+#endif
+
     private bool ShouldRegenerateMesh()
     {
-        if (overlapTestMask == overlapTestMask.ToEverything()) return true;
-        if (overlapTestMask == overlapTestMask.ToNothing()) return false;
+        if (obstacleMask == obstacleMask.ToEverything()) return true;
+        if (obstacleMask == obstacleMask.ToNothing()) return false;
 
         bool draw = false;
 
         List<Transform> obstacles = null;
         if (!draw)
         {
-            obstacles = FindVisibleTargets(overlapTestMask, true);
+            obstacles = FindVisibleTargets(obstacleMask, true);
 
             draw = lastObstacles.Count != obstacles.Count;
             if (!draw)
             {
-                draw = !obstacles.ScrambledEquals(lastObstacles);
+                draw = !obstacles.ScrambledEqualsHashSet(lastObstacles);
             }
         }
         if (draw)
@@ -137,17 +158,6 @@ public class FieldOfView : MonoBehaviour
         return draw;
     }
 
-#if UNITY_EDITOR
-    [ContextMenu("Create Mesh")]
-    private void CreateMesh()
-    {
-        if (Application.isPlaying) return;
-        if (viewMeshFilter == null) viewMeshFilter = GetComponent<MeshFilter>();
-        if (viewMeshFilter.sharedMesh == null || viewMeshFilter.mesh == null || viewMesh == null) SetMesh();
-        GenerateMesh();
-    }
-#endif
-
     private void SetMesh()
     {
         viewMesh = new Mesh();
@@ -160,7 +170,13 @@ public class FieldOfView : MonoBehaviour
     {
         for (; ; )
         {
+            if (unit.faction != GameManager.Instance.faction)
+            {
+                yield return null;
+                continue;
+            }
             yield return Yielders.Get(delay);
+
             List<Transform> visibleTargets = FindVisibleTargets(targetMask);
 
             var goneTargets = lastVisibleTargets.Except(visibleTargets);
@@ -204,7 +220,7 @@ public class FieldOfView : MonoBehaviour
             if (viewAngle == 360f || Vector3.Angle(transform.forward, dirToTarget) < viewAngle / 2f)
             {
                 float distToTarget = Vector3.Distance(transform.position, target.position);
-                if (!Physics.Raycast(transform.position, dirToTarget, distToTarget, obstacleMask))
+                if (!Physics.Raycast(transform.position, dirToTarget, distToTarget, mask))
                 {
                     visibleTargetsInViewRadius.Add(target);
                 }
@@ -274,6 +290,8 @@ public class FieldOfView : MonoBehaviour
         viewMesh.uv = uvs;
         viewMesh.normals = normals;
         //viewMesh.RecalculateNormals();
+
+        //Debug.Log("Regenerated mesh on " + transform.parent.gameObject, transform.parent.gameObject);
     }
 
     private EdgeInfo FindEdge(ViewCastInfo minViewCast, ViewCastInfo maxViewCast)

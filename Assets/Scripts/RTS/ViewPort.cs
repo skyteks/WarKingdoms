@@ -40,6 +40,7 @@ public class ViewPort : MonoBehaviour
     private void CreateViewPortPlaneMesh()
     {
         Camera mainCamera = CameraManager.Instance.gameplayCamera;
+        if (mainCamera == null) return;
         Vector2 resolution = new Vector2(Screen.width, Screen.height);
         Vector3 hitPoint;
         CameraManager.GetCameraScreenPointOnGroundPlane(mainCamera, resolution.ToScale(mainCamera.rect.position), out hitPoint);

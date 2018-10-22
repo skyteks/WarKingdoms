@@ -9,9 +9,10 @@ public class InputManager : Singleton<InputManager>
     [Header("Camera")]
     public Camera mainCamera;
     public bool mouseMovesCamera = true;
-    public Vector2 mouseDeadZone = new Vector2(.8f, .8f);
-    public float keyboardSpeed = 2f;
-    public float mouseSpeed = 2f;
+    public int panBorderThickness = 10;
+    public float keyboardPanSpeed = 2f;
+    public float mousePanSpeed = 2f;
+    public float mouseScrollSpeed = 2f;
 
     [Space]
 
@@ -29,14 +30,14 @@ public class InputManager : Singleton<InputManager>
     void Awake()
     {
         if (mainCamera == null) mainCamera = Camera.main;//GameObject.FindObjectOfType<Camera>();
-
-#if UNITY_EDITOR
-        mouseMovesCamera = false;
-#endif
     }
 
     void Update()
     {
+#if UNITY_EDITOR
+        float outsideBorderThickness = 100f;
+        mouseMovesCamera = new Rect(-outsideBorderThickness, -outsideBorderThickness, Screen.width + outsideBorderThickness, Screen.height + outsideBorderThickness).Contains(Input.mousePosition);
+#endif
         switch (GameManager.Instance.gameMode)
         {
             case GameManager.GameMode.Gameplay:
@@ -164,7 +165,7 @@ public class InputManager : Singleton<InputManager>
                 //-------------- GAMEPLAY CAMERA MOVEMENT --------------
                 if (!boxSelectionInitiated)
                 {
-                    Vector2 amountToMove = new Vector2(0f, 0f);
+                    Vector3 amountToMove = Vector3.zero;
                     bool mouseIsMovingCamera = false;
                     bool keyboardIsMovingCamera = false;
 
@@ -172,53 +173,35 @@ public class InputManager : Singleton<InputManager>
                     if (mouseMovesCamera
                         && !CameraManager.Instance.isFramingPlatoon)
                     {
-                        Vector2 mouseDeadZoneInvert = Vector2.one - mouseDeadZone;
-
-                        float multiplier = 0.01f;
-                        float deadzone = Screen.width * mouseDeadZoneInvert.x;
-                        if (Input.mousePosition.x < deadzone)
+                        if (Input.mousePosition.x >= Screen.width - panBorderThickness)
                         {
-                            amountToMove.x = (Input.mousePosition.x - deadzone) * multiplier * mouseSpeed;
+                            amountToMove.x += Time.deltaTime * mousePanSpeed;
                             mouseIsMovingCamera = true;
                         }
-                        deadzone = Screen.width * mouseDeadZone.x;
-                        if (Input.mousePosition.x > deadzone)
+                        if (Input.mousePosition.x <= panBorderThickness)
                         {
-                            amountToMove.x = (Input.mousePosition.x - deadzone) * multiplier * mouseSpeed;
+                            amountToMove.x -= Time.deltaTime * mousePanSpeed;
                             mouseIsMovingCamera = true;
                         }
 
-                        deadzone = Screen.height * mouseDeadZoneInvert.y;
-                        if (Input.mousePosition.y < deadzone)
+                        if (Input.mousePosition.y >= Screen.height - panBorderThickness)
                         {
-                            amountToMove.y = (Input.mousePosition.y - deadzone) * multiplier * mouseSpeed;
+                            amountToMove.z += Time.deltaTime * mousePanSpeed;
                             mouseIsMovingCamera = true;
                         }
-                        deadzone = Screen.height * mouseDeadZone.y;
-                        if (Input.mousePosition.y > deadzone)
+                        if (Input.mousePosition.y <= panBorderThickness)
                         {
-                            amountToMove.y = (Input.mousePosition.y - deadzone) * multiplier * mouseSpeed;
+                            amountToMove.z -= Time.deltaTime * mousePanSpeed;
                             mouseIsMovingCamera = true;
                         }
 
-                        ////horizontal
-                        //float horizontalDeadZone = Screen.width * mouseDeadZone.x;
-                        //float absoluteXValue = Mathf.Abs(mousePosition.x);
-                        //if (absoluteXValue > horizontalDeadZone)
-                        //{
-                        //    //camera needs to move horizontally
-                        //    amountToMove.x = (absoluteXValue - horizontalDeadZone) * Mathf.Sign(mousePosition.x) * .01f * mouseSpeed;
-                        //    mouseIsMovingCamera = true;
-                        //}
-                        ////vertical
-                        //float verticalDeadZone = Screen.height * mouseDeadZone.y;
-                        //float absoluteYValue = Mathf.Abs(mousePosition.y);
-                        //if (absoluteYValue > verticalDeadZone)
-                        //{
-                        //    //camera needs to move horizontally
-                        //    amountToMove.y = (absoluteYValue - verticalDeadZone) * Mathf.Sign(mousePosition.y) * .01f * mouseSpeed;
-                        //    mouseIsMovingCamera = true;
-                        //}
+                        float scrollValue = Input.GetAxis("Mouse ScrollWheel");
+                        float deadZone = 0.01f;
+                        if (scrollValue < -deadZone || scrollValue > deadZone)
+                        {
+                            amountToMove.y -= scrollValue * mouseScrollSpeed * 100f * Time.deltaTime;
+                            mouseIsMovingCamera = true;
+                        }
                     }
 
                     //Keyboard movements only happen if mouse is not causing the camera to move already
@@ -228,14 +211,14 @@ public class InputManager : Singleton<InputManager>
                         float vertKeyValue = Input.GetAxis("Vertical");
                         if (horKeyValue != 0f || vertKeyValue != 0f)
                         {
-                            amountToMove = new Vector2(horKeyValue, vertKeyValue) * keyboardSpeed;
+                            amountToMove = new Vector3(horKeyValue, 0f, vertKeyValue) * keyboardPanSpeed;
                             keyboardIsMovingCamera = true;
                         }
                     }
 
                     if (mouseIsMovingCamera || keyboardIsMovingCamera)
                     {
-                        CameraManager.Instance.MoveGameplayCamera(amountToMove * .5f);
+                        CameraManager.Instance.MoveGameplayCamera(amountToMove);
                     }
                 }
                 break;
