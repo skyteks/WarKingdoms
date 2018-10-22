@@ -128,7 +128,7 @@ public class FieldOfView : MonoBehaviour
         List<Transform> obstacles = null;
         if (!draw)
         {
-            obstacles = FindVisibleTargets(obstacleMask, true);
+            obstacles = FindTargets(obstacleMask, true);
 
             draw = lastObstacles.Count != obstacles.Count;
             if (!draw)
@@ -170,14 +170,10 @@ public class FieldOfView : MonoBehaviour
     {
         for (; ; )
         {
-            if (unit.faction != GameManager.Instance.faction)
-            {
-                yield return null;
-                continue;
-            }
             yield return Yielders.Get(delay);
+            if (unit.faction != GameManager.Instance.faction) continue;
 
-            List<Transform> visibleTargets = FindVisibleTargets(targetMask);
+            List<Transform> visibleTargets = FindTargets(targetMask, false);
 
             var goneTargets = lastVisibleTargets.Except(visibleTargets);
             foreach (var unseen in goneTargets)
@@ -199,7 +195,7 @@ public class FieldOfView : MonoBehaviour
         }
     }
 
-    private List<Transform> FindVisibleTargets(LayerMask mask, bool justInRange = false)
+    private List<Transform> FindTargets(LayerMask mask, bool justInRange)
     {
         Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, mask);
         List<Transform> visibleTargetsInViewRadius;
@@ -215,12 +211,12 @@ public class FieldOfView : MonoBehaviour
         {
             Transform target = targetsInViewRadius[i].transform;
             if (target == unit.transform) continue;
-
             Vector3 dirToTarget = (target.position - transform.position).normalized;
             if (viewAngle == 360f || Vector3.Angle(transform.forward, dirToTarget) < viewAngle / 2f)
             {
                 float distToTarget = Vector3.Distance(transform.position, target.position);
-                if (!Physics.Raycast(transform.position, dirToTarget, distToTarget, mask))
+                Debug.DrawRay(transform.position, dirToTarget * distToTarget, Color.red);
+                if (!Physics.Raycast(transform.position, dirToTarget, distToTarget, obstacleMask))
                 {
                     visibleTargetsInViewRadius.Add(target);
                 }

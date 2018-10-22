@@ -77,4 +77,14 @@ public static class List_Extension
         lookup1.All(group => lookup2.Contains(group.Key) &&
         lookup2[group.Key].Count() == group.Count());
     }
+
+    public static string ToStringList<T>(this IList<T> list)
+    {
+        string tmp = "";
+        foreach (var obj in list)
+        {
+            tmp = string.Concat(tmp, obj.ToString(), "\n");
+        }
+        return tmp;
+    }
 }
