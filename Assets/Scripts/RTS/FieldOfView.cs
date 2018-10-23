@@ -215,7 +215,7 @@ public class FieldOfView : MonoBehaviour
             if (viewAngle == 360f || Vector3.Angle(transform.forward, dirToTarget) < viewAngle / 2f)
             {
                 float distToTarget = Vector3.Distance(transform.position, target.position);
-                Debug.DrawRay(transform.position, dirToTarget * distToTarget, Color.red);
+                //Debug.DrawRay(transform.position, dirToTarget * distToTarget, Color.cyan);
                 if (!Physics.Raycast(transform.position, dirToTarget, distToTarget, obstacleMask))
                 {
                     visibleTargetsInViewRadius.Add(target);

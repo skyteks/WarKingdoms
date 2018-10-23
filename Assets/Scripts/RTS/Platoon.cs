@@ -14,11 +14,30 @@ public class Platoon : MonoBehaviour
         Circle,
     }
 
+#if UNITY_EDITOR
+    private struct Location
+    {
+        public Vector3 position;
+        public Quaternion rotation;
+
+        public Location(Vector3 pos, Quaternion rot)
+        {
+            position = pos;
+            rotation = rot;
+        }
+    }
+#endif
+
     public FormationModes formationMode;
     [Range(1f, 4f)]
     public float formationOffset = 3f;
     [HideInInspector]
     public List<Unit> units = new List<Unit>();
+
+#if UNITY_EDITOR
+    public Mesh debugMesh;
+    private Location[] debugCommandLocations = new Location[0];
+#endif
 
     private void Start()
     {
@@ -28,21 +47,23 @@ public class Platoon : MonoBehaviour
         }
     }
 
-    void OnDrawGizmosSelected()
+#if UNITY_EDITOR
+    void OnDrawGizmos()
     {
-        for (int i = 0; i < units.Count; i++)
+        for (int i = 0; i < debugCommandLocations.Length && debugMesh != null; i++)
         {
-            if (units[i] != null)
-            {
-                Gizmos.color = new Color(.8f, .8f, 1f, 1f);
-                Gizmos.DrawCube(units[i].transform.position, new Vector3(1f, .1f, 1f));
-            }
+            Gizmos.color = Color.green.ToWithA(0.3f);
+            Gizmos.DrawMesh(debugMesh, debugCommandLocations[i].position, debugCommandLocations[i].rotation, new Vector3(1f, .1f, 1f));
         }
     }
+#endif
 
     //Executes a command on all Units
     public void ExecuteCommand(AICommand command)
     {
+#if UNITY_EDITOR
+        debugCommandLocations = new Location[0];
+#endif
         if (command.destination.IsNaN())
         {
             for (int i = 0; i < units.Count; i++)
@@ -58,7 +79,10 @@ public class Platoon : MonoBehaviour
         Vector3 origin = units.Select(unit => unit.transform.position).FindCentroid();
         Quaternion rotation = Quaternion.LookRotation((destination - origin).normalized);
         Vector3[] offsets = GetFormationOffsets();
-        //for (int i = 0; i < offsets.Length; i++) offsets[i] = destination + rotation * offsets[i];
+#if UNITY_EDITOR
+        debugCommandLocations = new Location[offsets.Length];
+        for (int i = 0; i < offsets.Length; i++) debugCommandLocations[i] = new Location(destination + rotation * offsets[i], rotation);
+#endif
 
         List<Unit> sortedUnits = units.OrderBy(unit => Vector3.Distance(unit.transform.position, origin)).ToList();
 
@@ -81,6 +105,9 @@ public class Platoon : MonoBehaviour
 
     public void AddUnit(Unit unitToAdd)
     {
+#if UNITY_EDITOR
+        debugCommandLocations = new Location[0];
+#endif
         unitToAdd.OnDie += UnitDeadHandler;
         units.Add(unitToAdd);
     }
@@ -88,6 +115,9 @@ public class Platoon : MonoBehaviour
     //Removes an Unit from the Platoon and returns if the operation was successful
     public bool RemoveUnit(Unit unitToRemove)
     {
+#if UNITY_EDITOR
+        debugCommandLocations = new Location[0];
+#endif
         bool isThere = units.Contains(unitToRemove);
 
         if (isThere)
@@ -101,6 +131,9 @@ public class Platoon : MonoBehaviour
 
     public void Clear()
     {
+#if UNITY_EDITOR
+        debugCommandLocations = new Location[0];
+#endif
         for (int i = 0; i < units.Count; i++)
         {
             units[i].OnDie -= UnitDeadHandler;
