@@ -18,7 +18,7 @@ public class GameManager : Singleton<GameManager>
     [Space]
 #endif
     public GameMode gameMode = GameMode.Gameplay;
-    public Unit.Faction faction;
+    public Unit.Factions faction;
 
     private Platoon selectedPlatoon;
     private UnityEngine.Playables.PlayableDirector activeDirector;
@@ -102,9 +102,15 @@ public class GameManager : Singleton<GameManager>
         UIManager.Instance.ClearSelection();
     }
 
-    public void SentSelectedUnitsTo(Vector3 pos)
+    public void MoveSelectedUnitsTo(Vector3 pos)
     {
-        AICommand newCommand = new AICommand(AICommand.CommandType.GoToAndIdle, pos);
+        AICommand newCommand = new AICommand(AICommand.CommandType.MoveToAndIdle, pos);
+        IssueCommand(newCommand);
+    }
+
+    public void AttackMoveSelectedUnitsTo(Vector3 pos)
+    {
+        AICommand newCommand = new AICommand(AICommand.CommandType.AttackMoveToAndGuard, pos);
         IssueCommand(newCommand);
     }
 

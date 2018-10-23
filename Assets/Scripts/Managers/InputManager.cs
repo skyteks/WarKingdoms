@@ -23,7 +23,7 @@ public class InputManager : Singleton<InputManager>
     private Vector2 LMBDownMousePos, currentMousePos; //screen coordinates
     private Rect selectionRect; //screen coordinates
     private bool LMBClickedDown = false, boxSelectionInitiated = false;
-    private float timeOfClick;
+    private float timeOfClick, scrollDelta;
 
     private const float CLICK_TOLERANCE = .5f; //the player has this time to release the mouse button for it to be registered as a click
 
@@ -85,17 +85,13 @@ public class InputManager : Singleton<InputManager>
                         }
 
                         //consider the mouse release as the end of a box selection
-                        IList<Unit> allSelectables = GameManager.Instance.GetAllSelectableUnits();
+                        List<Unit> allSelectables = GameManager.Instance.GetAllSelectableUnits();
                         for (int i = 0; i < allSelectables.Count; i++)
                         {
                             Vector2 screenPos = mainCamera.WorldToScreenPoint(allSelectables[i].transform.position);
                             if (selectionRect.Contains(screenPos))
                             {
                                 GameManager.Instance.AddToSelection(allSelectables[i]);
-                            }
-                            else
-                            {
-                                //GameManager.Instance.RemoveFromSelection(allSelectables[i]); //Not necessary anymore, selection is cleared above
                             }
                         }
 
@@ -158,10 +154,18 @@ public class InputManager : Singleton<InputManager>
                     }
                     if (moveCommand)
                     {
-                        Vector3 commandPoint;
-                        CameraManager.GetCameraScreenPointOnGroundPlane(mainCamera, Input.mousePosition, out commandPoint);
-                        GameManager.Instance.SentSelectedUnitsTo(commandPoint);
-                        Debug.DrawLine(ray.origin, commandPoint, Color.green, 1f);
+                        Vector3 hitPoint;
+                        CameraManager.GetCameraScreenPointOnGroundPlane(mainCamera, Input.mousePosition, out hitPoint);
+                        if (!Input.GetButton("Attack"))
+                        {
+                            GameManager.Instance.MoveSelectedUnitsTo(hitPoint);
+                            Debug.DrawLine(ray.origin, hitPoint, Color.green, 1f);
+                        }
+                        else
+                        {
+                            GameManager.Instance.AttackMoveSelectedUnitsTo(hitPoint);
+                            Debug.DrawLine(ray.origin, hitPoint, Color.Lerp(Color.yellow, Color.red, 0.6f), 1f);
+                        }
                     }
                 }
 
@@ -172,37 +176,40 @@ public class InputManager : Singleton<InputManager>
                     bool mouseIsMovingCamera = false;
                     bool keyboardIsMovingCamera = false;
 
-                    //This check doesn't allow the camera to move with the mouse if we're currently framing a platoon
-                    if (mouseMovesCamera
-                        && !CameraManager.Instance.isFramingPlatoon)
+                    if (mouseMovesCamera)
                     {
-                        if (Input.mousePosition.x >= Screen.width - panBorderThickness)
+                        //This check doesn't allow the camera to move with the mouse if we're currently framing a platoon
+                        if (!CameraManager.Instance.isFramingPlatoon)
                         {
-                            amountToMove.x += Time.deltaTime * mousePanSpeed;
-                            mouseIsMovingCamera = true;
-                        }
-                        if (Input.mousePosition.x <= panBorderThickness)
-                        {
-                            amountToMove.x -= Time.deltaTime * mousePanSpeed;
-                            mouseIsMovingCamera = true;
-                        }
+                            if (Input.mousePosition.x >= Screen.width - panBorderThickness)
+                            {
+                                amountToMove.x += Time.deltaTime * mousePanSpeed;
+                                mouseIsMovingCamera = true;
+                            }
+                            if (Input.mousePosition.x <= panBorderThickness)
+                            {
+                                amountToMove.x -= Time.deltaTime * mousePanSpeed;
+                                mouseIsMovingCamera = true;
+                            }
 
-                        if (Input.mousePosition.y >= Screen.height - panBorderThickness)
-                        {
-                            amountToMove.z += Time.deltaTime * mousePanSpeed;
-                            mouseIsMovingCamera = true;
-                        }
-                        if (Input.mousePosition.y <= panBorderThickness)
-                        {
-                            amountToMove.z -= Time.deltaTime * mousePanSpeed;
-                            mouseIsMovingCamera = true;
+                            if (Input.mousePosition.y >= Screen.height - panBorderThickness)
+                            {
+                                amountToMove.z += Time.deltaTime * mousePanSpeed;
+                                mouseIsMovingCamera = true;
+                            }
+                            if (Input.mousePosition.y <= panBorderThickness)
+                            {
+                                amountToMove.z -= Time.deltaTime * mousePanSpeed;
+                                mouseIsMovingCamera = true;
+                            }
                         }
 
                         float scrollValue = Input.GetAxis("Mouse ScrollWheel");
+                        scrollDelta += scrollValue;
                         float deadZone = 0.01f;
-                        if (scrollValue < -deadZone || scrollValue > deadZone)
+                        if (scrollDelta < -deadZone || scrollDelta > deadZone)
                         {
-                            amountToMove.y -= scrollValue * mouseScrollSpeed * 100f * Time.deltaTime;
+                            amountToMove.y -= scrollDelta * mouseScrollSpeed * 100f * Time.deltaTime;
                             mouseIsMovingCamera = true;
                         }
                     }
@@ -224,6 +231,7 @@ public class InputManager : Singleton<InputManager>
                         CameraManager.Instance.MoveGameplayCamera(amountToMove);
                     }
                 }
+                scrollDelta = Mathf.MoveTowards(scrollDelta, 0f, Time.deltaTime);
                 break;
 
             case GameManager.GameMode.Cutscene:

@@ -55,10 +55,10 @@ public class FieldOfView : MonoBehaviour
     [Range(0f, 1f)]
     public float maskCutawayDistance;
     public bool maskCutawayHorizontalyOnly;
+    public List<Transform> lastVisibleTargets = new List<Transform>(0);
+    private List<Transform> lastObstacles = new List<Transform>(0);
     private MeshFilter viewMeshFilter;
     private Mesh viewMesh;
-    private List<Transform> lastVisibleTargets = new List<Transform>(0);
-    private List<Transform> lastObstacles = new List<Transform>(0);
     private Vector3 lastPosition;
     private Vector3 lastForward;
 

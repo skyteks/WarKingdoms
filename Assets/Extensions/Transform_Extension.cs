@@ -80,4 +80,20 @@ public static class Transform_Extension
     {
         return new Ray(transform.position, transform.forward);
     }
+
+    public static Transform FindClosestToPoint(this IEnumerable<Transform> transforms, Vector3 otherPoint)
+    {
+        Transform closestTransform = null;
+        float closestDistance = float.PositiveInfinity;
+        foreach (Transform transform in transforms)
+        {
+            float distance = Vector3.Distance(transform.position, otherPoint);
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestTransform = transform;
+            }
+        }
+        return closestTransform;
+    }
 }

@@ -43,9 +43,12 @@ public class Platoon : MonoBehaviour
     //Executes a command on all Units
     public void ExecuteCommand(AICommand command)
     {
-        if (units.Count == 1)
+        if (command.destination.IsNaN())
         {
-            units[0].ExecuteCommand(command);
+            for (int i = 0; i < units.Count; i++)
+            {
+                units[i].ExecuteCommand(command);
+            }
             return;
             //yield break;
         }

@@ -14,18 +14,18 @@ public class Unit : MonoBehaviour
         Attacking,
         MovingToTarget,
         MovingToSpotIdle,
-        MovingToSpotGuard,
+        AttackMovingToSpotGuard,
         Dead,
     }
 
-    public enum Faction
+    public enum Factions
     {
         Neutral,
         Faction1,
         Faction2,
     }
 
-    public static Dictionary<Faction, List<Unit>> globalUnits;
+    public static Dictionary<Factions, List<Unit>> globalUnits;
     private static int layerDefaultVisible;
     private static int layerDefaultHidden;
     private static int layerMiniMapVisible;
@@ -33,8 +33,8 @@ public class Unit : MonoBehaviour
 
     static Unit()
     {
-        globalUnits = new Dictionary<Faction, List<Unit>>();
-        var factions = System.Enum.GetValues(typeof(Faction)).Cast<Faction>();
+        globalUnits = new Dictionary<Factions, List<Unit>>();
+        var factions = System.Enum.GetValues(typeof(Factions)).Cast<Factions>();
         foreach (var faction in factions)
         {
             globalUnits.Add(faction, new List<Unit>());
@@ -43,7 +43,7 @@ public class Unit : MonoBehaviour
     }
 
     public UnitState state = UnitState.Idle;
-    public Faction faction;
+    public Factions faction;
     public float visionFadeTime = 1f;
     [Preview]
     public UnitTemplate template;
@@ -52,6 +52,7 @@ public class Unit : MonoBehaviour
     private NavMeshAgent navMeshAgent;
     private Animator animator;
     private MeshRenderer selectionCircle, miniMapCircle, visionCircle;
+    private FieldOfView fieldOfView;
 
     //private bool isSelected; //is the Unit currently selected by the Player
     private Unit targetOfAttack;
@@ -67,19 +68,17 @@ public class Unit : MonoBehaviour
         selectionCircle = transform.Find("SelectionCircle").GetComponent<MeshRenderer>();
         miniMapCircle = transform.Find("MiniMapCircle").GetComponent<MeshRenderer>();
         visionCircle = transform.Find("FieldOfView").GetComponent<MeshRenderer>();
+        fieldOfView = transform.Find("FieldOfView").GetComponent<FieldOfView>();
 
+        SetLayers();
+    }
+
+    void Start()
+    {
         //Randomization of NavMeshAgent speed. More fun!
         //float rndmFactor = navMeshAgent.speed * .15f;
         //navMeshAgent.speed += Random.Range(-rndmFactor, rndmFactor);
 
-        layerDefaultVisible = LayerMask.NameToLayer("Default");
-        layerDefaultHidden = LayerMask.NameToLayer("Default Hidden");
-        layerMiniMapVisible = LayerMask.NameToLayer("MiniMap Only");
-        layerMiniMapHidden = LayerMask.NameToLayer("MiniMap Hidden");
-    }
-
-    private void Start()
-    {
         globalUnits[faction].Add(this);
 
         template = template.Clone(); //we copy the template otherwise it's going to overwrite the original asset!
@@ -96,7 +95,7 @@ public class Unit : MonoBehaviour
         }
         else
         {
-            visionCircle.GetComponent<FieldOfView>().enabled = false;
+            fieldOfView.enabled = false;
             SetVisibility(false);
         }
     }
@@ -114,16 +113,28 @@ public class Unit : MonoBehaviour
         switch (state)
         {
             case UnitState.MovingToSpotIdle:
-                if (navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance + .1f)
+                if (navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
                 {
                     Idle();
                 }
                 break;
 
-            case UnitState.MovingToSpotGuard:
-                if (navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance + .1f)
+            case UnitState.AttackMovingToSpotGuard:
+                if (navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
                 {
                     Guard();
+                }
+                else
+                {
+                    if (fieldOfView.lastVisibleTargets.Count > 0)
+                    {
+                        var enemies = fieldOfView.lastVisibleTargets.Where(target => target.GetComponent<Unit>().faction != faction);
+                        if (enemies.Count() > 0)
+                        {
+                            var closestEnemy = enemies.FindClosestToPoint(transform.position);
+                            MoveToAttack(closestEnemy.GetComponent<Unit>());
+                        }
+                    }
                 }
                 break;
 
@@ -209,6 +220,14 @@ public class Unit : MonoBehaviour
     }
 #endif
 
+    private static void SetLayers()
+    {
+        layerDefaultVisible = LayerMask.NameToLayer("Default");
+        layerDefaultHidden = LayerMask.NameToLayer("Default Hidden");
+        layerMiniMapVisible = LayerMask.NameToLayer("MiniMap Only");
+        layerMiniMapHidden = LayerMask.NameToLayer("MiniMap Hidden");
+    }
+
     public void ExecuteCommand(AICommand c)
     {
         if (state == UnitState.Dead)
@@ -219,12 +238,12 @@ public class Unit : MonoBehaviour
 
         switch (c.commandType)
         {
-            case AICommand.CommandType.GoToAndIdle:
-                GoToAndIdle(c.destination);
+            case AICommand.CommandType.MoveToAndIdle:
+                MoveToAndIdle(c.destination);
                 break;
 
-            case AICommand.CommandType.GoToAndGuard:
-                GoToAndGuard(c.destination);
+            case AICommand.CommandType.AttackMoveToAndGuard:
+                AttackMoveToAndGuard(c.destination);
                 break;
 
             case AICommand.CommandType.Stop:
@@ -242,7 +261,7 @@ public class Unit : MonoBehaviour
     }
 
     //move to a position and be idle
-    private void GoToAndIdle(Vector3 location)
+    private void MoveToAndIdle(Vector3 location)
     {
         state = UnitState.MovingToSpotIdle;
         targetOfAttack = null;
@@ -253,9 +272,9 @@ public class Unit : MonoBehaviour
     }
 
     //move to a position and be guarding
-    private void GoToAndGuard(Vector3 location)
+    private void AttackMoveToAndGuard(Vector3 location)
     {
-        state = UnitState.MovingToSpotGuard;
+        state = UnitState.AttackMovingToSpotGuard;
         targetOfAttack = null;
         agentReady = false;
 

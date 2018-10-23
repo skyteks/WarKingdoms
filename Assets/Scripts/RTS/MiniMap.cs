@@ -64,8 +64,16 @@ public class MiniMap : UIClickable
         Vector3 hitPoint;
         if (CameraManager.GetCameraViewPointOnGroundPlane(miniMapCamera, clickPosition, out hitPoint))
         {
-            GameManager.Instance.SentSelectedUnitsTo(hitPoint);
-            Debug.DrawLine(miniMapCamera.transform.position, hitPoint, Color.Lerp(Color.black, Color.green, 0.6f), 1f);
+            if (!Input.GetButton("Attack"))
+            {
+                GameManager.Instance.MoveSelectedUnitsTo(hitPoint);
+                Debug.DrawLine(miniMapCamera.transform.position, hitPoint, Color.Lerp(Color.black, Color.green, 0.6f), 1f);
+            }
+            else
+            {
+                GameManager.Instance.AttackMoveSelectedUnitsTo(hitPoint);
+                Debug.DrawLine(miniMapCamera.transform.position, hitPoint, Color.Lerp(Color.black, Color.Lerp(Color.yellow, Color.red, 0.6f), 0.6f), 1f);
+            }
         }
     }
 }

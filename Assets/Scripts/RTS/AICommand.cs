@@ -6,12 +6,12 @@ public class AICommand
 {
     public enum CommandType
     {
-        GoToAndIdle,
-        GoToAndGuard,
+        MoveToAndIdle,
+        AttackMoveToAndGuard,
         AttackTarget, //attacks a specific target, then becomes Guarding
         Stop,
-        //Flee,
         Die,
+        //Flee,
     }
 
     public CommandType commandType;
@@ -19,27 +19,24 @@ public class AICommand
     public Vector3 destination;
     public Unit target;
 
-    //public AICommand(CommandType ty, Vector3 v, Unit ta)
-    //{
-    //    commandType = ty;
-    //    destination = v;
-    //    target = ta;
-    //}
-
     public AICommand(CommandType ty, Vector3 v)
     {
         commandType = ty;
         destination = v;
+        target = null;
     }
 
     public AICommand(CommandType ty, Unit ta)
     {
         commandType = ty;
+        destination = Vector3.one * float.NaN;
         target = ta;
     }
 
     public AICommand(CommandType ty)
     {
         commandType = ty;
+        destination = Vector3.one * float.NaN;
+        target = null;
     }
 }

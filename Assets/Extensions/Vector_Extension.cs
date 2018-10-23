@@ -242,7 +242,7 @@ public static class Vector_Extension
 
     public static Vector2 FindCentroid(this IEnumerable<Vector2> points)
     {
-        if (points.Count() == 0) return Vector3.one * float.NaN;
+        if (points.Count() == 0) throw new System.ArgumentOutOfRangeException();
         if (points.Count() == 1) return points.First();
 
         Vector2 minPoint = points.First();
@@ -261,7 +261,7 @@ public static class Vector_Extension
 
     public static Vector3 FindCentroid(this IEnumerable<Vector3> points)
     {
-        if (points.Count() == 0) return Vector3.one * float.NaN;
+        if (points.Count() == 0) throw new System.ArgumentOutOfRangeException();
         if (points.Count() == 1) return points.First();
         //Bounds bounds = new Bounds(points.First(), Vector3.zero);
         //foreach (Vector3 point in points) bounds.Encapsulate(point);
@@ -281,5 +281,39 @@ public static class Vector_Extension
         }
         Vector3 centroid = minPoint + (maxPoint - minPoint) * 0.5f;
         return centroid;
+    }
+
+    public static int FindClosestIndexToPoint(this IList<Vector2> points, Vector2 otherPoint)
+    {
+        if (points.Count == 0) throw new System.ArgumentOutOfRangeException();
+        int closestIndex = -1;
+        float closestDistance = float.PositiveInfinity;
+        for (int i = 0; i < points.Count; i++)
+        {
+            float distance = Vector2.Distance(points[i], otherPoint);
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestIndex = i;
+            }
+        }
+        return closestIndex;
+    }
+
+    public static int FindClosestIndexToPoint(this IList<Vector3> points, Vector3 otherPoint)
+    {
+        if (points.Count == 0) throw new System.ArgumentOutOfRangeException();
+        int closestIndex = -1;
+        float closestDistance = float.PositiveInfinity;
+        for (int i = 0; i < points.Count; i++)
+        {
+            float distance = Vector3.Distance(points[i], otherPoint);
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestIndex = i;
+            }
+        }
+        return closestIndex;
     }
 }
