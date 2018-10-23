@@ -45,10 +45,6 @@ public class UIManager : Singleton<UIManager>
             child.Find("Healthbar").GetComponentInChildren<Text>().text = unit.template.health + " / " + unit.template.original.health;
         }
     }
-    public void AddToSelection(IList<Unit> newSelectedUnits)
-    {
-        foreach (Unit unit in newSelectedUnits) AddToSelection(unit);
-    }
 
     public void AddToSelection(Unit newSelectedUnit)
     {

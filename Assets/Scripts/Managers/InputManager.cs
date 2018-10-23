@@ -79,7 +79,10 @@ public class InputManager : Singleton<InputManager>
                 {
                     if (boxSelectionInitiated)
                     {
-                        GameManager.Instance.ClearSelection();
+                        if (!Input.GetButton("AddToSelection"))
+                        {
+                            GameManager.Instance.ClearSelection();
+                        }
 
                         //consider the mouse release as the end of a box selection
                         IList<Unit> allSelectables = GameManager.Instance.GetAllSelectableUnits();
@@ -127,7 +130,7 @@ public class InputManager : Singleton<InputManager>
                     boxSelectionInitiated = false;
                 }
 
-                //-------------- RIGHT MOUSE BUTTON UP --------------
+                //-------------- RIGHT MOUSE BUTTON DOWN --------------
                 if (Input.GetMouseButtonDown(1)
                     && GameManager.Instance.GetSelectionLength() > 0
                     && !EventSystem.current.IsPointerOverGameObject())
@@ -224,7 +227,7 @@ public class InputManager : Singleton<InputManager>
                 break;
 
             case GameManager.GameMode.Cutscene:
-                if (Input.GetKeyDown(KeyCode.Space))
+                if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
                 {
                     GameManager.Instance.ResumeTimeline();
                 }

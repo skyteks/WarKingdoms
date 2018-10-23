@@ -48,25 +48,31 @@ public class GameManager : Singleton<GameManager>
         return selectedPlatoon.units.Select(x => x.transform).ToArray();
     }
 
-    public IList<Unit> GetSelectionUnits()
+    public List<Unit> GetSelectionUnits()
     {
         return selectedPlatoon.units;
     }
 
-    public void AddToSelection(IList<Unit> newSelectedUnits)
+    public bool IsInsideSelection(Unit newSelectedUnit)
     {
-        selectedPlatoon.AddUnits(newSelectedUnits);
-        foreach (Unit unit in newSelectedUnits) unit.SetSelected(true);
-
-        UIManager.Instance.AddToSelection(newSelectedUnits);
+        return selectedPlatoon.IncludesUnit(newSelectedUnit);
     }
 
-    public void AddToSelection(Unit newSelectedUnit)
+    public void AddToSelection(IList<Unit> newSelectedUnits)
     {
+        foreach (Unit newSelectedUnit in newSelectedUnits)
+        {
+            AddToSelection(newSelectedUnit);
+        }
+    }
+
+    public bool AddToSelection(Unit newSelectedUnit)
+    {
+        if (selectedPlatoon.IncludesUnit(newSelectedUnit)) return false;
         selectedPlatoon.AddUnit(newSelectedUnit);
         newSelectedUnit.SetSelected(true);
-
         UIManager.Instance.AddToSelection(newSelectedUnit);
+        return true;
     }
 
     public void SetSelection(IList<Unit> newSelectedUnits)
@@ -85,9 +91,7 @@ public class GameManager : Singleton<GameManager>
     {
         selectedPlatoon.RemoveUnit(unitToRemove);
         unitToRemove.SetSelected(false);
-
         UIManager.Instance.RemoveFromSelection(unitToRemove);
-
     }
 
     public void ClearSelection()

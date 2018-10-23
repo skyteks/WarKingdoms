@@ -9,7 +9,7 @@ public class Platoon : MonoBehaviour
 {
     public enum FormationModes
     {
-        SquareGrid,
+        Rectangle,
         HexGrid,
         Circle,
     }
@@ -71,21 +71,15 @@ public class Platoon : MonoBehaviour
         }
     }
 
+    public bool IncludesUnit(Unit unitToCheck)
+    {
+        return units.Contains(unitToCheck);
+    }
+
     public void AddUnit(Unit unitToAdd)
     {
         unitToAdd.OnDie += UnitDeadHandler;
         units.Add(unitToAdd);
-    }
-
-    //Adds an array of Units to the Platoon, and returns the new length
-    public int AddUnits(IList<Unit> unitsToAdd)
-    {
-        for (int i = 0; i < unitsToAdd.Count; i++)
-        {
-            AddUnit(unitsToAdd[i]);
-        }
-
-        return units.Count;
     }
 
     //Removes an Unit from the Platoon and returns if the operation was successful
@@ -155,50 +149,54 @@ public class Platoon : MonoBehaviour
                     }
                 }
                 break;
-            case FormationModes.SquareGrid:
+            case FormationModes.Rectangle:
                 {
                     float sqrt = Mathf.Sqrt(count);
                     int i = 0;
-                    if (sqrt % 1f == 0f)
+                    //if (sqrt % 1f == 0f)
+                    //{
+                    //    float halfSquareDiameter = (sqrt - 1f) * 0.5f * formationOffset;
+                    //    //for (int y = 0; y < sqrt && i < count; y++)
+                    //    for (int y = Mathf.FloorToInt(sqrt) - 1; y >= 0 && i < count; y--)
+                    //    {
+                    //        for (int x = 0; x < sqrt && i < count; x++, i++)
+                    //        {
+                    //            offsets[i] = new Vector3(
+                    //                x * formationOffset - halfSquareDiameter,
+                    //                0f,
+                    //                y * formationOffset - halfSquareDiameter
+                    //            );
+                    //        }
+                    //    }
+                    //}
+                    //else
+                    //{
+                    float currentOffset = formationOffset;
+
+                    int h = Mathf.FloorToInt(sqrt);
+                    float tmp = count / (float)h;
+                    int w = Mathf.CeilToInt(tmp);
+
+                    for (int y = h - 1; y >= 0 && i < count; y--)
                     {
-                        float halfSquareDiameter = (sqrt - 1f) * 0.5f * formationOffset;
-                        //for (int y = 0; y < sqrt && i < count; y++)
-                        for (int y = Mathf.FloorToInt(sqrt) - 1; y >= 0 && i < count; y--)
+                        int remaining = (count - i);
+                        float x = 0;
+                        if (remaining < w && formationMode == FormationModes.Rectangle)
                         {
-                            for (int x = 0; x < sqrt && i < count; x++, i++)
-                            {
-                                offsets[i] = new Vector3(
-                                    x * formationOffset - halfSquareDiameter,
-                                    0f,
-                                    y * formationOffset - halfSquareDiameter
-                                );
-                            }
+                            //int missing = w - remaining;
+                            //x += missing / 2f;
+                            currentOffset = formationOffset * (w - 1f) / (remaining - 1);
+                        }
+                        for (; x < w && i < count; x++, i++)
+                        {
+                            offsets[i] = new Vector3(
+                                x * currentOffset - (w - 1f) * 0.5f * formationOffset,
+                                0f,
+                                y * currentOffset - (h - 1f) * 0.5f * formationOffset
+                            );
                         }
                     }
-                    else
-                    {
-                        int w = Mathf.RoundToInt(sqrt);
-                        float rest = count / (float)w;
-                        int h = Mathf.FloorToInt(rest) + (rest % 1f != 0f).ToInt();
-                        for (int y = h - 1; y >= 0 && i < count; y--)
-                        {
-                            float x = 0;
-                            int remaining = (count - i);
-                            if (remaining < w && formationMode == FormationModes.SquareGrid)
-                            {
-                                int missing = w - remaining;
-                                x += missing / 2f;
-                            }
-                            for (; x < w && i < count; x++, i++)
-                            {
-                                offsets[i] = new Vector3(
-                                    x * formationOffset - (w - 1f) * 0.5f * formationOffset,
-                                    0f,
-                                    y * formationOffset - (h - 1f) * 0.5f * formationOffset
-                                );
-                            }
-                        }
-                    }
+                    //}
                 }
                 if (formationMode == FormationModes.HexGrid)
                 {
@@ -208,7 +206,7 @@ public class Platoon : MonoBehaviour
                 break;
             case FormationModes.HexGrid:
                 {
-                    if (caseCounter == 0) goto case FormationModes.SquareGrid;
+                    if (caseCounter == 0) goto case FormationModes.Rectangle;
 
                     float halfFormationOffset = formationOffset / 2f;
                     float triangleHeightOffset = Mathf.Sqrt(Mathf.Pow(formationOffset, 2f) - Mathf.Pow(halfFormationOffset, 2f));
