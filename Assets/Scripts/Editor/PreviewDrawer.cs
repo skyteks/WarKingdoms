@@ -14,30 +14,34 @@ public class PreviewDrawer : PropertyDrawer
             System.Type type = property.objectReferenceValue.GetType();
             if (type == typeof(Sprite))
             {
-				height += (property.objectReferenceValue as Sprite).texture.height + EditorGUIUtility.standardVerticalSpacing;
+                height += (property.objectReferenceValue as Sprite).texture.height + EditorGUIUtility.standardVerticalSpacing;
             }
             else if (type == typeof(Texture))
             {
-				height += (property.objectReferenceValue as Texture).height + EditorGUIUtility.standardVerticalSpacing;
+                height += (property.objectReferenceValue as Texture).height + EditorGUIUtility.standardVerticalSpacing;
             }
             else if (type.IsSubclassOf(typeof(ScriptableObject)))
             {
-				var fields = type.GetFields ();
-				foreach (var field in fields)
-				{
-					if (type == typeof(Sprite))
-					{
-						height += (property.objectReferenceValue as Sprite).texture.height;
-					}
-					else if (type == typeof(Texture))
-					{
-						height += (property.objectReferenceValue as Texture).height;
-					}
-					else
-					{
-						height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-					}
-				}
+                var fields = type.GetFields();
+                foreach (var field in fields)
+                {
+                    if (field.FieldType == typeof(Sprite))
+                    {
+                        //height += (property.objectReferenceValue as Sprite).texture.height;
+                        height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+                        height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+                    }
+                    else if (field.FieldType == typeof(Texture))
+                    {
+                        //height += (property.objectReferenceValue as Texture).height;
+                        height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+                        height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+                    }
+                    else
+                    {
+                        height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+                    }
+                }
             }
             else
             {
@@ -64,7 +68,7 @@ public class PreviewDrawer : PropertyDrawer
         {
             return;
         }
-		position.y += EditorGUIUtility.singleLineHeight;
+        position.y += EditorGUIUtility.singleLineHeight;
 
         System.Type type = property.objectReferenceValue.GetType();
 
@@ -72,17 +76,17 @@ public class PreviewDrawer : PropertyDrawer
         {
             Texture texture = (property.objectReferenceValue as Sprite).texture;
             EditorGUI.LabelField(position, new GUIContent(texture));
-			position.y += EditorGUIUtility.standardVerticalSpacing;
+            position.y += EditorGUIUtility.standardVerticalSpacing;
         }
         else if (type == typeof(Texture))
         {
             Texture texture = (property.objectReferenceValue as Texture);
             EditorGUI.LabelField(position, new GUIContent(texture));
-			position.y += EditorGUIUtility.standardVerticalSpacing;
+            position.y += EditorGUIUtility.standardVerticalSpacing;
         }
         else if (type.IsSubclassOf(typeof(ScriptableObject)))
         {
-			position.y += EditorGUIUtility.standardVerticalSpacing;
+            position.y += EditorGUIUtility.standardVerticalSpacing;
             EditorGUI.BeginDisabledGroup(true);
             position.height = EditorGUIUtility.singleLineHeight;
 
@@ -109,21 +113,21 @@ public class PreviewDrawer : PropertyDrawer
                         EditorGUI.IntField(position, field.Name, (int)value);
                         break;
                     case "Object":
-						//if (field.FieldType == typeof(Sprite) || field.FieldType == typeof(Texture))// || field.FieldType.IsSubclassOf(typeof(ScriptableObject)))
-						//OnGUI (position, property, label);
-						EditorGUI.ObjectField(position, field.Name, (Object)value, field.FieldType, true);
-						position.y += EditorGUIUtility.singleLineHeight;
-						if (field.FieldType == typeof(Sprite))
-						{
-							Texture texture = (value as Sprite).texture;
-							EditorGUI.LabelField(position, new GUIContent(texture));
-						}
-						else if (field.FieldType == typeof(Texture))
-						{
-							Texture texture = (value as Texture);
-							EditorGUI.LabelField(position, new GUIContent(texture));
-						}
-						position.y += EditorGUIUtility.standardVerticalSpacing;
+                        //if (field.FieldType == typeof(Sprite) || field.FieldType == typeof(Texture))// || field.FieldType.IsSubclassOf(typeof(ScriptableObject)))
+                        //OnGUI (position, property, label);
+                        EditorGUI.ObjectField(position, field.Name, (Object)value, field.FieldType, true);
+                        position.y += EditorGUIUtility.singleLineHeight;
+                        if (field.FieldType == typeof(Sprite))
+                        {
+                            Texture texture = (value as Sprite).texture;
+                            EditorGUI.LabelField(position, new GUIContent(texture));
+                        }
+                        else if (field.FieldType == typeof(Texture))
+                        {
+                            Texture texture = (value as Texture);
+                            EditorGUI.LabelField(position, new GUIContent(texture));
+                        }
+                        position.y += EditorGUIUtility.standardVerticalSpacing;
                         break;
                 }
                 position.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;

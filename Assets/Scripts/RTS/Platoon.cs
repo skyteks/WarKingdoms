@@ -167,21 +167,27 @@ public class Platoon : MonoBehaviour
             case FormationModes.Circle:
                 {
                     offsets[0] = Vector3.zero;
+                    int index = 1;
                     int remaining = count - 1;
-
-                    //float circumfence = 2f * Mathf.PI * formationOffset;
-                    //int spaces = Mathf.FloorToInt(circumfence / formationOffset);
-                    //float cirumfenceOffset = circumfence / (float)spaces;
-
-                    float increment = 360f / remaining;
-                    for (int i = 0; i < remaining; i++)
+                    float currentOffset = formationOffset;
+                    for (int j = 0; remaining > 0; j++)
                     {
-                        float angle = increment * i;
-                        offsets[i] = new Vector3(
-                            formationOffset * angle.Cos(),
-                            0f,
-                            formationOffset * angle.Sin()
-                        );
+                        currentOffset = formationOffset * (j + 1);
+                        float circumfence = 2f * Mathf.PI * currentOffset;
+                        int spaces = Mathf.FloorToInt(circumfence / formationOffset);
+                        float angle = 360f / (spaces > remaining ? remaining : spaces);
+
+                        for (int i = 0; i < spaces && index < count; i++)
+                        {
+                            float rotationOffset = angle * (j % 2f) * 0.5f;
+                            offsets[index] = new Vector3(
+                                (angle * i + rotationOffset).Sin() * currentOffset,
+                                0f,
+                                (angle * i + rotationOffset).Cos() * currentOffset
+                            );
+                            remaining--;
+                            index++;
+                        }
                     }
                 }
                 break;
