@@ -6,17 +6,18 @@ public class AICommand
 {
     public enum CommandType
     {
-        MoveToAndIdle,
-        AttackMoveToAndGuard,
+        MoveTo,
+        AttackMoveTo,
         AttackTarget, //attacks a specific target, then becomes Guarding
         Stop,
+        Guard,
         Die,
         //Flee,
     }
 
     public CommandType commandType;
 
-    public Vector3 destination;
+    public Vector3? destination;
     public Unit target;
 
     public AICommand(CommandType ty, Vector3 v)
@@ -29,14 +30,14 @@ public class AICommand
     public AICommand(CommandType ty, Unit ta)
     {
         commandType = ty;
-        destination = Vector3.one * float.NaN;
+        destination = null;
         target = ta;
     }
 
     public AICommand(CommandType ty)
     {
         commandType = ty;
-        destination = Vector3.one * float.NaN;
+        destination = null;
         target = null;
     }
 }

@@ -64,18 +64,18 @@ public class Platoon : MonoBehaviour
 #if UNITY_EDITOR
         debugCommandLocations = new Location[0];
 #endif
-        if (command.destination.IsNaN())
+        if (!command.destination.HasValue)
         {
             for (int i = 0; i < units.Count; i++)
             {
-                units[i].ExecuteCommand(command);
+                units[i].AddCommand(command, true);
             }
             return;
             //yield break;
         }
         //change the position for the command for each unit
         //so they move to a formation position rather than in the exact same place
-        Vector3 destination = command.destination;
+        Vector3 destination = command.destination.Value;
         Vector3 origin = units.Select(unit => unit.transform.position).FindCentroid();
         Quaternion rotation = Quaternion.LookRotation((destination - origin).normalized);
         Vector3[] offsets = GetFormationOffsets();
@@ -93,7 +93,7 @@ public class Platoon : MonoBehaviour
             Vector3 nextOffset = remainingOffsets.OrderBy(offset => Vector3.Distance(sortedUnits[i].transform.position, origin + rotation * offset)).First();
             remainingOffsets.Remove(nextOffset);
             command.destination = destination + rotation * nextOffset;
-            sortedUnits[i].ExecuteCommand(command);
+            sortedUnits[i].AddCommand(command, true);
             //yield return null;
         }
     }
@@ -291,7 +291,7 @@ public class Platoon : MonoBehaviour
         for (int i = 0; i < units.Count; i++)
         {
             if (units[i] != null
-                && units[i].state != Unit.UnitState.Dead)
+                && units[i].state != Unit.UnitStates.Dead)
             {
                 allDead = false;
                 break;

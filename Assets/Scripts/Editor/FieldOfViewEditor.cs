@@ -4,7 +4,7 @@ using UnityEditor;
 [CustomEditor(typeof(FieldOfView))]
 public class FieldOfViewEditor : Editor
 {
-    FieldOfView fow;
+    private FieldOfView fow;
 
     void OnEnable()
     {

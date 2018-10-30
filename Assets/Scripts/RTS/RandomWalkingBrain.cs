@@ -34,7 +34,7 @@ public class RandomWalkingBrain : MonoBehaviour
     private void SendCommand()
     {
         Vector3 move = Random.insideUnitCircle.ToVector3XZ() * unit.template.guardDistance * 4f;
-        AICommand command = new AICommand(AICommand.CommandType.MoveToAndIdle, unit.transform.position + move);
-        unit.ExecuteCommand(command);
+        AICommand command = new AICommand(AICommand.CommandType.MoveTo, unit.transform.position + move);
+        unit.AddCommand(command, true);
     }
 }

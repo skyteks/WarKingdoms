@@ -104,13 +104,13 @@ public class GameManager : Singleton<GameManager>
 
     public void MoveSelectedUnitsTo(Vector3 pos)
     {
-        AICommand newCommand = new AICommand(AICommand.CommandType.MoveToAndIdle, pos);
+        AICommand newCommand = new AICommand(AICommand.CommandType.MoveTo, pos);
         IssueCommand(newCommand);
     }
 
     public void AttackMoveSelectedUnitsTo(Vector3 pos)
     {
-        AICommand newCommand = new AICommand(AICommand.CommandType.AttackMoveToAndGuard, pos);
+        AICommand newCommand = new AICommand(AICommand.CommandType.AttackMoveTo, pos);
         IssueCommand(newCommand);
     }
 

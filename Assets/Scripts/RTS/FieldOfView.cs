@@ -172,27 +172,33 @@ public class FieldOfView : MonoBehaviour
         {
             yield return Yielders.Get(delay);
             if (unit.faction != GameManager.Instance.faction) continue;
+            if (unit.state == Unit.UnitStates.Dead) yield break;
 
-            List<Transform> visibleTargets = FindTargets(targetMask, false);
-
-            var goneTargets = lastVisibleTargets.Except(visibleTargets);
-            foreach (var unseen in goneTargets)
-            {
-                Unit unit = unseen.GetComponent<Unit>();
-                if (unit == null) continue;
-                if (unit.faction == GameManager.Instance.faction) continue;
-                unit.SetVisibility(false);
-            }
-            foreach (var seen in visibleTargets)
-            {
-                Unit unit = seen.GetComponent<Unit>();
-                if (unit == null) continue;
-                if (unit.faction == GameManager.Instance.faction) continue;
-                unit.SetVisibility(true);
-            }
-
-            lastVisibleTargets = visibleTargets;
+            MarkTargetsVisibility();
         }
+    }
+
+    public void MarkTargetsVisibility()
+    {
+        List<Transform> visibleTargets = FindTargets(targetMask, false);
+
+        var goneTargets = lastVisibleTargets.Except(visibleTargets);
+        foreach (var unseen in goneTargets)
+        {
+            Unit unit = unseen.GetComponent<Unit>();
+            if (unit == null) continue;
+            if (unit.faction == GameManager.Instance.faction) continue;
+            unit.SetVisibility(false);
+        }
+        foreach (var seen in visibleTargets)
+        {
+            Unit unit = seen.GetComponent<Unit>();
+            if (unit == null) continue;
+            if (unit.faction == GameManager.Instance.faction) continue;
+            unit.SetVisibility(true);
+        }
+
+        lastVisibleTargets = visibleTargets;
     }
 
     private List<Transform> FindTargets(LayerMask mask, bool justInRange)

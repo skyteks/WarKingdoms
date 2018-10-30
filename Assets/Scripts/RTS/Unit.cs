@@ -7,14 +7,14 @@ using UnityEngine.Events;
 
 public class Unit : MonoBehaviour
 {
-    public enum UnitState
+    public enum UnitStates
     {
-        Idle,
+        Idleing,
         Guarding,
         Attacking,
         MovingToTarget,
-        MovingToSpotIdle,
-        AttackMovingToSpotGuard,
+        MovingToSpot,
+        AttackMovingToSpot,
         Dead,
     }
 
@@ -39,10 +39,10 @@ public class Unit : MonoBehaviour
         {
             globalUnits.Add(faction, new List<Unit>());
         }
-
     }
 
-    public UnitState state = UnitState.Idle;
+    //[ReadOnly]
+    public UnitStates state = UnitStates.Idleing;
     public Factions faction;
     public float visionFadeTime = 1f;
     [Preview]
@@ -55,6 +55,9 @@ public class Unit : MonoBehaviour
     private FieldOfView fieldOfView;
 
     //private bool isSelected; //is the Unit currently selected by the Player
+    [HideInInspector]
+    public List<AICommand> commandList = new List<AICommand>();
+    private bool commandRecieved, commandExecuted;
     private Unit targetOfAttack;
     private Unit[] hostiles;
     private float lastGuardCheckTime, guardCheckInterval = 1f;
@@ -83,9 +86,11 @@ public class Unit : MonoBehaviour
 
         template = template.Clone(); //we copy the template otherwise it's going to overwrite the original asset!
 
+
         //Set some defaults, including the default state
         SetSelected(false);
-        Idle();
+
+        StartCoroutine(DequeueCommands());
 
         visionCircle.material.color = visionCircle.material.color.ToWithA(0f);
         if (faction == GameManager.Instance.faction)
@@ -112,40 +117,54 @@ public class Unit : MonoBehaviour
 
         switch (state)
         {
-            case UnitState.MovingToSpotIdle:
+            case UnitStates.MovingToSpot:
                 if (navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
                 {
-                    Idle();
+                    commandExecuted = true;
+                    AddCommand(new AICommand(AICommand.CommandType.Stop));
                 }
                 break;
 
-            case UnitState.AttackMovingToSpotGuard:
+            case UnitStates.AttackMovingToSpot:
                 if (navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
                 {
-                    Guard();
+                    commandExecuted = true;
+                    AddCommand(new AICommand(AICommand.CommandType.Guard));
                 }
                 else
                 {
                     if (fieldOfView.lastVisibleTargets.Count > 0)
                     {
-                        var enemies = fieldOfView.lastVisibleTargets.Where(target => target.GetComponent<Unit>().faction != faction);
+                        var enemies = fieldOfView.lastVisibleTargets.Where(target => target.GetComponent<Unit>().faction != faction && target.GetComponent<Unit>().state != UnitStates.Dead);
                         if (enemies.Count() > 0)
                         {
-                            var closestEnemy = enemies.FindClosestToPoint(transform.position);
-                            MoveToAttack(closestEnemy.GetComponent<Unit>());
+                            var closestEnemy = enemies.FindClosestToPoint(transform.position).GetComponent<Unit>();
+                            //MoveToAttack(closestEnemy);
+                            commandExecuted = true;
+                            commandRecieved = false;
+                            InsertCommand(new AICommand(AICommand.CommandType.AttackTarget, closestEnemy));
                         }
                     }
                 }
                 break;
 
-            case UnitState.MovingToTarget:
+            case UnitStates.MovingToTarget:
                 //check if target has been killed by somebody else
-                if (IsDeadOrNull(targetOfAttack))
+                if (IsDeadOrNull(targetOfAttack) || targetOfAttack.faction == faction)
                 {
-                    Guard();
+                    commandExecuted = true;
+                    //Idle();
                 }
                 else
                 {
+                    if (commandList.Count >= 2 && commandList[1].commandType == AICommand.CommandType.Guard)
+                    {
+                        if (Vector3.Distance(commandList[1].destination.Value, transform.position) > template.guardDistance * 2f)
+                        {
+                            commandExecuted = true;
+                            InsertCommand(new AICommand(AICommand.CommandType.MoveTo, commandList[1].destination.Value), 1);
+                        }
+                    }
                     //Check for distance from target
                     if (navMeshAgent.remainingDistance < template.engageDistance)
                     {
@@ -159,23 +178,26 @@ public class Unit : MonoBehaviour
                 }
                 break;
 
-            case UnitState.Guarding:
+            case UnitStates.Guarding:
                 if (Time.time > lastGuardCheckTime + guardCheckInterval)
                 {
                     lastGuardCheckTime = Time.time;
-                    Unit t = GetNearestHostileUnit();
-                    if (t != null)
+                    Unit closestEnemy = GetNearestHostileUnit();
+                    if (closestEnemy != null)
                     {
-                        MoveToAttack(t);
+                        commandExecuted = true;
+                        commandRecieved = false;
+                        InsertCommand(new AICommand(AICommand.CommandType.AttackTarget, closestEnemy));
                     }
                 }
                 break;
 
-            case UnitState.Attacking:
+            case UnitStates.Attacking:
                 //check if target has been killed by somebody else
-                if (IsDeadOrNull(targetOfAttack))
+                if (IsDeadOrNull(targetOfAttack) || targetOfAttack.faction == faction)
                 {
-                    Guard();
+                    commandExecuted = true;
+                    //Guard();
                 }
                 else
                 {
@@ -184,7 +206,7 @@ public class Unit : MonoBehaviour
                     transform.forward = Vector3.Lerp(transform.forward, desiredForward, Time.deltaTime * 10f);
                 }
                 break;
-            case UnitState.Dead:
+            case UnitStates.Dead:
                 if (template.health != 0)
                 {
                     Die();
@@ -228,30 +250,116 @@ public class Unit : MonoBehaviour
         layerMiniMapHidden = LayerMask.NameToLayer("MiniMap Hidden");
     }
 
-    public void ExecuteCommand(AICommand c)
+    public void AddCommand(AICommand command, bool clear = false)
     {
-        if (state == UnitState.Dead)
+        if (clear)
+        {
+            commandList.Clear();
+            commandExecuted = true;
+            commandRecieved = false;
+        }
+        commandList.Add(command);
+    }
+
+    public void InsertCommand(AICommand command, int position = 0)
+    {
+        commandList.Insert(position, command);
+    }
+
+    private IEnumerator DequeueCommands()
+    {
+        commandRecieved = false;
+        commandExecuted = true;
+        AICommand stopCommand = new AICommand(AICommand.CommandType.Stop);
+        switch (state)
+        {
+            case UnitStates.Idleing:
+                AddCommand(stopCommand);
+                break;
+            case UnitStates.Guarding:
+                AddCommand(new AICommand(AICommand.CommandType.Guard, transform.position));
+                break;
+            default:
+                Debug.LogError("Cannot start with a state different to Idle or Guard. State has been set to Idle.", gameObject);
+                state = UnitStates.Idleing;
+                goto case UnitStates.Idleing;
+        }
+        for (; ; )
+        {
+            if (state == UnitStates.Dead)
+            {
+                //already dead
+                yield break;
+            }
+            if (commandList.Count == 0)
+            {
+                if (commandExecuted && state != UnitStates.Idleing && state != UnitStates.Guarding) AddCommand(stopCommand);
+                else yield return null;
+                continue;
+            }
+            else
+            {
+                if (commandExecuted)
+                {
+                    if(commandList.Count == 1 && (commandList[0].commandType == AICommand.CommandType.Stop || commandList[0].commandType == AICommand.CommandType.Guard))
+                    {
+                        yield return null;
+                        continue;
+                    }
+
+                    if (commandRecieved)
+                    {
+                        commandList.RemoveAt(0);
+                        commandRecieved = false;
+                    }
+                    commandExecuted = false;
+
+                    if (commandList.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    AICommand nextCommand = commandList[0];
+                    ExecuteCommand(nextCommand);
+                }
+                yield return null;
+            }
+        }
+    }
+
+    private void ExecuteCommand(AICommand command)
+    {
+        if (state == UnitStates.Dead)
         {
             //already dead
+            Debug.LogWarning("Unit is dead. Cannot execute command.", gameObject);
             return;
         }
 
-        switch (c.commandType)
+        print(name + " Execute cmd: " + command.commandType);
+
+        commandExecuted = false;
+        commandRecieved = true;
+        switch (command.commandType)
         {
-            case AICommand.CommandType.MoveToAndIdle:
-                MoveToAndIdle(c.destination);
+            case AICommand.CommandType.MoveTo:
+                MoveToSpot(command.destination.Value);
                 break;
 
-            case AICommand.CommandType.AttackMoveToAndGuard:
-                AttackMoveToAndGuard(c.destination);
+            case AICommand.CommandType.AttackMoveTo:
+                AttackMoveToSpot(command.destination.Value);
                 break;
 
             case AICommand.CommandType.Stop:
                 Idle();
                 break;
 
+            case AICommand.CommandType.Guard:
+                Guard();
+                break;
+
             case AICommand.CommandType.AttackTarget:
-                MoveToAttack(c.target);
+                MoveToTarget(command.target);
                 break;
 
             case AICommand.CommandType.Die:
@@ -261,9 +369,10 @@ public class Unit : MonoBehaviour
     }
 
     //move to a position and be idle
-    private void MoveToAndIdle(Vector3 location)
+    private void MoveToSpot(Vector3 location)
     {
-        state = UnitState.MovingToSpotIdle;
+        state = UnitStates.MovingToSpot;
+
         targetOfAttack = null;
         agentReady = false;
 
@@ -272,9 +381,10 @@ public class Unit : MonoBehaviour
     }
 
     //move to a position and be guarding
-    private void AttackMoveToAndGuard(Vector3 location)
+    private void AttackMoveToSpot(Vector3 location)
     {
-        state = UnitState.AttackMovingToSpotGuard;
+        state = UnitStates.AttackMovingToSpot;
+
         targetOfAttack = null;
         agentReady = false;
 
@@ -285,7 +395,9 @@ public class Unit : MonoBehaviour
     //stop and stay Idle
     private void Idle()
     {
-        state = UnitState.Idle;
+        state = UnitStates.Idleing;
+        commandExecuted = true;
+
         targetOfAttack = null;
         agentReady = false;
 
@@ -296,7 +408,9 @@ public class Unit : MonoBehaviour
     //stop but watch for enemies nearby
     public void Guard()
     {
-        state = UnitState.Guarding;
+        state = UnitStates.Guarding;
+        commandExecuted = true;
+
         targetOfAttack = null;
         agentReady = false;
 
@@ -305,11 +419,11 @@ public class Unit : MonoBehaviour
     }
 
     //move towards a target to attack it
-    private void MoveToAttack(Unit target)
+    private void MoveToTarget(Unit target)
     {
         if (!IsDeadOrNull(target))
         {
-            state = UnitState.MovingToTarget;
+            state = UnitStates.MovingToTarget;
             targetOfAttack = target;
             agentReady = false;
 
@@ -319,7 +433,9 @@ public class Unit : MonoBehaviour
         else
         {
             //if the command is dealt by a Timeline, the target might be already dead
-            Guard();
+            //Guard();
+            commandExecuted = true;
+            AddCommand(new AICommand(AICommand.CommandType.Stop));
         }
     }
 
@@ -329,14 +445,16 @@ public class Unit : MonoBehaviour
         //somebody might have killed the target while this Unit was approaching it
         if (!IsDeadOrNull(targetOfAttack))
         {
-            state = UnitState.Attacking;
+            state = UnitStates.Attacking;
             agentReady = false;
             navMeshAgent.isStopped = true;
             StartCoroutine(DealAttack());
         }
         else
         {
-            Guard();
+            //Guard();
+            commandExecuted = true;
+            AddCommand(new AICommand(AICommand.CommandType.Stop));
         }
     }
 
@@ -351,7 +469,7 @@ public class Unit : MonoBehaviour
             {
                 if (animator != null) animator.SetBool("DoAttack", false);
 
-                MoveToAttack(targetOfAttack);
+                MoveToTarget(targetOfAttack);
 
                 yield break;
             }
@@ -369,7 +487,7 @@ public class Unit : MonoBehaviour
                 break;
             }
 
-            if (state == UnitState.Dead)
+            if (state == UnitStates.Dead)
             {
                 yield break;
             }
@@ -381,16 +499,17 @@ public class Unit : MonoBehaviour
         if (animator != null) animator.SetBool("DoAttack", false);
 
         //only move into Guard if the attack was interrupted (dead target, etc.)
-        if (state == UnitState.Attacking)
+        if (state == UnitStates.Attacking)
         {
-            Guard();
+            commandExecuted = true;
+            //AddCommand(new AICommand(AICommand.CommandType.Stop));
         }
     }
 
     //called by an attacker
     private void SufferAttack(int damage)
     {
-        if (state == UnitState.Dead)
+        if (state == UnitStates.Dead)
         {
             //already dead
             return;
@@ -410,7 +529,10 @@ public class Unit : MonoBehaviour
     {
         template.health = 0;
 
-        state = UnitState.Dead; //still makes sense to set it, because somebody might be interacting with this script before it is destroyed
+        commandList.Clear();
+        commandExecuted = true;
+
+        state = UnitStates.Dead; //still makes sense to set it, because somebody might be interacting with this script before it is destroyed
         if (animator != null) animator.SetTrigger("DoDeath");
 
         //Remove itself from the selection Platoon
@@ -431,6 +553,7 @@ public class Unit : MonoBehaviour
 
         //Remove unneeded Components
         //Destroy(sightCircle);
+        StartCoroutine(HideSeenThings(visionFadeTime / 2f));
         StartCoroutine(VisionFade(visionFadeTime, true));
         Destroy(selectionCircle);
         Destroy(miniMapCircle);
@@ -456,9 +579,18 @@ public class Unit : MonoBehaviour
         }
     }
 
-    private bool IsDeadOrNull(Unit unit)
+    private IEnumerator HideSeenThings(float fadeTime)
     {
-        return (unit == null || unit.state == UnitState.Dead);
+        if (fadeTime != 0f) yield return Yielders.Get(fadeTime);
+        float radius = template.guardDistance;
+        template.guardDistance = 0f;
+        fieldOfView.MarkTargetsVisibility();
+        template.guardDistance = radius;
+    }
+
+    private static bool IsDeadOrNull(Unit unit)
+    {
+        return (unit == null || unit.state == UnitStates.Dead);
     }
 
     private Unit GetNearestHostileUnit()
