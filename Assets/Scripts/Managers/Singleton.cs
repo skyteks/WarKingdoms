@@ -1,9 +1,7 @@
 using UnityEngine;
 
-/// <summary>
-/// Be aware this will not prevent a non singleton constructor such as `T myT = new T();`
-/// To prevent that, add `protected T () {}` to your singleton class.
-/// </summary>
+// Be aware this will not prevent a non singleton constructor such as `T myT = new T();`
+// To prevent that, add `protected T () {}` to your singleton class.
 public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T _instance;

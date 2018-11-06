@@ -7,6 +7,9 @@ using UnityEngine;
 
 public delegate void EventDelegate<T>(T e) where T : GameEvent;
 
+/// <summary>
+/// Delegate Event handler
+/// </summary>
 public class EventManager : Singleton<EventManager>
 {
     private delegate void EventDelegate(GameEvent e);

@@ -4,6 +4,9 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Handles selection rectangle for Unit selection
+/// </summary>
 public class UIManager : Singleton<UIManager>
 {
     public Image selectionRectangle;

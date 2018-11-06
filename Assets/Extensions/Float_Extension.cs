@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// A class that adds some math functions
+/// This class adds some extension methods for float
 /// </summary>
 public static class Float_Extension
 {

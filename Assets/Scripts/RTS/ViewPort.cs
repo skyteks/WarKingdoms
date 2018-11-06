@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Creates a mesh on ground plane with camera frustum collision points
+/// </summary>
 [ExecuteInEditMode]
 [RequireComponent(typeof(MeshFilter))]
 public class ViewPort : MonoBehaviour
@@ -17,13 +20,13 @@ public class ViewPort : MonoBehaviour
         viewportMeshFilter = GetComponent<MeshFilter>();
     }
 
-    private void OnEnable()
+    void OnEnable()
     {
         MeshRenderer render = GetComponent<MeshRenderer>();
         if (render != null) render.enabled = true;
     }
 
-    private void OnDisable()
+    void OnDisable()
     {
         MeshRenderer render = GetComponent<MeshRenderer>();
         if (render != null) render.enabled = false;
@@ -37,7 +40,7 @@ public class ViewPort : MonoBehaviour
         }
     }
 
-    private void CreateViewPortPlaneMesh()
+    void CreateViewPortPlaneMesh()
     {
         Camera mainCamera = CameraManager.Instance.gameplayCamera;
         if (mainCamera == null) return;

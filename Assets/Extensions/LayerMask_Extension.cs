@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This class adds some extension methods for LayerMask
+/// </summary>
 public static class LayerMask_Extension
 {
     public static LayerMask ToEverything(this LayerMask layerMask)

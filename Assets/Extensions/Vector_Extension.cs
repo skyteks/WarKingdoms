@@ -240,6 +240,11 @@ public static class Vector_Extension
         return new Vector4(Mathf.Abs(vector.x), Mathf.Abs(vector.y), Mathf.Abs(vector.z), Mathf.Abs(vector.w));
     }
 
+    /// <summary>
+    /// Find closest point in collection
+    /// </summary>
+    /// <param name="points"></param>
+    /// <returns></returns>
     public static Vector2 FindCentroid(this IEnumerable<Vector2> points)
     {
         if (points.Count() == 0) throw new System.ArgumentOutOfRangeException();
@@ -259,6 +264,11 @@ public static class Vector_Extension
         return centroid;
     }
 
+    /// <summary>
+    /// Find closest point in collection
+    /// </summary>
+    /// <param name="points"></param>
+    /// <returns></returns>
     public static Vector3 FindCentroid(this IEnumerable<Vector3> points)
     {
         if (points.Count() == 0) throw new System.ArgumentOutOfRangeException();

@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This class adds some extension methods for bool
+/// </summary>
 public static class Bool_Extension
 {
     public static float ToFloat(this bool boolean)

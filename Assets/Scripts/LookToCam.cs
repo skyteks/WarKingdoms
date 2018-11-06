@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Component that makes the gameobject rotate towards main camera, like a billboard
+/// Basic Billboard Behavior
 /// </summary>
 public class LookToCam : MonoBehaviour
 {

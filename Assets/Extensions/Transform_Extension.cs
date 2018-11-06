@@ -81,6 +81,12 @@ public static class Transform_Extension
         return new Ray(transform.position, transform.forward);
     }
 
+    /// <summary>
+    /// Find closest transform to a point
+    /// </summary>
+    /// <param name="transforms"></param>
+    /// <param name="otherPoint"></param>
+    /// <returns></returns>
     public static Transform FindClosestToPoint(this IEnumerable<Transform> transforms, Vector3 otherPoint)
     {
         Transform closestTransform = null;

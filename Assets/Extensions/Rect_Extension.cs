@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+
+/// <summary>
+/// This class adds some extension methods for Rect
+/// </summary>
 public static class Rect_Extension
 {
     public static Rect[] SplitOnXAxis(this Rect rect, float percentageFirst)
@@ -39,15 +43,7 @@ public static class Rect_Extension
         return parts;
     }
 
-    public static bool Touches(this Rect rect, Vector2 pos)
-    {
-        return pos.x >= rect.xMin &&
-               pos.x <= rect.xMax &&
-               pos.y <= rect.yMax &&
-               pos.y <= rect.yMax;
-    }
-
-    public static Rect Scaled(this Rect rect, Vector2 scale)
+    public static Rect ToScaled(this Rect rect, Vector2 scale)
     {
         float width = rect.width * scale.x;
         float height = rect.height * scale.y;

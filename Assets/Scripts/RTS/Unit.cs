@@ -5,6 +5,9 @@ using UnityEngine.AI;
 using System.Linq;
 using UnityEngine.Events;
 
+/// <summary>
+/// Unit semi-AI handles movement and stats
+/// </summary>
 public class Unit : MonoBehaviour
 {
     public enum UnitStates

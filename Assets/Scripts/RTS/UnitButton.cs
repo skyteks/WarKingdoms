@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// Button to select/deselect a unit in the UI
+/// </summary>
 public class UnitButton : UIClickable
 {
     public Unit unit;

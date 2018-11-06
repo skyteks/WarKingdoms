@@ -2,6 +2,9 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+/// <summary>
+/// Multi-State Button
+/// </summary>
 [RequireComponent(typeof(RectTransform))]
 public class UIClickable : MonoBehaviour
     , IDragHandler
@@ -18,7 +21,7 @@ public class UIClickable : MonoBehaviour
         Dragged = 4,
     }
 
-    //[ReadOnly]
+    [ReadOnly]
     public SelectionStates selectionState;
 
     public bool Pressed { get; private set; }

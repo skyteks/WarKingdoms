@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Handles Camera movement
+/// </summary>
 public class CameraManager : Singleton<CameraManager>
 {
     public Camera mainCamera;

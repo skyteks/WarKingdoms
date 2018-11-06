@@ -4,6 +4,9 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// Handles input from mouse and keyboard for camera and unit commands
+/// </summary>
 public class InputManager : Singleton<InputManager>
 {
     [Header("Camera")]

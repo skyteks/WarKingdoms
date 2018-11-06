@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// This class adds some extension methods for Lists
+/// </summary>
 public static class List_Extension
 {
     public static void Shuffle<T>(this IList<T> list)

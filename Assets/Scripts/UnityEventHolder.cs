@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+/// <summary>
+/// UnityEvent Holder for Unity callbacks
+/// </summary>
 public class UnityEventHolder : MonoBehaviour
 {
     public UnityEvent OnAwake;

@@ -4,7 +4,9 @@ using UnityEngine;
 using System;
 using System.Linq;
 
-[Serializable]
+/// <summary>
+/// Movement and selection handling for a list of Units
+/// </summary>
 public class Platoon : MonoBehaviour
 {
     public enum FormationModes

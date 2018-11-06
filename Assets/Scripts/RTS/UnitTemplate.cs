@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Stores unit stats as asset file
+/// </summary>
 [CreateAssetMenu(fileName = "new Unit Template", menuName = "RTS/Unit Template", order = 1)]
 public class UnitTemplate : ScriptableObject
 {
-    
-
     public UnitTemplate original { get; private set; }
 
     [Preview]

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// Handles MiniMap mouse input
+/// </summary>
 public class MiniMap : UIClickable
 {
     public Camera miniMapCamera;

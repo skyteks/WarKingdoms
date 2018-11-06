@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Makes a Unit walk randomly in a direction
+/// </summary>
 [RequireComponent(typeof(Unit))]
 public class RandomWalkingBrain : MonoBehaviour
 {

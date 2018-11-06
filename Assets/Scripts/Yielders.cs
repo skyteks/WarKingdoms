@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+
+/// <summary>
+/// Object Pool for WaitForSeconds
+/// </summary>
 public static class Yielders
 {
     class FloatComparer : IEqualityComparer<float>

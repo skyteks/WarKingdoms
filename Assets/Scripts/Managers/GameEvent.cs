@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameEvent
+/// <summary>
+/// Event Base Blueprint
+/// </summary>
+public abstract class GameEvent
 {
     public virtual bool UseInUnityAnalytics { get { return false; } }
 

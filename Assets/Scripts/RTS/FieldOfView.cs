@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Creates mesh from field of view raycasts
+/// </summary>
 [RequireComponent(typeof(MeshFilter))]
 public class FieldOfView : MonoBehaviour
 {

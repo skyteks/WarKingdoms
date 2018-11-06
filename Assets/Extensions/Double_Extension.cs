@@ -1,5 +1,8 @@
 ﻿using System;
 
+/// <summary>
+/// This class adds some extension methods for double
+/// </summary>
 public static class Double_Extension
 {
     public static float ToFloat(this double value)

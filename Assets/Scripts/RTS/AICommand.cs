@@ -1,6 +1,9 @@
 ﻿using System;
 using UnityEngine;
 
+/// <summary>
+/// Order for Units to move or attack somewhere
+/// </summary>
 [Serializable]
 public class AICommand
 {

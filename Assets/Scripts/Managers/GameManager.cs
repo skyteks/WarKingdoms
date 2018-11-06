@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+/// <summary>
+/// All arround game state manager
+/// </summary>
 public class GameManager : Singleton<GameManager>
 {
     public enum GameMode
