@@ -6,7 +6,8 @@ using UnityEngine;
 /// <summary>
 /// Fog of war texture drawer [obsolete]
 /// </summary>
-public class FogOfWar : MonoBehaviour
+[System.Obsolete]
+public class FogOfWarTextureReadWrite : MonoBehaviour
 {
     public Texture2D readWriteTexture;
     [Range(0f, 1f)]
