@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
-using System.Linq;
 using UnityEngine.Events;
 
 /// <summary>
@@ -65,7 +65,7 @@ public class Unit : MonoBehaviour
     private Unit[] hostiles;
     private float lastGuardCheckTime, guardCheckInterval = 1f;
     private bool agentReady = false;
-    public UnityAction<Unit> OnDie;
+    public UnityAction<Unit> OnDeath;
 
     void Awake()
     {
@@ -218,7 +218,10 @@ public class Unit : MonoBehaviour
         }
 
         float navMeshAgentSpeed = navMeshAgent.velocity.magnitude;
-        if (animator != null) animator.SetFloat("Speed", navMeshAgentSpeed * .05f);
+        if (animator != null)
+        {
+            animator.SetFloat("Speed", navMeshAgentSpeed * .05f);
+        }
 
         //float scalingCorrection = template.guardDistance * 2f * 1.05f;
         //if (visionCircle.transform.localScale.x != template.guardDistance * scalingCorrection)
@@ -296,15 +299,22 @@ public class Unit : MonoBehaviour
             }
             if (commandList.Count == 0)
             {
-                if (commandExecuted && state != UnitStates.Idleing && state != UnitStates.Guarding) AddCommand(stopCommand);
-                else yield return null;
+                if (commandExecuted && state != UnitStates.Idleing && state != UnitStates.Guarding)
+                {
+                    AddCommand(stopCommand);
+                }
+                else
+                {
+                    yield return null;
+                }
+
                 continue;
             }
             else
             {
                 if (commandExecuted)
                 {
-                    if(commandList.Count == 1 && (commandList[0].commandType == AICommand.CommandType.Stop || commandList[0].commandType == AICommand.CommandType.Guard))
+                    if (commandList.Count == 1 && (commandList[0].commandType == AICommand.CommandType.Stop || commandList[0].commandType == AICommand.CommandType.Guard))
                     {
                         yield return null;
                         continue;
@@ -339,7 +349,8 @@ public class Unit : MonoBehaviour
             return;
         }
 
-        print(name + " Execute cmd: " + command.commandType);
+
+        Debug.Log(string.Concat(name, " Execute cmd: ", command.commandType));
 
         commandExecuted = false;
         commandRecieved = true;
@@ -464,13 +475,20 @@ public class Unit : MonoBehaviour
     //the single blows
     private IEnumerator DealAttack()
     {
-        if (animator != null) animator.SetBool("DoAttack", true);
+        if (animator != null)
+        {
+            animator.SetBool("DoAttack", true);
+        }
+
         while (!IsDeadOrNull(targetOfAttack))
         {
             //Check if the target moved away for some reason
             if (Vector3.Distance(targetOfAttack.transform.position, transform.position) > template.engageDistance)
             {
-                if (animator != null) animator.SetBool("DoAttack", false);
+                if (animator != null)
+                {
+                    animator.SetBool("DoAttack", false);
+                }
 
                 MoveToTarget(targetOfAttack);
 
@@ -499,7 +517,10 @@ public class Unit : MonoBehaviour
 
             targetOfAttack.SufferAttack(template.attackPower);
         }
-        if (animator != null) animator.SetBool("DoAttack", false);
+        if (animator != null)
+        {
+            animator.SetBool("DoAttack", false);
+        }
 
         //only move into Guard if the attack was interrupted (dead target, etc.)
         if (state == UnitStates.Attacking)
@@ -536,16 +557,19 @@ public class Unit : MonoBehaviour
         commandExecuted = true;
 
         state = UnitStates.Dead; //still makes sense to set it, because somebody might be interacting with this script before it is destroyed
-        if (animator != null) animator.SetTrigger("DoDeath");
+        if (animator != null)
+        {
+            animator.SetTrigger("DoDeath");
+        }
 
         //Remove itself from the selection Platoon
         GameManager.Instance.RemoveFromSelection(this);
         SetSelected(false);
 
         //Fire an event so any Platoon containing this Unit will be notified
-        if (OnDie != null)
+        if (OnDeath != null)
         {
-            OnDie(this);
+            OnDeath(this);
         }
 
         //To avoid the object participating in any Raycast or tag search
@@ -562,7 +586,10 @@ public class Unit : MonoBehaviour
         Destroy(miniMapCircle);
         Destroy(navMeshAgent);
         Destroy(GetComponent<Collider>()); //will make it unselectable on click
-        if (animator != null) Destroy(animator, 10f); //give it some time to complete the animation
+        if (animator != null)
+        {
+            Destroy(animator, 10f); //give it some time to complete the animation
+        }
     }
 
     private IEnumerator VisionFade(float fadeTime, bool fadeOut)
@@ -584,7 +611,11 @@ public class Unit : MonoBehaviour
 
     private IEnumerator HideSeenThings(float fadeTime)
     {
-        if (fadeTime != 0f) yield return Yielders.Get(fadeTime);
+        if (fadeTime != 0f)
+        {
+            yield return Yielders.Get(fadeTime);
+        }
+
         float radius = template.guardDistance;
         template.guardDistance = 0f;
         fieldOfView.MarkTargetsVisibility();
@@ -636,11 +667,17 @@ public class Unit : MonoBehaviour
     {
         if (visibility)
         {
-            if (gameObject.layer == layerDefaultVisible) return;
+            if (gameObject.layer == layerDefaultVisible)
+            {
+                return;
+            }
         }
         else
         {
-            if (gameObject.layer == layerDefaultHidden) return;
+            if (gameObject.layer == layerDefaultHidden)
+            {
+                return;
+            }
         }
 
         IEnumerable<GameObject> parts = GetComponentsInChildren<Transform>().Where(form =>
@@ -653,13 +690,25 @@ public class Unit : MonoBehaviour
         {
             if (part.layer == layerDefaultVisible || part.layer == layerDefaultHidden)
             {
-                if (visibility) part.layer = layerDefaultVisible;
-                else part.layer = layerDefaultHidden;
+                if (visibility)
+                {
+                    part.layer = layerDefaultVisible;
+                }
+                else
+                {
+                    part.layer = layerDefaultHidden;
+                }
             }
             else
             {
-                if (visibility) part.layer = layerMiniMapVisible;
-                else part.layer = layerMiniMapHidden;
+                if (visibility)
+                {
+                    part.layer = layerMiniMapVisible;
+                }
+                else
+                {
+                    part.layer = layerMiniMapHidden;
+                }
             }
         }
     }

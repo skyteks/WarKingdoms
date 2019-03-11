@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 /// <summary>
 /// This class adds some extension methods for the Transform component
@@ -46,7 +45,7 @@ public static class Transform_Extension
     /// </summary>
     /// <param name="transform">The transform you want to search from</param>
     /// <returns>Array of direct children</returns>
-    public static Transform[] GetAllChildren(this Transform transform)
+    public static Transform[] GetChildren(this Transform transform)
     {
         Transform[] children = new Transform[transform.childCount];
         for (int i = 0; i < transform.childCount; i++)
@@ -66,12 +65,17 @@ public static class Transform_Extension
     {
         var result = transform.Find(name);
         if (result != null)
+        {
             return result;
+        }
+
         foreach (Transform child in transform)
         {
             result = child.FindDeepChild(name);
             if (result != null)
+            {
                 return result;
+            }
         }
         return null;
     }
@@ -101,5 +105,57 @@ public static class Transform_Extension
             }
         }
         return closestTransform;
+    }
+
+    /// <summary>
+    /// Find the center point in collection
+    /// </summary>
+    /// <param name="transforms"></param>
+    /// <returns></returns>
+    public static Vector3 FindCentroid(this IList<Transform> transforms)
+    {
+        if (transforms.Count == 0)
+        {
+            throw new System.ArgumentOutOfRangeException();
+        }
+
+        if (transforms.Count == 1)
+        {
+            return transforms[0].transform.position;
+        }
+
+        Vector3 minPoint = transforms[0].transform.position;
+        Vector3 maxPoint = transforms[0].transform.position;
+
+        foreach (Transform transform in transforms)
+        {
+            Vector3 point = transform.position;
+            if (point.x < minPoint.x)
+            {
+                minPoint.x = point.x;
+            }
+            if (point.x > maxPoint.x)
+            {
+                maxPoint.x = point.x;
+            }
+            if (point.y < minPoint.y)
+            {
+                minPoint.y = point.y;
+            }
+            if (point.y > maxPoint.y)
+            {
+                maxPoint.y = point.y;
+            }
+            if (point.z < minPoint.z)
+            {
+                minPoint.z = point.z;
+            }
+            if (point.z > maxPoint.z)
+            {
+                maxPoint.z = point.z;
+            }
+        }
+        Vector3 centroid = minPoint + (maxPoint - minPoint) * 0.5f;
+        return centroid;
     }
 }

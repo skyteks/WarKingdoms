@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
+﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 /// <summary>
 /// Movement and selection handling for a list of Units
@@ -45,7 +43,7 @@ public class Platoon : MonoBehaviour
     {
         for (int i = 0; i < units.Count; i++)
         {
-            units[i].OnDie += UnitDeadHandler;
+            units[i].OnDeath += UnitDeadHandler;
         }
     }
 
@@ -78,12 +76,28 @@ public class Platoon : MonoBehaviour
         //change the position for the command for each unit
         //so they move to a formation position rather than in the exact same place
         Vector3 destination = command.destination.Value;
-        Vector3 origin = units.Select(unit => unit.transform.position).FindCentroid();
+        Vector3 origin;
+        if (units.Count == 1)
+        {
+            origin = units[0].transform.position;
+        }
+        else
+        {
+            Vector3[] positions = new Vector3[units.Count];
+            for (int i = 0; i < units.Count; i++)
+            {
+                positions[i] = units[i].transform.position;
+            }
+            origin = positions.FindCentroid();
+        }
         Quaternion rotation = Quaternion.LookRotation((destination - origin).normalized);
         Vector3[] offsets = GetFormationOffsets();
 #if UNITY_EDITOR
         debugCommandLocations = new Location[offsets.Length];
-        for (int i = 0; i < offsets.Length; i++) debugCommandLocations[i] = new Location(destination + rotation * offsets[i], rotation);
+        for (int i = 0; i < offsets.Length; i++)
+        {
+            debugCommandLocations[i] = new Location(destination + rotation * offsets[i], rotation);
+        }
 #endif
 
         List<Unit> sortedUnits = units.OrderBy(unit => Vector3.Distance(unit.transform.position, origin)).ToList();
@@ -110,7 +124,7 @@ public class Platoon : MonoBehaviour
 #if UNITY_EDITOR
         debugCommandLocations = new Location[0];
 #endif
-        unitToAdd.OnDie += UnitDeadHandler;
+        unitToAdd.OnDeath += UnitDeadHandler;
         units.Add(unitToAdd);
     }
 
@@ -125,7 +139,7 @@ public class Platoon : MonoBehaviour
         if (isThere)
         {
             units.Remove(unitToRemove);
-            unitToRemove.OnDie -= UnitDeadHandler;
+            unitToRemove.OnDeath -= UnitDeadHandler;
         }
 
         return isThere;
@@ -138,7 +152,7 @@ public class Platoon : MonoBehaviour
 #endif
         for (int i = 0; i < units.Count; i++)
         {
-            units[i].OnDie -= UnitDeadHandler;
+            units[i].OnDeath -= UnitDeadHandler;
         }
         units.Clear();
     }
@@ -250,7 +264,10 @@ public class Platoon : MonoBehaviour
                 break;
             case FormationModes.HexGrid:
                 {
-                    if (caseCounter == 0) goto case FormationModes.Rectangle;
+                    if (caseCounter == 0)
+                    {
+                        goto case FormationModes.Rectangle;
+                    }
 
                     float halfFormationOffset = formationOffset / 2f;
                     float triangleHeightOffset = Mathf.Sqrt(Mathf.Pow(formationOffset, 2f) - Mathf.Pow(halfFormationOffset, 2f));

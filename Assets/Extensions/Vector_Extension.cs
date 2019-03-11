@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -245,49 +243,98 @@ public static class Vector_Extension
     /// </summary>
     /// <param name="points"></param>
     /// <returns></returns>
-    public static Vector2 FindCentroid(this IEnumerable<Vector2> points)
+    public static Vector2 FindCentroid(this IList<Vector2> points)
     {
-        if (points.Count() == 0) throw new System.ArgumentOutOfRangeException();
-        if (points.Count() == 1) return points.First();
+        if (points.Count == 0)
+        {
+            throw new System.ArgumentOutOfRangeException();
+        }
 
-        Vector2 minPoint = points.First();
-        Vector2 maxPoint = points.First();
+        if (points.Count == 1)
+        {
+            return points[0];
+        }
+
+        Vector2 minPoint = points[0];
+        Vector2 maxPoint = points[0];
 
         foreach (Vector3 point in points)
         {
-            if (point.x < minPoint.x) minPoint.x = point.x;
-            if (point.x > maxPoint.x) maxPoint.x = point.x;
-            if (point.y < minPoint.y) minPoint.y = point.y;
-            if (point.y > maxPoint.y) maxPoint.y = point.y;
+            if (point.x < minPoint.x)
+            {
+                minPoint.x = point.x;
+            }
+
+            if (point.x > maxPoint.x)
+            {
+                maxPoint.x = point.x;
+            }
+
+            if (point.y < minPoint.y)
+            {
+                minPoint.y = point.y;
+            }
+
+            if (point.y > maxPoint.y)
+            {
+                maxPoint.y = point.y;
+            }
         }
         Vector2 centroid = minPoint + (maxPoint - minPoint) * 0.5f;
         return centroid;
     }
 
     /// <summary>
-    /// Find closest point in collection
+    /// Find the center point in collection
     /// </summary>
     /// <param name="points"></param>
     /// <returns></returns>
-    public static Vector3 FindCentroid(this IEnumerable<Vector3> points)
+    public static Vector3 FindCentroid(this IList<Vector3> points)
     {
-        if (points.Count() == 0) throw new System.ArgumentOutOfRangeException();
-        if (points.Count() == 1) return points.First();
-        //Bounds bounds = new Bounds(points.First(), Vector3.zero);
-        //foreach (Vector3 point in points) bounds.Encapsulate(point);
-        //return bounds.center;
+        if (points.Count == 0)
+        {
+            throw new System.ArgumentOutOfRangeException();
+        }
 
-        Vector3 minPoint = points.First();
-        Vector3 maxPoint = points.First();
+        if (points.Count == 1)
+        {
+            return points[0];
+        }
+
+        Vector3 minPoint = points[0];
+        Vector3 maxPoint = points[0];
 
         foreach (Vector3 point in points)
         {
-            if (point.x < minPoint.x) minPoint.x = point.x;
-            if (point.x > maxPoint.x) maxPoint.x = point.x;
-            if (point.y < minPoint.y) minPoint.y = point.y;
-            if (point.y > maxPoint.y) maxPoint.y = point.y;
-            if (point.z < minPoint.z) minPoint.z = point.z;
-            if (point.z > maxPoint.z) maxPoint.z = point.z;
+            if (point.x < minPoint.x)
+            {
+                minPoint.x = point.x;
+            }
+
+            if (point.x > maxPoint.x)
+            {
+                maxPoint.x = point.x;
+            }
+
+            if (point.y < minPoint.y)
+            {
+                minPoint.y = point.y;
+            }
+
+            if (point.y > maxPoint.y)
+            {
+                maxPoint.y = point.y;
+            }
+
+            if (point.z < minPoint.z)
+            {
+                minPoint.z = point.z;
+            }
+
+            if (point.z > maxPoint.z)
+            {
+                maxPoint.z = point.z;
+            }
         }
         Vector3 centroid = minPoint + (maxPoint - minPoint) * 0.5f;
         return centroid;
@@ -295,7 +342,11 @@ public static class Vector_Extension
 
     public static int FindClosestIndexToPoint(this IList<Vector2> points, Vector2 otherPoint)
     {
-        if (points.Count == 0) throw new System.ArgumentOutOfRangeException();
+        if (points.Count == 0)
+        {
+            throw new System.ArgumentOutOfRangeException();
+        }
+
         int closestIndex = -1;
         float closestDistance = float.PositiveInfinity;
         for (int i = 0; i < points.Count; i++)
@@ -312,7 +363,11 @@ public static class Vector_Extension
 
     public static int FindClosestIndexToPoint(this IList<Vector3> points, Vector3 otherPoint)
     {
-        if (points.Count == 0) throw new System.ArgumentOutOfRangeException();
+        if (points.Count == 0)
+        {
+            throw new System.ArgumentOutOfRangeException();
+        }
+
         int closestIndex = -1;
         float closestDistance = float.PositiveInfinity;
         for (int i = 0; i < points.Count; i++)

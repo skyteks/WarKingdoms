@@ -1,7 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
 
 /// <summary>
 /// All arround game state manager
@@ -26,13 +25,38 @@ public class GameManager : Singleton<GameManager>
     private Platoon selectedPlatoon;
     private UnityEngine.Playables.PlayableDirector activeDirector;
 
-    private void Awake()
+    private bool showHealthbars;
+
+    void Awake()
     {
         selectedPlatoon = GetComponent<Platoon>();
         Cursor.lockState = CursorLockMode.Confined;
 #if UNITY_EDITOR
-        if (editorFrameRateLock30) Application.targetFrameRate = 30;//just to keep things "smooth" during presentations
+        if (editorFrameRateLock30)
+        {
+            Application.targetFrameRate = 30;//just to keep things "smooth" during presentations
+        }
 #endif
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftAlt))
+        {
+            showHealthbars = !showHealthbars;
+            if (showHealthbars)
+            {
+                foreach (var unit in GetAllSelectableUnits())
+                {
+                    UIManager.Instance.AddHealthbar(unit);
+                    unit.OnDeath += UIManager.Instance.RemoveHealthbar;
+                }
+            }
+            else
+            {
+                UIManager.Instance.ClearHealthbars();
+            }
+        }
     }
 
     public void IssueCommand(AICommand cmd)
@@ -71,7 +95,11 @@ public class GameManager : Singleton<GameManager>
 
     public bool AddToSelection(Unit newSelectedUnit)
     {
-        if (selectedPlatoon.IncludesUnit(newSelectedUnit)) return false;
+        if (selectedPlatoon.IncludesUnit(newSelectedUnit))
+        {
+            return false;
+        }
+
         selectedPlatoon.AddUnit(newSelectedUnit);
         newSelectedUnit.SetSelected(true);
         UIManager.Instance.AddToSelection(newSelectedUnit);
@@ -99,7 +127,11 @@ public class GameManager : Singleton<GameManager>
 
     public void ClearSelection()
     {
-        foreach (Unit unit in selectedPlatoon.units) unit.SetSelected(false);
+        foreach (Unit unit in selectedPlatoon.units)
+        {
+            unit.SetSelected(false);
+        }
+
         selectedPlatoon.Clear();
 
         UIManager.Instance.ClearSelection();

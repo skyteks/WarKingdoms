@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -23,13 +22,19 @@ public class ViewPort : MonoBehaviour
     void OnEnable()
     {
         MeshRenderer render = GetComponent<MeshRenderer>();
-        if (render != null) render.enabled = true;
+        if (render != null)
+        {
+            render.enabled = true;
+        }
     }
 
     void OnDisable()
     {
         MeshRenderer render = GetComponent<MeshRenderer>();
-        if (render != null) render.enabled = false;
+        if (render != null)
+        {
+            render.enabled = false;
+        }
     }
 
     void LateUpdate()
@@ -43,7 +48,11 @@ public class ViewPort : MonoBehaviour
     void CreateViewPortPlaneMesh()
     {
         Camera mainCamera = CameraManager.Instance.gameplayCamera;
-        if (mainCamera == null) return;
+        if (mainCamera == null)
+        {
+            return;
+        }
+
         Vector2 resolution = new Vector2(Screen.width, Screen.height);
         Vector3 hitPoint;
         CameraManager.GetCameraScreenPointOnGroundPlane(mainCamera, resolution.ToScale(mainCamera.rect.position), out hitPoint);
@@ -86,14 +95,23 @@ public class ViewPort : MonoBehaviour
             topLeft,
             topRight
         }.ToList();
-        List<Vector3> normalArray = Vector3.up.ToListOfMultiple(vertexArray.Count);
+        List<Vector3> normalArray = new List<Vector3>(vertexArray.Count);
+        for (int i = 0; i < vertexArray.Count; i++)
+        {
+            normalArray.Add(Vector3.up);
+        }
+
         int[] indexArray = new int[] { 0, 4, 6, 2, 0, 1, 5, 4, 5, 1, 3, 7, 6, 7, 3, 2 }.Reverse().ToArray();
         for (int i = 0; i < vertexArray.Count; i++)
         {
             vertexArray[i] = mainCamera.transform.InverseTransformPoint(vertexArray[i]);
         }
 
-        if (viewportMeshFilter.sharedMesh == null) viewportMeshFilter.sharedMesh = new Mesh();
+        if (viewportMeshFilter.sharedMesh == null)
+        {
+            viewportMeshFilter.sharedMesh = new Mesh();
+        }
+
         Mesh mesh = viewportMeshFilter.sharedMesh;
         mesh.name = "View Port Mesh (Generated)";
         mesh.Clear();

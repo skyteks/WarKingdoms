@@ -21,13 +21,6 @@ public static class List_Extension
         }
     }
 
-    public static List<T> ToListOfMultiple<T>(this T item, int count)
-    {
-        List<T> list = new List<T>(count);
-        for (int i = 0; i < count; i++) list.Add(item);
-        return list;
-    }
-
     public static bool ScrambledEqualsFast<T>(this IList<T> list1, IList<T> list2, IEqualityComparer<T> comparer = null)
     {
         if (list1.Count != list2.Count) return false;
