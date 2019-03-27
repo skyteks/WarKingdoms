@@ -5,7 +5,7 @@ using UnityEngine;
 /// Order for Units to move or attack somewhere
 /// </summary>
 [Serializable]
-public class AICommand
+public struct AICommand
 {
     public enum CommandType
     {
@@ -20,7 +20,7 @@ public class AICommand
 
     public CommandType commandType;
 
-    public Vector3? destination;
+    public Vector3 destination;
     public Unit target;
 
     public AICommand(CommandType ty, Vector3 v)
@@ -33,14 +33,14 @@ public class AICommand
     public AICommand(CommandType ty, Unit ta)
     {
         commandType = ty;
-        destination = null;
+        destination = Vector3.one * float.NaN;
         target = ta;
     }
 
     public AICommand(CommandType ty)
     {
         commandType = ty;
-        destination = null;
+        destination = Vector3.one * float.NaN;
         target = null;
     }
 }

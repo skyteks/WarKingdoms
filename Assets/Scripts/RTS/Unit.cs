@@ -162,10 +162,10 @@ public class Unit : MonoBehaviour
                 {
                     if (commandList.Count >= 2 && commandList[1].commandType == AICommand.CommandType.Guard)
                     {
-                        if (Vector3.Distance(commandList[1].destination.Value, transform.position) > template.guardDistance * 2f)
+                        if (Vector3.Distance(commandList[1].destination, transform.position) > template.guardDistance * 2f)
                         {
                             commandExecuted = true;
-                            InsertCommand(new AICommand(AICommand.CommandType.MoveTo, commandList[1].destination.Value), 1);
+                            InsertCommand(new AICommand(AICommand.CommandType.MoveTo, commandList[1].destination), 1);
                         }
                     }
                     //Check for distance from target
@@ -237,7 +237,7 @@ public class Unit : MonoBehaviour
             && navMeshAgent.isOnNavMesh
             && navMeshAgent.hasPath)
         {
-            //UnityEditor.Handles.color = Random.onUnitSphere.ToVector4(1f).ToColor();
+            UnityEditor.Handles.color = Random.onUnitSphere.ToVector4(1f).ToColor();
             UnityEditor.Handles.DrawLine(transform.position, navMeshAgent.destination);
         }
 
@@ -357,11 +357,11 @@ public class Unit : MonoBehaviour
         switch (command.commandType)
         {
             case AICommand.CommandType.MoveTo:
-                MoveToSpot(command.destination.Value);
+                MoveToSpot(command.destination);
                 break;
 
             case AICommand.CommandType.AttackMoveTo:
-                AttackMoveToSpot(command.destination.Value);
+                AttackMoveToSpot(command.destination);
                 break;
 
             case AICommand.CommandType.Stop:

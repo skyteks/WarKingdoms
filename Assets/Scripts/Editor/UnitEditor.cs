@@ -38,7 +38,7 @@ public class UnitEditor : Editor
             case AICommand.CommandType.MoveTo:
             case AICommand.CommandType.AttackMoveTo:
             case AICommand.CommandType.Guard:
-                EditorGUI.Vector3Field(rects[1], "", command.destination.Value);
+                EditorGUI.Vector3Field(rects[1], "", command.destination);
                 break;
             default:
                 break;

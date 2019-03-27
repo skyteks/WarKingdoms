@@ -64,7 +64,7 @@ public class Platoon : MonoBehaviour
 #if UNITY_EDITOR
         debugCommandLocations = new Location[0];
 #endif
-        if (!command.destination.HasValue)
+        if (command.destination.IsNaN())
         {
             for (int i = 0; i < units.Count; i++)
             {
@@ -75,7 +75,7 @@ public class Platoon : MonoBehaviour
         }
         //change the position for the command for each unit
         //so they move to a formation position rather than in the exact same place
-        Vector3 destination = command.destination.Value;
+        Vector3 destination = command.destination;
         Vector3 origin;
         if (units.Count == 1)
         {
