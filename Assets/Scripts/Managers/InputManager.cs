@@ -140,11 +140,29 @@ public class InputManager : Singleton<InputManager>
                     bool moveCommand = false;
                     if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitsLayerMask))
                     {
-                        Unit targetOfAttack = hit.collider.GetComponent<Unit>();
-                        if (targetOfAttack != null && targetOfAttack.faction != GameManager.Instance.faction)
+                        Unit targetUnit = hit.collider.GetComponent<Unit>();
+                        if (targetUnit != null)
                         {
-                            GameManager.Instance.AttackTarget(targetOfAttack);
-                            Debug.DrawLine(ray.origin, hit.point, Color.red, 1f);
+                            if (targetUnit.faction != GameManager.Instance.faction)
+                            {
+                                GameManager.Instance.AttackTarget(targetUnit);
+                                Debug.DrawLine(ray.origin, hit.point, Color.red, 1f);
+                            }
+                            else
+                            {
+                                bool forceCommand = Input.GetKey(KeyCode.LeftControl);
+                                bool attackComand = Input.GetButton("Attack");
+                                if (forceCommand && attackComand)
+                                {
+                                    GameManager.Instance.AttackTarget(targetUnit);
+                                    Debug.DrawLine(ray.origin, hit.point, Color.red, 1f);
+                                }
+                                else
+                                {
+                                    //TODO: this should be a follow command
+                                    moveCommand = true;
+                                }
+                            }
                         }
                         else
                         {
@@ -159,15 +177,16 @@ public class InputManager : Singleton<InputManager>
                     {
                         Vector3 hitPoint;
                         CameraManager.GetCameraScreenPointOnGroundPlane(mainCamera, Input.mousePosition, out hitPoint);
-                        if (!Input.GetButton("Attack"))
-                        {
-                            GameManager.Instance.MoveSelectedUnitsTo(hitPoint);
-                            Debug.DrawLine(ray.origin, hitPoint, Color.green, 1f);
-                        }
-                        else
+                        bool attackComand = Input.GetButton("Attack");
+                        if (attackComand)
                         {
                             GameManager.Instance.AttackMoveSelectedUnitsTo(hitPoint);
                             Debug.DrawLine(ray.origin, hitPoint, Color.Lerp(Color.yellow, Color.red, 0.6f), 1f);
+                        }
+                        else
+                        {
+                            GameManager.Instance.MoveSelectedUnitsTo(hitPoint);
+                            Debug.DrawLine(ray.origin, hitPoint, Color.green, 1f);
                         }
                     }
                 }

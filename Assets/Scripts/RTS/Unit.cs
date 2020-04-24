@@ -153,7 +153,7 @@ public class Unit : MonoBehaviour
 
             case UnitStates.MovingToTarget:
                 //check if target has been killed by somebody else
-                if (IsDeadOrNull(targetOfAttack) || targetOfAttack.faction == faction)
+                if (IsDeadOrNull(targetOfAttack))
                 {
                     commandExecuted = true;
                     //Idle();
@@ -247,6 +247,11 @@ public class Unit : MonoBehaviour
         UnityEditor.Handles.DrawWireDisc(transform.position, Vector3.up, template.guardDistance);
     }
 #endif
+
+    public static bool IsDeadOrNull(Unit unit)
+    {
+        return (unit == null || unit.state == UnitStates.Dead);
+    }
 
     private static void SetLayers()
     {
@@ -350,7 +355,7 @@ public class Unit : MonoBehaviour
         }
 
 
-        Debug.Log(string.Concat(name, " Execute cmd: ", command.commandType));
+        //Debug.Log(string.Concat(name, " Execute cmd: ", command.commandType));
 
         commandExecuted = false;
         commandRecieved = true;
@@ -441,8 +446,11 @@ public class Unit : MonoBehaviour
             targetOfAttack = target;
             agentReady = false;
 
-            navMeshAgent.isStopped = false;
-            navMeshAgent.SetDestination(target.transform.position);
+            if (navMeshAgent != null) //can be null after death
+            {
+                navMeshAgent.isStopped = false;
+                navMeshAgent.SetDestination(target.transform.position);
+            }
         }
         else
         {
@@ -495,7 +503,7 @@ public class Unit : MonoBehaviour
                 yield break;
             }
 
-            yield return new WaitForSeconds(1f / template.attackSpeed);
+            yield return new WaitForSeconds((1f / template.attackSpeed) * (1f / 3f));
 
             //check is performed after the wait, because somebody might have killed the target in the meantime
             if (IsDeadOrNull(targetOfAttack))
@@ -503,10 +511,10 @@ public class Unit : MonoBehaviour
                 break;
             }
 
-            if (targetOfAttack.faction == faction)
-            {
-                break;
-            }
+            //if (targetOfAttack.faction == faction)
+            //{
+            //    break;
+            //}
 
             if (state == UnitStates.Dead)
             {
@@ -516,6 +524,8 @@ public class Unit : MonoBehaviour
             //Too far away check moved to before waittime
 
             targetOfAttack.SufferAttack(template.attackPower);
+
+            yield return new WaitForSeconds((1f / template.attackSpeed) * (1f / 3f) * 2f);
         }
         if (animator != null)
         {
@@ -579,7 +589,6 @@ public class Unit : MonoBehaviour
         globalUnits[faction].Remove(this);
 
         //Remove unneeded Components
-        //Destroy(sightCircle);
         StartCoroutine(HideSeenThings(visionFadeTime / 2f));
         StartCoroutine(VisionFade(visionFadeTime, true));
         Destroy(selectionCircle);
@@ -620,11 +629,6 @@ public class Unit : MonoBehaviour
         template.guardDistance = 0f;
         fieldOfView.MarkTargetsVisibility();
         template.guardDistance = radius;
-    }
-
-    private static bool IsDeadOrNull(Unit unit)
-    {
-        return (unit == null || unit.state == UnitStates.Dead);
     }
 
     private Unit GetNearestHostileUnit()
