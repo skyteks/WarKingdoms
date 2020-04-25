@@ -591,14 +591,32 @@ public class Unit : MonoBehaviour
         //Remove unneeded Components
         StartCoroutine(HideSeenThings(visionFadeTime / 2f));
         StartCoroutine(VisionFade(visionFadeTime, true));
-        Destroy(selectionCircle);
-        Destroy(miniMapCircle);
-        Destroy(navMeshAgent);
-        Destroy(GetComponent<Collider>()); //will make it unselectable on click
-        if (animator != null)
+        //Destroy(selectionCircle);
+        //Destroy(miniMapCircle);
+        //Destroy(navMeshAgent);
+        //Destroy(GetComponent<Collider>()); //will make it unselectable on click
+        //if (animator != null)
+        //{
+        //    Destroy(animator, 10f); //give it some time to complete the animation
+        //}
+        selectionCircle.enabled = false;
+        miniMapCircle.enabled = false;
+        navMeshAgent.enabled = false;
+        GetComponent<Collider>().enabled = false; //will make it unselectable on click
+        StartCoroutine(DecayIntoGround());
+    }
+
+    private IEnumerator DecayIntoGround()
+    {
+        yield return Yielders.Get(5f);
+        float startY = transform.position.y;
+        float depth = 1f;
+        while (transform.position.y > startY - depth)
         {
-            Destroy(animator, 10f); //give it some time to complete the animation
+            transform.position = Vector3.MoveTowards(transform.position, transform.position.ToWithY(startY - depth), Time.deltaTime * 0.1f);
+            yield return null;
         }
+        Destroy(gameObject);
     }
 
     private IEnumerator VisionFade(float fadeTime, bool fadeOut)
