@@ -4698,6 +4698,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 379a564e6a5daa0468044e108c5a7a1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  healthColorGreen: {r: 0.053549763, g: 0.7058823, b: 0, a: 1}
+  healthColorRed: {r: 1, g: 0, b: 0, a: 1}
+  healthColorOrange: {r: 1, g: 0.585702, b: 0, a: 1}
+  healthbarColoringMode: 1
   selectionRectangle: {fileID: 1935518528}
   selectionLayoutGroup: {fileID: 359466322}
   selectedUnitUIPrefab: {fileID: 1415296774041510, guid: dd6331a2c470fbd40bac3af10a82a1db,
@@ -6196,6 +6200,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6113541555682152409, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: state
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a6476a774e7514469db4f7665d98ac2, type: 3}

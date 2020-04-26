@@ -28,7 +28,8 @@ public class Unit : MonoBehaviour
         Faction2,
     }
 
-    public static Dictionary<Factions, List<Unit>> globalUnits;
+    public static Dictionary<Factions, List<Unit>> globalUnitsDict;
+    public static List<Unit> globalUnitsList;
     private static int layerDefaultVisible;
     private static int layerDefaultHidden;
     private static int layerMiniMapVisible;
@@ -36,12 +37,13 @@ public class Unit : MonoBehaviour
 
     static Unit()
     {
-        globalUnits = new Dictionary<Factions, List<Unit>>();
+        globalUnitsDict = new Dictionary<Factions, List<Unit>>();
         var factions = System.Enum.GetValues(typeof(Factions)).Cast<Factions>();
         foreach (var faction in factions)
         {
-            globalUnits.Add(faction, new List<Unit>());
+            globalUnitsDict.Add(faction, new List<Unit>());
         }
+        globalUnitsList = new List<Unit>();
     }
 
     //[ReadOnly]
@@ -85,10 +87,10 @@ public class Unit : MonoBehaviour
         //float rndmFactor = navMeshAgent.speed * .15f;
         //navMeshAgent.speed += Random.Range(-rndmFactor, rndmFactor);
 
-        globalUnits[faction].Add(this);
+        globalUnitsDict[faction].Add(this);
+        globalUnitsList.Add(this);
 
         template = template.Clone(); //we copy the template otherwise it's going to overwrite the original asset!
-
 
         //Set some defaults, including the default state
         SetSelected(false);
@@ -586,7 +588,8 @@ public class Unit : MonoBehaviour
         gameObject.tag = "Untagged";
         gameObject.layer = 0;
 
-        globalUnits[faction].Remove(this);
+        globalUnitsDict[faction].Remove(this);
+        globalUnitsList.Remove(this);
 
         //Remove unneeded Components
         StartCoroutine(HideSeenThings(visionFadeTime / 2f));

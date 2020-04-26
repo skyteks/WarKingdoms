@@ -7,6 +7,18 @@ using UnityEngine.UI;
 /// </summary>
 public class UIManager : Singleton<UIManager>
 {
+    public enum HealthbarColoringMode
+    {
+        FriendFoe,
+        HealthPercentage,
+        Teamcolor,
+    }
+
+    public Color healthColorGreen;
+    public Color healthColorRed;
+    public Color healthColorOrange;
+    public HealthbarColoringMode healthbarColoringMode;
+
     public Image selectionRectangle;
     public GridLayoutGroup selectionLayoutGroup;
     public GameObject selectedUnitUIPrefab;
@@ -51,8 +63,17 @@ public class UIManager : Singleton<UIManager>
         {
             Unit unit = child.GetComponent<UnitButton>().unit;
             child.FindDeepChild("Portrait").GetComponent<Image>().sprite = unit.template.icon;
-            child.FindDeepChild("HealthbarSlice").GetComponent<Image>().fillAmount = (float)unit.template.health / (float)unit.template.original.health;
-            //child.FindDeepChild("HealthbarSlice").GetComponentInChildren<Text>().text = unit.template.health + " / " + unit.template.original.health;
+            Image healthbarSlice = child.FindDeepChild("HealthbarSlice").GetComponent<Image>();
+            healthbarSlice.fillAmount = (float)unit.template.health / (float)unit.template.original.health;
+            if (healthbarSlice.fillAmount > 0.5f)
+            {
+                healthbarSlice.color = Color.Lerp(healthColorOrange, healthColorGreen, healthbarSlice.fillAmount.LinearRemap(0.5f, 1f));
+            }
+            else
+            {
+                healthbarSlice.color = Color.Lerp(healthColorRed, healthColorOrange, healthbarSlice.fillAmount.LinearRemap(0f, 0.5f));
+            }
+            break;
         }
     }
 
@@ -80,11 +101,11 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
-    public void AddHealthbar(Unit newUnit)
+    public void AddHealthbar(Unit unit)
     {
         GameObject holder = Instantiate<GameObject>(healthbarUIPrefab, healthbarsGroup.transform);
         holder.GetComponent<UIAnchor>().canvas = healthbarsGroup;
-        holder.GetComponent<UIAnchor>().objectToFollow = newUnit.transform;
+        holder.GetComponent<UIAnchor>().objectToFollow = unit.transform;
     }
 
     public void UpdateHealthbars()
@@ -93,8 +114,27 @@ public class UIManager : Singleton<UIManager>
         foreach (var child in children)
         {
             Unit unit = child.GetComponent<UIAnchor>().objectToFollow.GetComponent<Unit>();
-            child.FindDeepChild("HealthbarSlice").GetComponent<Image>().fillAmount = (float)unit.template.health / (float)unit.template.original.health;
-            //child.FindDeepChild("HealthbarSlice").GetComponentInChildren<Text>().text = unit.template.health + " / " + unit.template.original.health;
+            Image healthbarSlice = child.FindDeepChild("HealthbarSlice").GetComponent<Image>();
+            healthbarSlice.fillAmount = (float)unit.template.health / (float)unit.template.original.health;
+            switch (healthbarColoringMode)
+            {
+                case HealthbarColoringMode.FriendFoe:
+                    healthbarSlice.color = unit.faction == GameManager.Instance.faction ? healthColorGreen : healthColorRed;
+                    break;
+                case HealthbarColoringMode.HealthPercentage:
+                    if (healthbarSlice.fillAmount > 0.5f)
+                    {
+                        healthbarSlice.color = Color.Lerp(healthColorOrange, healthColorGreen, healthbarSlice.fillAmount.LinearRemap(0.5f, 1f));
+                    }
+                    else
+                    {
+                        healthbarSlice.color = Color.Lerp(healthColorRed, healthColorOrange, healthbarSlice.fillAmount.LinearRemap(0f, 0.5f));
+                    }
+                    break;
+                case HealthbarColoringMode.Teamcolor:
+                    //TODO: add teamcolor
+                    break;
+            }
         }
     }
 

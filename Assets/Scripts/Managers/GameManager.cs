@@ -46,7 +46,7 @@ public class GameManager : Singleton<GameManager>
             showHealthbars = !showHealthbars;
             if (showHealthbars)
             {
-                foreach (var unit in GetAllSelectableUnits())
+                foreach (Unit unit in GetAllUnits())
                 {
                     UIManager.Instance.AddHealthbar(unit);
                     unit.OnDeath += UIManager.Instance.RemoveHealthbar;
@@ -158,12 +158,17 @@ public class GameManager : Singleton<GameManager>
     public List<Unit> GetAllSelectableUnits()
     {
         //return FindObjectsOfType<Unit>().Where(unit => unit.template.faction == faction).ToList();
-        return Unit.globalUnits[faction];
+        return Unit.globalUnitsDict[faction];
     }
 
     public List<Unit> GetAllNonSelectableUnits()
     {
-        return FindObjectsOfType<Unit>().Where(unit => unit.faction != faction).ToList();
+        return Unit.globalUnitsList.Where(unit => unit.faction != faction).ToList();
+    }
+
+    public List<Unit> GetAllUnits()
+    {
+        return Unit.globalUnitsList;
     }
 
     //Called by the TimeMachine Clip (of type Pause)
