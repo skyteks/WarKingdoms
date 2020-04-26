@@ -563,6 +563,10 @@ public class Unit : MonoBehaviour
     [ContextMenu("Die")]
     private void Die()
     {
+        if (Application.isEditor && !Application.isPlaying)
+        {
+            return;
+        }
         template.health = 0;
 
         commandList.Clear();
