@@ -14,9 +14,9 @@ public class UIManager : Singleton<UIManager>
         Teamcolor,
     }
 
-    public Color healthColorGreen;
-    public Color healthColorRed;
-    public Color healthColorOrange;
+    public Color healthColorGreen = Color.green;
+    public Color healthColorRed = Color.red;
+    public Color healthColorOrange = Color.Lerp(Color.red, Color.yellow, 0.5f);
     public HealthbarColoringMode healthbarColoringMode;
 
     public Image selectionRectangle;

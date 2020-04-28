@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -21,6 +19,13 @@ public class InputManager : Singleton<InputManager>
 
     public LayerMask unitsLayerMask;
     public LayerMask enemiesLayerMask;
+    public LayerMask groundLayerMask;
+
+    [Space]
+
+    public GameObject movementOrderCursor;
+    public Color moveCommandColor = Color.green;
+    public Color attackMoveCommandColor = Color.red;
 
     //private Vector3 initialSelectionWorldPos, currentSelectionWorldPos; //world coordinates //currently unused
     private Vector2 LMBDownMousePos, currentMousePos; //screen coordinates
@@ -32,7 +37,16 @@ public class InputManager : Singleton<InputManager>
 
     void Awake()
     {
-        if (mainCamera == null) mainCamera = Camera.main;//GameObject.FindObjectOfType<Camera>();
+        if (mainCamera == null)
+        {
+            mainCamera = Camera.main;//GameObject.FindObjectOfType<Camera>();
+        }
+    }
+
+    void Start()
+    {
+        GameObject movementOrderCursorInstance = Instantiate<GameObject>(movementOrderCursor);
+        movementOrderCursor = movementOrderCursorInstance;
     }
 
     void Update()
@@ -176,17 +190,21 @@ public class InputManager : Singleton<InputManager>
                     if (moveCommand)
                     {
                         Vector3 hitPoint;
-                        CameraManager.GetCameraScreenPointOnGroundPlane(mainCamera, Input.mousePosition, out hitPoint);
-                        bool attackComand = Input.GetButton("Attack");
-                        if (attackComand)
+                        if (CameraManager.GetCameraScreenPointOnGround(mainCamera, Input.mousePosition, out hitPoint, groundLayerMask))
                         {
-                            GameManager.Instance.AttackMoveSelectedUnitsTo(hitPoint);
-                            Debug.DrawLine(ray.origin, hitPoint, Color.Lerp(Color.yellow, Color.red, 0.6f), 1f);
-                        }
-                        else
-                        {
-                            GameManager.Instance.MoveSelectedUnitsTo(hitPoint);
-                            Debug.DrawLine(ray.origin, hitPoint, Color.green, 1f);
+                            bool attackComand = Input.GetButton("Attack");
+                            if (attackComand)
+                            {
+                                GameManager.Instance.AttackMoveSelectedUnitsTo(hitPoint);
+                                Debug.DrawLine(ray.origin, hitPoint, Color.Lerp(Color.yellow, Color.red, 0.6f), 1f);
+                                AnimateMoveOrderCursor(hitPoint, attackMoveCommandColor);
+                            }
+                            else
+                            {
+                                GameManager.Instance.MoveSelectedUnitsTo(hitPoint);
+                                Debug.DrawLine(ray.origin, hitPoint, Color.green, 1f);
+                                AnimateMoveOrderCursor(hitPoint, moveCommandColor);
+                            }
                         }
                     }
                 }
@@ -265,5 +283,9 @@ public class InputManager : Singleton<InputManager>
         }
     }
 
-
+    private void AnimateMoveOrderCursor(Vector3 point, Color color)
+    {
+        MovementCursor mover = movementOrderCursor.GetComponent<MovementCursor>();
+        mover.AnimateOnPos(point, color);
+    }
 }

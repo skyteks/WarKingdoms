@@ -13,8 +13,6 @@ public class GameManager : Singleton<GameManager>
         Cutscene,
     }
 
-    public static Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
-
 #if UNITY_EDITOR
     public bool editorFrameRateLock30 = true;
     [Space]

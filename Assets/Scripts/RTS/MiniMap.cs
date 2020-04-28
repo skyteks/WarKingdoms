@@ -54,7 +54,7 @@ public class MiniMap : UIClickable
     private void MoveGameplayCameraToMinimapClickPosition(Vector2 clickPosition)
     {
         Vector3 hitPoint;
-        if (CameraManager.GetCameraViewPointOnGroundPlane(miniMapCamera, clickPosition, out hitPoint))
+        if (CameraManager.GetCameraViewPointOnGroundPlane(miniMapCamera, clickPosition, out hitPoint, InputManager.Instance.groundLayerMask))
         {
             CameraManager.Instance.MoveGameplayCameraTo(hitPoint);
         }
@@ -65,7 +65,7 @@ public class MiniMap : UIClickable
         if (GameManager.Instance.GetSelectionLength() == 0) return;
 
         Vector3 hitPoint;
-        if (CameraManager.GetCameraViewPointOnGroundPlane(miniMapCamera, clickPosition, out hitPoint))
+        if (CameraManager.GetCameraViewPointOnGroundPlane(miniMapCamera, clickPosition, out hitPoint, InputManager.Instance.groundLayerMask))
         {
             if (!Input.GetButton("Attack"))
             {
