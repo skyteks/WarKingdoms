@@ -62,18 +62,18 @@ public class UIManager : Singleton<UIManager>
         foreach (var child in children)
         {
             Unit unit = child.GetComponent<UnitButton>().unit;
+            float fill = (float)unit.template.health / (float)unit.template.original.health;
             child.FindDeepChild("Portrait").GetComponent<Image>().sprite = unit.template.icon;
             Image healthbarSlice = child.FindDeepChild("HealthbarSlice").GetComponent<Image>();
-            healthbarSlice.fillAmount = (float)unit.template.health / (float)unit.template.original.health;
-            if (healthbarSlice.fillAmount > 0.5f)
+            healthbarSlice.fillAmount = fill;
+            if (fill > 0.5f)
             {
-                healthbarSlice.color = Color.Lerp(healthColorOrange, healthColorGreen, healthbarSlice.fillAmount.LinearRemap(0.5f, 1f));
+                healthbarSlice.color = Color.Lerp(healthColorOrange, healthColorGreen, fill.LinearRemap(0.5f, 1f));
             }
             else
             {
-                healthbarSlice.color = Color.Lerp(healthColorRed, healthColorOrange, healthbarSlice.fillAmount.LinearRemap(0f, 0.5f));
+                healthbarSlice.color = Color.Lerp(healthColorRed, healthColorOrange, fill.LinearRemap(0f, 0.5f));
             }
-            break;
         }
     }
 
