@@ -62,20 +62,24 @@ public class MiniMap : UIClickable
 
     private void MoveSelectionToMinimapClickPosition(Vector2 clickPosition)
     {
-        if (GameManager.Instance.GetSelectionLength() == 0) return;
-
+        GameManager gameManager = GameManager.Instance;
+        if (gameManager.GetSelectionLength() == 0) return;
+        InputManager inputManager = InputManager.Instance;
         Vector3 hitPoint;
-        if (CameraManager.GetCameraViewPointOnGroundPlane(miniMapCamera, clickPosition, out hitPoint, InputManager.Instance.groundLayerMask))
+        if (CameraManager.GetCameraViewPointOnGroundPlane(miniMapCamera, clickPosition, out hitPoint, inputManager.groundLayerMask))
         {
-            if (!Input.GetButton("Attack"))
+            bool attackComand = Input.GetButton("Attack");
+            if (attackComand)
             {
-                GameManager.Instance.MoveSelectedUnitsTo(hitPoint);
-                Debug.DrawLine(miniMapCamera.transform.position, hitPoint, Color.Lerp(Color.black, Color.green, 0.6f), 1f);
+                gameManager.AttackMoveSelectedUnitsTo(hitPoint);
+                Debug.DrawLine(miniMapCamera.transform.position, hitPoint, Color.Lerp(Color.black, Color.Lerp(Color.yellow, Color.red, 0.6f), 0.6f), 1f);
+                inputManager.AnimateMoveOrderCursor(hitPoint, inputManager.attackMoveCommandColor);
             }
             else
             {
-                GameManager.Instance.AttackMoveSelectedUnitsTo(hitPoint);
-                Debug.DrawLine(miniMapCamera.transform.position, hitPoint, Color.Lerp(Color.black, Color.Lerp(Color.yellow, Color.red, 0.6f), 0.6f), 1f);
+                gameManager.MoveSelectedUnitsTo(hitPoint);
+                Debug.DrawLine(miniMapCamera.transform.position, hitPoint, Color.Lerp(Color.black, Color.green, 0.6f), 1f);
+                inputManager.AnimateMoveOrderCursor(hitPoint, inputManager.moveCommandColor);
             }
         }
     }

@@ -126,7 +126,7 @@ public class Unit : MonoBehaviour
                 if (navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
                 {
                     commandExecuted = true;
-                    AddCommand(new AICommand(AICommand.CommandType.Stop));
+                    //AddCommand(new AICommand(AICommand.CommandType.Stop));
                 }
                 break;
 
@@ -525,7 +525,9 @@ public class Unit : MonoBehaviour
 
             //Too far away check moved to before waittime
 
-            targetOfAttack.SufferAttack(template.attackPower);
+            int damage = Random.Range(template.damage.x, template.damage.y + 1);
+
+            targetOfAttack.SufferAttack(damage);
 
             yield return new WaitForSeconds((1f / template.attackSpeed) * (1f / 3f) * 2f);
         }

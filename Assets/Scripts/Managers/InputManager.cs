@@ -283,7 +283,7 @@ public class InputManager : Singleton<InputManager>
         }
     }
 
-    private void AnimateMoveOrderCursor(Vector3 point, Color color)
+    public void AnimateMoveOrderCursor(Vector3 point, Color color)
     {
         MovementCursor mover = movementOrderCursor.GetComponent<MovementCursor>();
         mover.AnimateOnPos(point, color);

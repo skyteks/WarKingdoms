@@ -60,7 +60,6 @@ public class GameManager : Singleton<GameManager>
     public void IssueCommand(AICommand cmd)
     {
         selectedPlatoon.ExecuteCommand(cmd);
-        //StartCoroutine(selectedPlatoon.ExecuteCommand(cmd));
     }
 
     public int GetSelectionLength()
@@ -155,7 +154,6 @@ public class GameManager : Singleton<GameManager>
 
     public List<Unit> GetAllSelectableUnits()
     {
-        //return FindObjectsOfType<Unit>().Where(unit => unit.template.faction == faction).ToList();
         return Unit.globalUnitsDict[faction];
     }
 

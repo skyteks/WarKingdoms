@@ -14,10 +14,12 @@ public class UnitTemplate : ScriptableObject
     public Sprite icon;
 
     [Tooltip("Determines the damage the Unit can take before it dies")]
-    public int health = 10;
+    public int health = 100;
+
+    public float healthRegen = 0.5f;
 
     [Tooltip("Damage dealt each attack")]
-    public int attackPower = 2;
+    public Vector2Int damage = new Vector2Int(9, 11);
 
     [Tooltip("The attack rate. The higher, the faster the Unit is in attacking. 1 second/attackSpeed = time it takes for a single attack")]
     public float attackSpeed = 1f;
@@ -27,6 +29,12 @@ public class UnitTemplate : ScriptableObject
 
     [Tooltip("When guarding, if any enemy enters this range it will be attacked")]
     public float guardDistance = 5f;
+
+    [Space]
+
+    public int mana = 0;
+
+    public float manaRegen = 0;
 
     public UnitTemplate Clone()
     {
