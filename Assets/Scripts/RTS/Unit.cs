@@ -21,34 +21,14 @@ public class Unit : MonoBehaviour
         Dead,
     }
 
-    public enum Factions
-    {
-        Neutral,
-        Faction1,
-        Faction2,
-    }
-
-    public static Dictionary<Factions, List<Unit>> globalUnitsDict;
     public static List<Unit> globalUnitsList;
     private static int layerDefaultVisible;
     private static int layerDefaultHidden;
     private static int layerMiniMapVisible;
     private static int layerMiniMapHidden;
 
-    static Unit()
-    {
-        globalUnitsDict = new Dictionary<Factions, List<Unit>>();
-        var factions = System.Enum.GetValues(typeof(Factions)).Cast<Factions>();
-        foreach (var faction in factions)
-        {
-            globalUnitsDict.Add(faction, new List<Unit>());
-        }
-        globalUnitsList = new List<Unit>();
-    }
-
-    //[ReadOnly]
     public UnitStates state = UnitStates.Idleing;
-    public Factions faction;
+    public FactionTemplate faction;
     public float visionFadeTime = 1f;
     [Preview]
     public UnitTemplate template;
@@ -58,6 +38,7 @@ public class Unit : MonoBehaviour
     private Animator animator;
     private MeshRenderer selectionCircle, miniMapCircle, visionCircle;
     private FieldOfView fieldOfView;
+    private Renderer[] modelRenderers;
 
     //private bool isSelected; //is the Unit currently selected by the Player
     [HideInInspector]
@@ -69,6 +50,11 @@ public class Unit : MonoBehaviour
     private bool agentReady = false;
     public UnityAction<Unit> OnDeath;
 
+    static Unit()
+    {
+        globalUnitsList = new List<Unit>();
+    }
+
     void Awake()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
@@ -77,6 +63,7 @@ public class Unit : MonoBehaviour
         miniMapCircle = transform.Find("MiniMapCircle").GetComponent<MeshRenderer>();
         visionCircle = transform.Find("FieldOfView").GetComponent<MeshRenderer>();
         fieldOfView = transform.Find("FieldOfView").GetComponent<FieldOfView>();
+        modelRenderers = transform.Find("Model").GetComponentsInChildren<Renderer>(true);
 
         SetLayers();
     }
@@ -87,10 +74,12 @@ public class Unit : MonoBehaviour
         //float rndmFactor = navMeshAgent.speed * .15f;
         //navMeshAgent.speed += Random.Range(-rndmFactor, rndmFactor);
 
-        globalUnitsDict[faction].Add(this);
-        globalUnitsList.Add(this);
-
         template = template.Clone(); //we copy the template otherwise it's going to overwrite the original asset!
+
+        globalUnitsList.Add(this);
+        faction.units.Add(this);
+
+        SetColorMaterial();
 
         //Set some defaults, including the default state
         SetSelected(false);
@@ -98,7 +87,7 @@ public class Unit : MonoBehaviour
         StartCoroutine(DequeueCommands());
 
         visionCircle.material.color = visionCircle.material.color.ToWithA(0f);
-        if (faction == GameManager.Instance.faction)
+        if (faction == GameManager.Instance.playerFaction)
         {
             StartCoroutine(VisionFade(visionFadeTime, false));
             SetVisibility(true);
@@ -261,6 +250,15 @@ public class Unit : MonoBehaviour
         layerDefaultHidden = LayerMask.NameToLayer("Default Hidden");
         layerMiniMapVisible = LayerMask.NameToLayer("MiniMap Only");
         layerMiniMapHidden = LayerMask.NameToLayer("MiniMap Hidden");
+    }
+
+    private void SetColorMaterial()
+    {
+        Material factionMaterial = faction.GetMaterial(template.race);
+        foreach (Renderer render in modelRenderers)
+        {
+            render.material = factionMaterial;
+        }
     }
 
     public void AddCommand(AICommand command, bool clear = false)
@@ -594,8 +592,8 @@ public class Unit : MonoBehaviour
         gameObject.tag = "Untagged";
         gameObject.layer = 0;
 
-        globalUnitsDict[faction].Remove(this);
         globalUnitsList.Remove(this);
+        faction.units.Remove(this);
 
         //Remove unneeded Components
         StartCoroutine(HideSeenThings(visionFadeTime / 2f));
@@ -688,7 +686,7 @@ public class Unit : MonoBehaviour
     public void SetSelected(bool selected)
     {
         //Set transparency dependent on selection
-        Color newColor = (faction == GameManager.Instance.faction) ? Color.green : Color.red;
+        Color newColor = (faction == GameManager.Instance.playerFaction) ? Color.green : Color.red;
         miniMapCircle.material.color = newColor;
         newColor.a = (selected) ? 1f : .3f;
         selectionCircle.material.color = newColor;

@@ -13,6 +13,8 @@ public class UnitTemplate : ScriptableObject
     [Preview]
     public Sprite icon;
 
+    public FactionTemplate.Race race;
+
     [Tooltip("Determines the damage the Unit can take before it dies")]
     public int health = 100;
 

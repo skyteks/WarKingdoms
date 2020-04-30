@@ -69,7 +69,7 @@ public class FogOfWarTextureReadWrite : MonoBehaviour
 
     private void UpdateUnitsSight()
     {
-        var units = GameManager.Instance.GetAllSelectableUnits();
+        var units = GameManager.Instance.playerFaction.units;
         foreach (Unit unit in units)
         {
             Vector2Int uv = WorldToTextureUV(unit.transform.position);

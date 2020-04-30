@@ -129,7 +129,8 @@ public class UIManager : Singleton<UIManager>
             switch (healthbarColoringMode)
             {
                 case HealthbarColoringMode.FriendFoe:
-                    healthbarSlice.color = unit.faction == GameManager.Instance.faction ? healthColorGreen : healthColorRed;
+                    //TODO: allied color
+                    healthbarSlice.color = GameManager.Instance.playerFaction.allies.Contains(unit.faction) ? healthColorGreen : healthColorRed;
                     break;
                 case HealthbarColoringMode.HealthPercentage:
                     if (healthbarSlice.fillAmount > 0.5f)
@@ -142,7 +143,7 @@ public class UIManager : Singleton<UIManager>
                     }
                     break;
                 case HealthbarColoringMode.Teamcolor:
-                    //TODO: add teamcolor
+                    healthbarSlice.color = unit.faction.color;
                     break;
             }
         }

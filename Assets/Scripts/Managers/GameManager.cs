@@ -18,7 +18,10 @@ public class GameManager : Singleton<GameManager>
     [Space]
 #endif
     public GameMode gameMode = GameMode.Gameplay;
-    public Unit.Factions faction;
+
+    public FactionTemplate playerFaction;
+    public List<FactionTemplate> factions;
+
 
     private Platoon selectedPlatoon;
     private UnityEngine.Playables.PlayableDirector activeDirector;
@@ -35,6 +38,10 @@ public class GameManager : Singleton<GameManager>
             Application.targetFrameRate = 30;//just to keep things "smooth" during presentations
         }
 #endif
+        if (playerFaction == null)
+        {
+            Debug.LogError("No player faction set", this);
+        }
     }
 
     void Update()
@@ -152,14 +159,14 @@ public class GameManager : Singleton<GameManager>
         IssueCommand(newCommand);
     }
 
-    public List<Unit> GetAllSelectableUnits()
-    {
-        return Unit.globalUnitsDict[faction];
-    }
+    //public List<Unit> GetAllSelectableUnits()
+    //{
+    //    return Unit.globalUnitsDict[playerFaction];
+    //}
 
     public List<Unit> GetAllNonSelectableUnits()
     {
-        return Unit.globalUnitsList.Where(unit => unit.faction != faction).ToList();
+        return Unit.globalUnitsList.Where(unit => unit.faction != playerFaction).ToList();
     }
 
     public List<Unit> GetAllUnits()

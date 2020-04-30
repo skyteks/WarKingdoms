@@ -102,7 +102,7 @@ public class InputManager : Singleton<InputManager>
                         }
 
                         //consider the mouse release as the end of a box selection
-                        List<Unit> allSelectables = GameManager.Instance.GetAllSelectableUnits();
+                        List<Unit> allSelectables = GameManager.Instance.playerFaction.units;
                         for (int i = 0; i < allSelectables.Count; i++)
                         {
                             Vector2 screenPos = mainCamera.WorldToScreenPoint(allSelectables[i].transform.position);
@@ -131,7 +131,7 @@ public class InputManager : Singleton<InputManager>
                             if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitsLayerMask))
                             {
                                 Unit newSelectedUnit = hit.collider.GetComponent<Unit>();
-                                if (newSelectedUnit != null && newSelectedUnit.faction == GameManager.Instance.faction)
+                                if (newSelectedUnit != null && newSelectedUnit.faction == GameManager.Instance.playerFaction)
                                 {
                                     GameManager.Instance.SetSelection(newSelectedUnit);
                                 }
@@ -157,7 +157,7 @@ public class InputManager : Singleton<InputManager>
                         Unit targetUnit = hit.collider.GetComponent<Unit>();
                         if (targetUnit != null)
                         {
-                            if (targetUnit.faction != GameManager.Instance.faction)
+                            if (targetUnit.faction != GameManager.Instance.playerFaction)
                             {
                                 GameManager.Instance.AttackTarget(targetUnit);
                                 Debug.DrawLine(ray.origin, hit.point, Color.red, 1f);

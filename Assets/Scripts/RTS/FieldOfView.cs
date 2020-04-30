@@ -174,7 +174,7 @@ public class FieldOfView : MonoBehaviour
         for (; ; )
         {
             yield return Yielders.Get(delay);
-            if (unit.faction != GameManager.Instance.faction) continue;
+            if (unit.faction != GameManager.Instance.playerFaction) continue;
             if (unit.state == Unit.UnitStates.Dead) yield break;
 
             MarkTargetsVisibility();
@@ -190,14 +190,14 @@ public class FieldOfView : MonoBehaviour
         {
             Unit unit = unseen.GetComponent<Unit>();
             if (unit == null) continue;
-            if (unit.faction == GameManager.Instance.faction) continue;
+            if (unit.faction == GameManager.Instance.playerFaction) continue;
             unit.SetVisibility(false);
         }
         foreach (var seen in visibleTargets)
         {
             Unit unit = seen.GetComponent<Unit>();
             if (unit == null) continue;
-            if (unit.faction == GameManager.Instance.faction) continue;
+            if (unit.faction == GameManager.Instance.playerFaction) continue;
             unit.SetVisibility(true);
         }
 
