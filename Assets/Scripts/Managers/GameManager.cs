@@ -64,6 +64,15 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        foreach (FactionTemplate faction in factions)
+        {
+            faction.units.Clear();
+        }
+    }
+
     public void IssueCommand(AICommand cmd)
     {
         selectedPlatoon.ExecuteCommand(cmd);
@@ -157,16 +166,6 @@ public class GameManager : Singleton<GameManager>
     {
         AICommand newCommand = new AICommand(AICommand.CommandType.AttackTarget, tgtUnit);
         IssueCommand(newCommand);
-    }
-
-    //public List<Unit> GetAllSelectableUnits()
-    //{
-    //    return Unit.globalUnitsDict[playerFaction];
-    //}
-
-    public List<Unit> GetAllNonSelectableUnits()
-    {
-        return Unit.globalUnitsList.Where(unit => unit.faction != playerFaction).ToList();
     }
 
     public List<Unit> GetAllUnits()

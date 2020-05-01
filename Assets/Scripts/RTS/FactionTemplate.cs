@@ -33,7 +33,7 @@ public class FactionTemplate : ScriptableObject
 
     [Space]
 
-    public List<FactionTemplate> allies = new List<FactionTemplate>();
+    public byte allianceId;// { get; private set; }
 
     public List<Unit> units { get; private set; }
 
@@ -45,6 +45,15 @@ public class FactionTemplate : ScriptableObject
     void OnDisable()
     {
         units = new List<Unit>();
+    }
+
+    public static bool IsAlliedWith(FactionTemplate faction1, FactionTemplate faction2)
+    {
+        if (faction1 != faction2 && (faction1 == null || faction2 == null || faction1.allianceId == 0 || faction2.allianceId == 0))
+        {
+            return false;
+        }
+        return faction1.allianceId == faction2.allianceId;
     }
 
     public Material GetMaterial(Race race)

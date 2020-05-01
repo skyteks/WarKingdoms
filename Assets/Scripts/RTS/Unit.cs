@@ -87,7 +87,7 @@ public class Unit : MonoBehaviour
         StartCoroutine(DequeueCommands());
 
         visionCircle.material.color = visionCircle.material.color.ToWithA(0f);
-        if (faction == GameManager.Instance.playerFaction)
+        if (FactionTemplate.IsAlliedWith(faction, GameManager.Instance.playerFaction))
         {
             StartCoroutine(VisionFade(visionFadeTime, false));
             SetVisibility(true);
@@ -129,7 +129,7 @@ public class Unit : MonoBehaviour
                 {
                     if (fieldOfView.lastVisibleTargets.Count > 0)
                     {
-                        var enemies = fieldOfView.lastVisibleTargets.Where(target => target.GetComponent<Unit>().faction != faction && target.GetComponent<Unit>().state != UnitStates.Dead);
+                        var enemies = fieldOfView.lastVisibleTargets.Where(target => !FactionTemplate.IsAlliedWith(target.GetComponent<Unit>().faction, faction) && target.GetComponent<Unit>().state != UnitStates.Dead);
                         if (enemies.Count() > 0)
                         {
                             var closestEnemy = enemies.FindClosestToPoint(transform.position).GetComponent<Unit>();
@@ -176,12 +176,12 @@ public class Unit : MonoBehaviour
                 if (Time.time > lastGuardCheckTime + guardCheckInterval)
                 {
                     lastGuardCheckTime = Time.time;
-                    Unit closestEnemy = GetNearestHostileUnit();
-                    if (closestEnemy != null)
+                    Unit[] closestEnemies = GetNearestHostileUnits();
+                    for (int i = 0; i < closestEnemies.Length; i++)
                     {
                         commandExecuted = true;
                         commandRecieved = false;
-                        InsertCommand(new AICommand(AICommand.CommandType.AttackTarget, closestEnemy));
+                        InsertCommand(new AICommand(AICommand.CommandType.AttackTarget, closestEnemies[i]));
                     }
                 }
                 break;
@@ -191,7 +191,13 @@ public class Unit : MonoBehaviour
                 if (IsDeadOrNull(targetOfAttack) || targetOfAttack.faction == faction)
                 {
                     commandExecuted = true;
-                    //Guard();
+                    if (commandList.Count >= 2 && commandList[1].commandType == AICommand.CommandType.Guard)
+                    {
+                        if (Vector3.Distance(commandList[1].destination, transform.position) > 0.1f)
+                        {
+                            InsertCommand(new AICommand(AICommand.CommandType.MoveTo, commandList[1].destination), 1);
+                        }
+                    }
                 }
                 else
                 {
@@ -455,9 +461,7 @@ public class Unit : MonoBehaviour
         else
         {
             //if the command is dealt by a Timeline, the target might be already dead
-            //Guard();
             commandExecuted = true;
-            AddCommand(new AICommand(AICommand.CommandType.Stop));
         }
     }
 
@@ -474,9 +478,8 @@ public class Unit : MonoBehaviour
         }
         else
         {
-            //Guard();
             commandExecuted = true;
-            AddCommand(new AICommand(AICommand.CommandType.Stop));
+            //AddCommand(new AICommand(AICommand.CommandType.Stop));
         }
     }
 
@@ -656,9 +659,17 @@ public class Unit : MonoBehaviour
         template.guardDistance = radius;
     }
 
+    private Unit[] GetNearestHostileUnits()
+    {
+        hostiles = FindObjectsOfType<Unit>().Where(unit => !FactionTemplate.IsAlliedWith(unit.faction, faction)).Where(unit => Vector3.Distance(unit.transform.position, transform.position) < template.guardDistance).ToArray();
+
+        //TODO: sort array by distance
+        return hostiles;
+    }
+
     private Unit GetNearestHostileUnit()
     {
-        hostiles = FindObjectsOfType<Unit>().Where(unit => unit.faction != faction).ToArray();//GameObject.FindGameObjectsWithTag(template.GetOtherFaction().ToString()).Select(x => x.GetComponent<Unit>()).ToArray();
+        hostiles = FindObjectsOfType<Unit>().Where(unit => !FactionTemplate.IsAlliedWith(unit.faction, faction)).ToArray();
 
         Unit nearestEnemy = null;
         float nearestEnemyDistance = 1000f;
@@ -686,7 +697,21 @@ public class Unit : MonoBehaviour
     public void SetSelected(bool selected)
     {
         //Set transparency dependent on selection
-        Color newColor = (faction == GameManager.Instance.playerFaction) ? Color.green : Color.red;
+
+        GameManager gameManager = GameManager.Instance;
+        Color newColor;
+        if (faction == gameManager.playerFaction)
+        {
+            newColor = Color.green;
+        }
+        else if (FactionTemplate.IsAlliedWith(faction, gameManager.playerFaction))
+        {
+            newColor = Color.yellow;
+        }
+        else
+        {
+            newColor = Color.red;
+        }
         miniMapCircle.material.color = newColor;
         newColor.a = (selected) ? 1f : .3f;
         selectionCircle.material.color = newColor;

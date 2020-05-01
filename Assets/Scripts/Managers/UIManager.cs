@@ -130,7 +130,19 @@ public class UIManager : Singleton<UIManager>
             {
                 case HealthbarColoringMode.FriendFoe:
                     //TODO: allied color
-                    healthbarSlice.color = GameManager.Instance.playerFaction.allies.Contains(unit.faction) ? healthColorGreen : healthColorRed;
+                    GameManager gameManager = GameManager.Instance;
+                    if (unit.faction == gameManager.playerFaction)
+                    {
+                        healthbarSlice.color = Color.green;
+                    }
+                    else if (FactionTemplate.IsAlliedWith(unit.faction, gameManager.playerFaction))
+                    {
+                        healthbarSlice.color = Color.yellow;
+                    }
+                    else
+                    {
+                        healthbarSlice.color = Color.red;
+                    }
                     break;
                 case HealthbarColoringMode.HealthPercentage:
                     if (healthbarSlice.fillAmount > 0.5f)
