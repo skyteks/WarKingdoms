@@ -109,6 +109,8 @@ public class Unit : MonoBehaviour
             return;
         }
 
+        UpdateMinimapUI();
+
         switch (state)
         {
             case UnitStates.MovingToSpot:
@@ -764,6 +766,33 @@ public class Unit : MonoBehaviour
                     part.layer = layerMiniMapHidden;
                 }
             }
+        }
+    }
+
+    private void UpdateMinimapUI()
+    {
+        GameManager gameManager = GameManager.Instance;
+        UIManager uiManager = UIManager.Instance;
+        Material minimapCircleMaterial = miniMapCircle.material;
+        switch (uiManager.minimapColoringMode)
+        {
+            case UIManager.MinimapColoringModes.FriendFoe:
+                if (faction == gameManager.playerFaction)
+                {
+                    minimapCircleMaterial.color = Color.green;
+                }
+                else if (FactionTemplate.IsAlliedWith(faction, gameManager.playerFaction))
+                {
+                    minimapCircleMaterial.color = Color.yellow;
+                }
+                else
+                {
+                    minimapCircleMaterial.color = Color.red;
+                }
+                break;
+            case UIManager.MinimapColoringModes.Teamcolor:
+                minimapCircleMaterial.color = faction.color;
+                break;
         }
     }
 }

@@ -23,7 +23,7 @@ public class GameManager : Singleton<GameManager>
     public List<FactionTemplate> factions;
 
 
-    private Platoon selectedPlatoon;
+    public Platoon selectedPlatoon { get; private set; }
     private UnityEngine.Playables.PlayableDirector activeDirector;
 
     private bool showHealthbars;

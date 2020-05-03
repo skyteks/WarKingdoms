@@ -7,17 +7,23 @@ using UnityEngine.UI;
 /// </summary>
 public class UIManager : Singleton<UIManager>
 {
-    public enum HealthbarColoringMode
+    public enum HealthbarColoringModes : int
     {
         FriendFoe,
         HealthPercentage,
+        Teamcolor,
+    }
+    public enum MinimapColoringModes : int
+    {
+        FriendFoe,
         Teamcolor,
     }
 
     public Color healthColorGreen = Color.green;
     public Color healthColorRed = Color.red;
     public Color healthColorOrange = Color.Lerp(Color.red, Color.yellow, 0.5f);
-    public HealthbarColoringMode healthbarColoringMode;
+    public HealthbarColoringModes healthbarColoringMode;
+    public MinimapColoringModes minimapColoringMode;
 
     public Image selectionRectangle;
     public GridLayoutGroup selectionLayoutGroup;
@@ -128,7 +134,7 @@ public class UIManager : Singleton<UIManager>
             healthbarSlice.fillAmount = (float)unit.template.health / (float)unit.template.original.health;
             switch (healthbarColoringMode)
             {
-                case HealthbarColoringMode.FriendFoe:
+                case HealthbarColoringModes.FriendFoe:
                     //TODO: allied color
                     GameManager gameManager = GameManager.Instance;
                     if (unit.faction == gameManager.playerFaction)
@@ -144,7 +150,7 @@ public class UIManager : Singleton<UIManager>
                         healthbarSlice.color = Color.red;
                     }
                     break;
-                case HealthbarColoringMode.HealthPercentage:
+                case HealthbarColoringModes.HealthPercentage:
                     if (healthbarSlice.fillAmount > 0.5f)
                     {
                         healthbarSlice.color = Color.Lerp(healthColorOrange, healthColorGreen, healthbarSlice.fillAmount.LinearRemap(0.5f, 1f));
@@ -154,7 +160,7 @@ public class UIManager : Singleton<UIManager>
                         healthbarSlice.color = Color.Lerp(healthColorRed, healthColorOrange, healthbarSlice.fillAmount.LinearRemap(0f, 0.5f));
                     }
                     break;
-                case HealthbarColoringMode.Teamcolor:
+                case HealthbarColoringModes.Teamcolor:
                     healthbarSlice.color = unit.faction.color;
                     break;
             }

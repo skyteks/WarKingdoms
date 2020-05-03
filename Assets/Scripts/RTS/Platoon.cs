@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 public class Platoon : MonoBehaviour
 {
-    public enum FormationModes
+    public enum FormationModes : int
     {
         Rectangle,
         HexGrid,
