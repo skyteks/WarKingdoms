@@ -22,8 +22,14 @@ public class UIManager : Singleton<UIManager>
     public Color healthColorGreen = Color.green;
     public Color healthColorRed = Color.red;
     public Color healthColorOrange = Color.Lerp(Color.red, Color.yellow, 0.5f);
+
+    [Space]
+
     public HealthbarColoringModes healthbarColoringMode;
+    public bool showHealthbars { get; private set; }
     public MinimapColoringModes minimapColoringMode;
+
+    [Space]
 
     public Image selectionRectangle;
     public GridLayoutGroup selectionLayoutGroup;
@@ -37,6 +43,26 @@ public class UIManager : Singleton<UIManager>
         ToggleSelectionRectangle(false);
         ClearSelection();
         ClearHealthbars();
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftAlt))
+        {
+            showHealthbars = !showHealthbars;
+            if (showHealthbars)
+            {
+                foreach (Unit unit in GameManager.Instance.GetAllUnits())
+                {
+                    AddHealthbar(unit);
+                    unit.OnDeath += RemoveHealthbar;
+                }
+            }
+            else
+            {
+                ClearHealthbars();
+            }
+        }
     }
 
     void LateUpdate()

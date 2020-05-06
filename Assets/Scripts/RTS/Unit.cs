@@ -265,7 +265,16 @@ public class Unit : MonoBehaviour
         Material factionMaterial = faction.GetMaterial(template.race);
         foreach (Renderer render in modelRenderers)
         {
-            render.material = factionMaterial;
+            if (render.materials.Length == 1)
+            {
+                render.material = factionMaterial;
+            }
+            else
+            {
+                Material[] materialArray = render.materials;
+                materialArray[materialArray.Length - 1] = factionMaterial;
+                render.materials = materialArray;
+            }
         }
     }
 

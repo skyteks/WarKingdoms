@@ -44,26 +44,6 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.LeftAlt))
-        {
-            showHealthbars = !showHealthbars;
-            if (showHealthbars)
-            {
-                foreach (Unit unit in GetAllUnits())
-                {
-                    UIManager.Instance.AddHealthbar(unit);
-                    unit.OnDeath += UIManager.Instance.RemoveHealthbar;
-                }
-            }
-            else
-            {
-                UIManager.Instance.ClearHealthbars();
-            }
-        }
-    }
-
     protected override void OnDestroy()
     {
         base.OnDestroy();
