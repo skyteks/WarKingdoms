@@ -30,7 +30,7 @@ public class RandomWalkingBrain : MonoBehaviour
         {
             yield return new WaitForSeconds(waitTime);
             SendCommand();
-            waitTime = Random.Range(intervalRanges.Min, intervalRanges.Max);
+            waitTime = Random.Range(intervalRanges.min, intervalRanges.max);
         }
     }
 

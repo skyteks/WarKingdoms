@@ -89,7 +89,7 @@ public static class Float_Extension
 
     public static bool IsInRange(this float value, Range range)
     {
-        return value >= range.Min && value <= range.Max;
+        return value >= range.min && value <= range.max;
     }
 
     public static bool IsInRange(this float value, float center, float offset)
@@ -100,5 +100,11 @@ public static class Float_Extension
     public static bool IsInRange(this float value, float center, float negativeOffset, float positiveOffset)
     {
         return value >= center - negativeOffset && value <= center + positiveOffset;
+    }
+
+    public static float SignOr0(this float value)
+    {
+        if (value == 0f) return 0f;
+        return Sign(value);
     }
 }

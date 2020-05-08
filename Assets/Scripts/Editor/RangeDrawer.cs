@@ -21,8 +21,8 @@ public class RangeDrawer : PropertyDrawer
 
         // Draw fields - passs GUIContent.none to each so they are drawn without labels
         EditorGUIUtility.labelWidth = 25f;
-        EditorGUI.PropertyField(amountRect, property.FindPropertyRelative("Min"), new GUIContent("Min"));
-        EditorGUI.PropertyField(unitRect, property.FindPropertyRelative("Max"), new GUIContent("Max"));
+        EditorGUI.PropertyField(amountRect, property.FindPropertyRelative("min"), new GUIContent("min"));
+        EditorGUI.PropertyField(unitRect, property.FindPropertyRelative("max"), new GUIContent("max"));
         EditorGUIUtility.labelWidth = 0f;
 
         // Set indent back to what it was

@@ -1955,8 +1955,8 @@ Mesh:
     firstVertex: 0
     vertexCount: 8
     localAABB:
-      m_Center: {x: 0, y: 1.4035897, z: 22.722063}
-      m_Extent: {x: 19.664179, y: 9.096317, z: 4.241682}
+      m_Center: {x: 0, y: 0.86674666, z: 14.030888}
+      m_Extent: {x: 12.672419, y: 5.9765053, z: 2.7868896}
   m_Shapes:
     vertices: []
     shapes: []
@@ -2035,7 +2035,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 192
-    _typelessdata: d46b5cc1d22af6c0d2d79341000000000000803f00000000d46b5c41d22af6c0d2d79341000000000000803f000000003d509dc19eff2741c0b5d741000000000000803f000000003d509d419eff2741c0b5d741000000000000803f00000000d87f51c1b6badbc0d4ec9641000000000000803f00000000d87f5141b6badbc0d4ec9641000000000000803f00000000089393c190c71a41bea0d441000000000000803f000000000893934190c71a41bea0d441000000000000803f00000000
+    _typelessdata: eadc0cc12583a3c06be73341000000000000803f00000000eadc0c412583a3c06be73341000000000000803f000000003ac24ac1ecfbda40cf8a8641000000000000803f000000003ac24a41ecfbda40cf8a8641000000000000803f00000000c75d01c1d2ae87c07b643a41000000000000803f00000000c75d0141d2ae87c07b643a41000000000000803f000000005e4136c19c27bf40484c8341000000000000803f000000005e4136419c27bf40484c8341000000000000803f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -2089,8 +2089,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: 0, y: 1.4035897, z: 22.722063}
-    m_Extent: {x: 19.664179, y: 9.096317, z: 4.241682}
+    m_Center: {x: 0, y: 0.86674666, z: 14.030888}
+    m_Extent: {x: 12.672419, y: 5.9765053, z: 2.7868896}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -2612,7 +2612,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c80c0ad309951114d985678b24116e3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  viewPortBorderSize: 1.9
+  viewPortBorderSize: 2
 --- !u!1 &593328919
 GameObject:
   m_ObjectHideFlags: 0
@@ -4462,9 +4462,10 @@ MonoBehaviour:
   mainCamera: {fileID: 1325132821}
   mouseMovesCamera: 1
   panBorderThickness: 10
-  keyboardPanSpeed: 0.7
-  mousePanSpeed: 5
-  mouseScrollSpeed: 5
+  cameraMovementSpeed: 0.3
+  cameraMovementTime: 12
+  cameraRotationSpeed: 1
+  cameraZoomSpeed: 0.4
   unitsLayerMask:
     serializedVersion: 2
     m_Bits: 1
@@ -4612,15 +4613,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 1325132821}
   miniMapCamera: {fileID: 2139451564}
-  panLimitBorders:
+  panLimitBorder:
     serializedVersion: 2
     x: -100
     y: -100
     width: 200
     height: 200
-  scrollLimitBorders:
-    Min: 20
-    Max: 50
+  scrollLimitBorder:
+    min: 5
+    max: 100
 --- !u!1 &882587127
 GameObject:
   m_ObjectHideFlags: 0
@@ -6416,7 +6417,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 100
+  far clip plane: 1000
   field of view: 40
   orthographic: 0
   orthographic size: 5
@@ -6442,12 +6443,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1325132818}
-  m_LocalRotation: {x: 0.53729963, y: 0, z: 0, w: 0.8433915}
-  m_LocalPosition: {x: 0, y: 20, z: -7.4}
+  m_LocalRotation: {x: 0.53729963, y: -0, z: -0, w: 0.8433915}
+  m_LocalPosition: {x: 0, y: 12.35, z: -5.76}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 592036064}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1985839272}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 65, y: 0, z: 0}
 --- !u!1001 &1327074477
@@ -8720,6 +8721,37 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 6344745089759422237}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1985839271
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1985839272}
+  m_Layer: 0
+  m_Name: Camera Rig
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1985839272
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1985839271}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1325132822}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1986749882
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9193,7 +9225,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 100
+  far clip plane: 200
   field of view: 120
   orthographic: 1
   orthographic size: 100
@@ -9220,7 +9252,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2139451560}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 50, z: 0}
+  m_LocalPosition: {x: 0, y: 100, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1001358759}

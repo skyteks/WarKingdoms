@@ -11,9 +11,10 @@ public class InputManager : Singleton<InputManager>
     public Camera mainCamera;
     public bool mouseMovesCamera = true;
     public int panBorderThickness = 10;
-    public float keyboardPanSpeed = 2f;
-    public float mousePanSpeed = 2f;
-    public float mouseScrollSpeed = 2f;
+    public float cameraMovementSpeed;
+    public float cameraMovementTime;
+    public float cameraRotationSpeed;
+    public float cameraZoomSpeed;
 
     [Space]
 
@@ -27,11 +28,13 @@ public class InputManager : Singleton<InputManager>
     public Color moveCommandColor = Color.green;
     public Color attackMoveCommandColor = Color.red;
 
-    //private Vector3 initialSelectionWorldPos, currentSelectionWorldPos; //world coordinates //currently unused
     private Vector2 LMBDownMousePos, currentMousePos; //screen coordinates
     private Rect selectionRect; //screen coordinates
     private bool LMBClickedDown = false, boxSelectionInitiated = false;
     private float timeOfClick, scrollDelta;
+
+    private Vector3 dragStartPosition;
+    private Vector3 dragCurrentPosition;
 
     private const float CLICK_TOLERANCE = .5f; //the player has this time to release the mouse button for it to be registered as a click
 
@@ -221,6 +224,8 @@ public class InputManager : Singleton<InputManager>
                 if (!boxSelectionInitiated)
                 {
                     Vector3 amountToMove = Vector3.zero;
+                    Quaternion amountToRotate = Quaternion.identity;
+                    float amountToZoom = 0f;
                     bool mouseIsMovingCamera = false;
                     bool keyboardIsMovingCamera = false;
 
@@ -231,45 +236,91 @@ public class InputManager : Singleton<InputManager>
                         {
                             if (Input.mousePosition.x >= Screen.width - panBorderThickness)
                             {
-                                amountToMove.x += Time.deltaTime * mousePanSpeed;
+                                amountToMove.x += cameraMovementSpeed;
                                 mouseIsMovingCamera = true;
                             }
                             if (Input.mousePosition.x <= panBorderThickness)
                             {
-                                amountToMove.x -= Time.deltaTime * mousePanSpeed;
+                                amountToMove.x -= cameraMovementSpeed;
                                 mouseIsMovingCamera = true;
                             }
 
                             if (Input.mousePosition.y >= Screen.height - panBorderThickness)
                             {
-                                amountToMove.z += Time.deltaTime * mousePanSpeed;
+                                amountToMove.z += cameraMovementSpeed;
                                 mouseIsMovingCamera = true;
                             }
                             if (Input.mousePosition.y <= panBorderThickness)
                             {
-                                amountToMove.z -= Time.deltaTime * mousePanSpeed;
+                                amountToMove.z -= cameraMovementSpeed;
                                 mouseIsMovingCamera = true;
                             }
-                        }
 
-                        float scrollValue = Input.GetAxis("Mouse ScrollWheel");
-                        scrollDelta += scrollValue;
+                            if (Input.GetMouseButtonDown(2))
+                            {
+                                Ray ray = cameraManager.gameplayCamera.ScreenPointToRay(Input.mousePosition);
+                                float entry;
+                                if (CameraManager.groundPlane.Raycast(ray, out entry))
+                                {
+                                    dragStartPosition = ray.GetPoint(entry);
+                                }
+                            }
+                            if (Input.GetMouseButton(2))
+                            {
+                                Ray ray = cameraManager.gameplayCamera.ScreenPointToRay(Input.mousePosition);
+                                float entry;
+                                if (CameraManager.groundPlane.Raycast(ray, out entry))
+                                {
+                                    dragCurrentPosition = ray.GetPoint(entry);
+
+                                    amountToMove = dragStartPosition - dragCurrentPosition;
+                                    cameraManager.MoveGameplayCameraTo(cameraManager.gameplayCamera.transform.parent.position + amountToMove);
+                                }
+                            }
+                        }
+                        scrollDelta = Input.mouseScrollDelta.y;
                         float deadZone = 0.01f;
                         if (scrollDelta < -deadZone || scrollDelta > deadZone)
                         {
-                            amountToMove.y -= scrollDelta * mouseScrollSpeed * 100f * Time.deltaTime;
+                            amountToZoom -= scrollDelta * 10f * cameraZoomSpeed;
                             mouseIsMovingCamera = true;
                         }
                     }
 
-                    //Keyboard movements only happen if mouse is not causing the camera to move already
                     if (!mouseIsMovingCamera)
                     {
+                    //Keyboard movements only happen if mouse is not causing the camera to move already
                         float horKeyValue = Input.GetAxis("Horizontal");
                         float vertKeyValue = Input.GetAxis("Vertical");
                         if (horKeyValue != 0f || vertKeyValue != 0f)
                         {
-                            amountToMove = new Vector3(horKeyValue, 0f, vertKeyValue) * keyboardPanSpeed;
+                            amountToMove = new Vector3(horKeyValue, 0f, vertKeyValue) * cameraMovementSpeed;
+                            keyboardIsMovingCamera = true;
+                        }
+
+                        float rotKeyValue = 0f;
+                        if (Input.GetKey(KeyCode.Q))
+                        {
+                            rotKeyValue = -1f;
+                        }
+                        if (Input.GetKey(KeyCode.E))
+                        {
+                            rotKeyValue = 1f;
+                        }
+                        if (rotKeyValue != 0f)
+                        {
+                            amountToRotate = Quaternion.Euler(Vector3.up * rotKeyValue * cameraRotationSpeed);
+                            keyboardIsMovingCamera = true;
+                        }
+
+                        if (Input.GetKey(KeyCode.R))
+                        {
+                            amountToZoom -= cameraZoomSpeed;
+                            keyboardIsMovingCamera = true;
+                        }
+                        if (Input.GetKey(KeyCode.F))
+                        {
+                            amountToZoom += cameraZoomSpeed;
                             keyboardIsMovingCamera = true;
                         }
                     }
@@ -277,6 +328,8 @@ public class InputManager : Singleton<InputManager>
                     if (mouseIsMovingCamera || keyboardIsMovingCamera)
                     {
                         cameraManager.MoveGameplayCamera(amountToMove);
+                        cameraManager.RotateGameplayCamera(amountToRotate);
+                        cameraManager.ZoomGameplayCamera(amountToZoom);
                     }
                 }
                 scrollDelta = Mathf.MoveTowards(scrollDelta, 0f, Time.deltaTime);
