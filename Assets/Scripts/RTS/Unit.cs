@@ -38,6 +38,7 @@ public class Unit : MonoBehaviour
     private Animator animator;
     private MeshRenderer selectionCircle, miniMapCircle, visionCircle;
     private FieldOfView fieldOfView;
+    private Transform modelHolder;
     private Renderer[] modelRenderers;
 
     //private bool isSelected; //is the Unit currently selected by the Player
@@ -63,7 +64,8 @@ public class Unit : MonoBehaviour
         miniMapCircle = transform.Find("MiniMapCircle").GetComponent<MeshRenderer>();
         visionCircle = transform.Find("FieldOfView").GetComponent<MeshRenderer>();
         fieldOfView = transform.Find("FieldOfView").GetComponent<FieldOfView>();
-        modelRenderers = transform.Find("Model").GetComponentsInChildren<Renderer>(true);
+        modelHolder = transform.Find("Model");
+        modelRenderers = modelHolder.GetComponentsInChildren<Renderer>(true);
 
         SetLayers();
     }
@@ -116,9 +118,9 @@ public class Unit : MonoBehaviour
             case UnitStates.MovingToSpot:
                 if (navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
                 {
-                    commandExecuted = true;
-                    //AddCommand(new AICommand(AICommand.CommandType.Stop));
+                    Idle();
                 }
+                AdjustModelAngleToGround();
                 break;
 
             case UnitStates.AttackMovingToSpot:
@@ -142,6 +144,7 @@ public class Unit : MonoBehaviour
                         }
                     }
                 }
+                AdjustModelAngleToGround();
                 break;
 
             case UnitStates.MovingToTarget:
@@ -172,6 +175,7 @@ public class Unit : MonoBehaviour
                         navMeshAgent.SetDestination(targetOfAttack.transform.position); //update target position in case it's moving
                     }
                 }
+                AdjustModelAngleToGround();
                 break;
 
             case UnitStates.Guarding:
@@ -185,6 +189,7 @@ public class Unit : MonoBehaviour
                         commandRecieved = false;
                         InsertCommand(new AICommand(AICommand.CommandType.AttackTarget, closestEnemies[i]));
                     }
+                    AdjustModelAngleToGround();
                 }
                 break;
 
@@ -581,6 +586,8 @@ public class Unit : MonoBehaviour
         {
             return;
         }
+        AdjustModelAngleToGround();
+
         template.health = 0;
 
         commandList.Clear();
@@ -631,7 +638,7 @@ public class Unit : MonoBehaviour
     {
         yield return Yielders.Get(5f);
         float startY = transform.position.y;
-        float depth = 1f;
+        float depth = 2f;
         while (transform.position.y > startY - depth)
         {
             transform.position = Vector3.MoveTowards(transform.position, transform.position.ToWithY(startY - depth), Time.deltaTime * 0.1f);
@@ -802,6 +809,18 @@ public class Unit : MonoBehaviour
             case UIManager.MinimapColoringModes.Teamcolor:
                 minimapCircleMaterial.color = faction.color;
                 break;
+        }
+    }
+
+    public void AdjustModelAngleToGround()
+    {
+        Ray ray = new Ray(modelHolder.position + Vector3.up * 0.1f, Vector3.down);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, 1f, InputManager.Instance.groundLayerMask))
+        {
+            Quaternion newRotation = Quaternion.FromToRotation(Vector3.up, hit.normal) * modelHolder.parent.rotation;
+            modelHolder.rotation = Quaternion.Lerp(modelHolder.rotation, newRotation, Time.deltaTime * 8f);
+            selectionCircle.transform.rotation = modelHolder.rotation;
         }
     }
 }

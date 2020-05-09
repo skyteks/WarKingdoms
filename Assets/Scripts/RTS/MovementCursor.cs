@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
-[RequireComponent(typeof(Animation))]
 public class MovementCursor : MonoBehaviour
 {
     private Animation anim;
@@ -13,13 +13,18 @@ public class MovementCursor : MonoBehaviour
         render.enabled = false;
     }
 
+    void OnWillRenderObject()
+    {
+        if (!anim.isPlaying)
+        {
+            render.enabled = false;
+        }
+    }
+
     public void AnimateOnPos(Vector3 pos, Color color)
     {
-        //transform.SetPositionAndRotation(pos, Quaternion.LookRotation(Quaternion.FromToRotation(Vector3.up, Vector3.forward) * up, up));
-        transform.position = pos;
+        transform.parent.position = pos;
 
-        //Material mat = render.material;
-        //mat.color = color;
         render.material.color = color;
         render.enabled = true;
         anim.Rewind("Play");
@@ -29,8 +34,8 @@ public class MovementCursor : MonoBehaviour
 
     private void UpdateAnimSpeed()
     {
-        render = GetComponentInChildren<SkinnedMeshRenderer>(true);
-        anim = GetComponent<Animation>();
+        render = GetComponent<SkinnedMeshRenderer>();
+        anim = GetComponentInParent<Animation>();
         anim["Play"].speed = animationSpeed;
     }
 }
