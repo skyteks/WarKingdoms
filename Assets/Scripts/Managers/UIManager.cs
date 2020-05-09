@@ -52,10 +52,10 @@ public class UIManager : Singleton<UIManager>
             showHealthbars = !showHealthbars;
             if (showHealthbars)
             {
-                foreach (Unit unit in GameManager.Instance.GetAllUnits())
+                foreach (Unit unit in GameManager.Instance.GetAllVisibleUnits())
                 {
                     AddHealthbar(unit);
-                    unit.OnDeath += RemoveHealthbar;
+                    
                 }
             }
             else
@@ -145,9 +145,17 @@ public class UIManager : Singleton<UIManager>
 
     public void AddHealthbar(Unit unit)
     {
-        GameObject holder = Instantiate<GameObject>(healthbarUIPrefab, healthbarsGroup.transform);
+        if (!showHealthbars)
+        {
+            return;
+        }
+
+        Transform holder = Instantiate<GameObject>(healthbarUIPrefab, healthbarsGroup.transform).transform;
         holder.GetComponent<UIAnchor>().canvas = healthbarsGroup;
         holder.GetComponent<UIAnchor>().objectToFollow = unit.transform;
+
+        unit.OnDeath += RemoveHealthbar;
+        unit.OnDisapearInFOW += RemoveHealthbar;
     }
 
     public void UpdateHealthbars()
@@ -195,15 +203,19 @@ public class UIManager : Singleton<UIManager>
 
     public void RemoveHealthbar(Unit unitToRemoveFrom)
     {
-        Transform child = healthbarsGroup.transform.GetChildren().Where(holder => holder.GetComponent<UIAnchor>().objectToFollow.GetComponent<Unit>() == unitToRemoveFrom).FirstOrDefault();
-        if (child == null)
+        Transform holder = healthbarsGroup.transform.GetChildren().Where(holderr => holderr.GetComponent<UIAnchor>().objectToFollow.GetComponent<Unit>() == unitToRemoveFrom).FirstOrDefault();
+        if (holder == null)
         {
             return;
         }
 
-        child.SetParent(null);
-        Destroy(child.gameObject);
-        child.gameObject.SetActive(false);
+        Unit unit = holder.GetComponent<UIAnchor>().objectToFollow.GetComponent<Unit>();
+        unit.OnDeath -= RemoveHealthbar;
+        unit.OnDisapearInFOW -= RemoveHealthbar;
+
+        holder.SetParent(null);
+        Destroy(holder.gameObject);
+        holder.gameObject.SetActive(false);
     }
 
     public void ClearHealthbars()

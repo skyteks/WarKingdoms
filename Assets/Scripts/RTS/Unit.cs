@@ -29,6 +29,7 @@ public class Unit : MonoBehaviour
 
     public UnitStates state = UnitStates.Idleing;
     public FactionTemplate faction;
+    public bool visible;
     public float visionFadeTime = 1f;
     [Preview]
     public UnitTemplate template;
@@ -50,6 +51,7 @@ public class Unit : MonoBehaviour
     private float lastGuardCheckTime, guardCheckInterval = 1f;
     private bool agentReady = false;
     public UnityAction<Unit> OnDeath;
+    public UnityAction<Unit> OnDisapearInFOW;
 
     static Unit()
     {
@@ -97,6 +99,7 @@ public class Unit : MonoBehaviour
         else
         {
             fieldOfView.enabled = false;
+            visible = true;
             SetVisibility(false);
         }
     }
@@ -606,7 +609,7 @@ public class Unit : MonoBehaviour
         //Fire an event so any Platoon containing this Unit will be notified
         if (OnDeath != null)
         {
-            OnDeath(this);
+            OnDeath.Invoke(this);
         }
 
         //To avoid the object participating in any Raycast or tag search
@@ -739,18 +742,20 @@ public class Unit : MonoBehaviour
     {
         if (visibility)
         {
-            if (gameObject.layer == layerDefaultVisible)
+            if (visible)
             {
                 return;
             }
         }
         else
         {
-            if (gameObject.layer == layerDefaultHidden)
+            if (!visible)
             {
                 return;
             }
         }
+
+        visible = visibility;
 
         IEnumerable<GameObject> parts = GetComponentsInChildren<Transform>().Where(form =>
             form.gameObject.layer == layerDefaultVisible ||
@@ -758,6 +763,7 @@ public class Unit : MonoBehaviour
             form.gameObject.layer == layerMiniMapVisible ||
             form.gameObject.layer == layerMiniMapHidden
         ).Select(form => form.gameObject);
+
         foreach (GameObject part in parts)
         {
             if (part.layer == layerDefaultVisible || part.layer == layerDefaultHidden)
@@ -781,6 +787,18 @@ public class Unit : MonoBehaviour
                 {
                     part.layer = layerMiniMapHidden;
                 }
+            }
+        }
+
+        if (visible)
+        {
+            UIManager.Instance.AddHealthbar(this);
+        }
+        else
+        {
+            if (OnDisapearInFOW != null)
+            {
+                OnDisapearInFOW.Invoke(this);
             }
         }
     }

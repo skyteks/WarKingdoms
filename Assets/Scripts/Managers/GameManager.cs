@@ -153,6 +153,11 @@ public class GameManager : Singleton<GameManager>
         return Unit.globalUnitsList;
     }
 
+    public List<Unit> GetAllVisibleUnits()
+    {
+        return Unit.globalUnitsList.Where(unit => unit.visible).ToList();
+    }
+
     //Called by the TimeMachine Clip (of type Pause)
     public void PauseTimeline(UnityEngine.Playables.PlayableDirector whichOne)
     {
