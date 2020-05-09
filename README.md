@@ -7,11 +7,9 @@ A Warcraft-3-like Realtime Strategie Game
 ### Prerequisites
 
 Assets not included
-```
-3D Assets
+
 https://assetstore.unity.com/packages/3d/characters/humanoids/toon-rts-units-67948
 https://assetstore.unity.com/packages/3d/characters/humanoids/toon-rts-units-orcs-78906
-```
 
 ## Built With
 
@@ -23,7 +21,7 @@ https://assetstore.unity.com/packages/3d/characters/humanoids/toon-rts-units-orc
 
 ## Acknowledgments
 
-* **Lutz Kadoch** - https://github.com/hadea SebastianLague
+* **Lutz Kadoch** - https://github.com/hadea
 * **Pascal Jacob**
 * **Sebastian Lague** - https://youtu.be/rQG9aUWarwE
 * **Game Dev Guide** - https://youtu.be/rnqF6S7PfFA
