@@ -525,31 +525,7 @@ public class Unit : MonoBehaviour
                 yield break;
             }
 
-            yield return new WaitForSeconds((1f / template.attackSpeed) * (1f / 3f));
-
-            //check is performed after the wait, because somebody might have killed the target in the meantime
-            if (IsDeadOrNull(targetOfAttack))
-            {
-                break;
-            }
-
-            //if (targetOfAttack.faction == faction)
-            //{
-            //    break;
-            //}
-
-            if (state == UnitStates.Dead)
-            {
-                yield break;
-            }
-
-            //Too far away check moved to before waittime
-
-            int damage = Random.Range(template.damage.x, template.damage.y + 1);
-
-            targetOfAttack.SufferAttack(damage);
-
-            yield return new WaitForSeconds((1f / template.attackSpeed) * (1f / 3f) * 2f);
+            yield return new WaitForSeconds(template.attackSpeed);
         }
         if (animator != null)
         {
@@ -562,6 +538,20 @@ public class Unit : MonoBehaviour
             commandExecuted = true;
             //AddCommand(new AICommand(AICommand.CommandType.Stop));
         }
+    }
+
+    public void TriggerAttackAnimEvent(int Int)//Functionname equals Eventname
+    {
+        if (state == UnitStates.Dead || targetOfAttack.state == UnitStates.Dead)
+        {
+            //already dead
+            animator.SetBool("DoAttack", false);
+            return;
+        }
+
+        int damage = Random.Range(template.damage.x, template.damage.y + 1);
+
+        targetOfAttack.SufferAttack(damage);
     }
 
     //called by an attacker
@@ -840,10 +830,5 @@ public class Unit : MonoBehaviour
             modelHolder.rotation = Quaternion.Lerp(modelHolder.rotation, newRotation, Time.deltaTime * 8f);
             selectionCircle.transform.rotation = modelHolder.rotation;
         }
-    }
-
-    public void Trigger(int index)
-    {
-        print("TRIGGER");
     }
 }
