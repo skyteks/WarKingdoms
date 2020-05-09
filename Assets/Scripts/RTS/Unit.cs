@@ -841,4 +841,9 @@ public class Unit : MonoBehaviour
             selectionCircle.transform.rotation = modelHolder.rotation;
         }
     }
+
+    public void Trigger(int index)
+    {
+        print("TRIGGER");
+    }
 }
