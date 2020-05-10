@@ -31,6 +31,7 @@ public class Unit : MonoBehaviour
     public FactionTemplate faction;
     public bool visible;
     public float visionFadeTime = 1f;
+    public float combatReadySwitchTime = 7f;
     [Preview]
     public UnitTemplate template;
 
@@ -52,6 +53,7 @@ public class Unit : MonoBehaviour
     private bool agentReady = false;
     public UnityAction<Unit> OnDeath;
     public UnityAction<Unit> OnDisapearInFOW;
+    private Coroutine LerpingCombatReady;
 
     static Unit()
     {
@@ -542,7 +544,7 @@ public class Unit : MonoBehaviour
 
     public void TriggerAttackAnimEvent(int Int)//Functionname equals Eventname
     {
-        if (state == UnitStates.Dead || targetOfAttack.state == UnitStates.Dead)
+        if (state == UnitStates.Dead || IsDeadOrNull(targetOfAttack))
         {
             //already dead
             animator.SetBool("DoAttack", false);
@@ -829,6 +831,51 @@ public class Unit : MonoBehaviour
             Quaternion newRotation = Quaternion.FromToRotation(Vector3.up, hit.normal) * modelHolder.parent.rotation;
             modelHolder.rotation = Quaternion.Lerp(modelHolder.rotation, newRotation, Time.deltaTime * 8f);
             selectionCircle.transform.rotation = modelHolder.rotation;
+        }
+    }
+
+    public bool SetCombatReady(bool state)
+    {
+        const string name = "DoCombatReady";
+        foreach (var parameter in animator.parameters)
+        {
+            if (parameter.name == name)
+            {
+                float value = animator.GetFloat(name);
+                float stat = state.ToFloat();
+                if (value != stat)
+                {
+                    if (LerpingCombatReady != null)
+                    {
+                        StopCoroutine(LerpingCombatReady);
+                    }
+                    LerpingCombatReady = StartCoroutine(LerpCombatReady(state.ToFloat()));
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private IEnumerator LerpCombatReady(float state)
+    {
+        const string name = "DoCombatReady";
+
+        float value;
+        for (; ; )
+        {
+            value = animator.GetFloat(name);
+            value = Mathf.MoveTowards(value, state, Time.deltaTime * combatReadySwitchTime);
+            animator.SetFloat(name, value);
+            if (value != state)
+            {
+                yield return null;
+            }
+            else
+            {
+                LerpingCombatReady = null;
+                yield break;
+            }
         }
     }
 }

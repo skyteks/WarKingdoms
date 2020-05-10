@@ -126,7 +126,9 @@ public class Platoon : MonoBehaviour
 #endif
         unitToAdd.OnDeath += UnitDeadHandler;
         units.Add(unitToAdd);
-    }
+
+        unitToAdd.SetCombatReady(true);
+;    }
 
     //Removes an Unit from the Platoon and returns if the operation was successful
     public bool RemoveUnit(Unit unitToRemove)
@@ -140,6 +142,8 @@ public class Platoon : MonoBehaviour
         {
             units.Remove(unitToRemove);
             unitToRemove.OnDeath -= UnitDeadHandler;
+
+            unitToRemove.SetCombatReady(false);
         }
 
         return isThere;
@@ -150,9 +154,10 @@ public class Platoon : MonoBehaviour
 #if UNITY_EDITOR
         debugCommandLocations = new Location[0];
 #endif
-        for (int i = 0; i < units.Count; i++)
+        foreach (Unit unitToRemove in units)
         {
-            units[i].OnDeath -= UnitDeadHandler;
+            unitToRemove.OnDeath -= UnitDeadHandler;
+            unitToRemove.SetCombatReady(false);
         }
         units.Clear();
     }
