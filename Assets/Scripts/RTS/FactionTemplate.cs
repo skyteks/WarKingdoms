@@ -29,7 +29,6 @@ public class FactionTemplate : ScriptableObject
     [Space]
 
     public Material humanUnitsMaterial;
-    [Preview]
     public Material orcUnitsMaterial;
 
     [Space]

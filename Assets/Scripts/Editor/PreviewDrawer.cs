@@ -20,10 +20,6 @@ public class PreviewDrawer : PropertyDrawer
             {
                 height += (property.objectReferenceValue as Texture).height + EditorGUIUtility.standardVerticalSpacing;
             }
-            else if (type == typeof(Material))
-            {
-                height += (property.objectReferenceValue as Material).mainTexture.height + EditorGUIUtility.standardVerticalSpacing;
-            }
             else if (type.IsSubclassOf(typeof(ScriptableObject)))
             {
                 var fields = type.GetFields();
@@ -41,12 +37,6 @@ public class PreviewDrawer : PropertyDrawer
                         height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
                         height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
                     }
-                    //else if (field.FieldType == typeof(Material))
-                    //{
-                    //    //height += (property.objectReferenceValue as Texture).height;
-                    //    height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-                    //    height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-                    //}
                     else
                     {
                         height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
@@ -97,12 +87,6 @@ public class PreviewDrawer : PropertyDrawer
             EditorGUI.LabelField(position, new GUIContent(texture));
             position.y += EditorGUIUtility.standardVerticalSpacing;
         }
-        else if (type == typeof(Material))
-        {
-            Texture texture = (property.objectReferenceValue as Material).mainTexture;
-            EditorGUI.LabelField(position, new GUIContent(texture));
-            position.y += EditorGUIUtility.standardVerticalSpacing;
-        }
         else if (type.IsSubclassOf(typeof(ScriptableObject)))
         {
             position.y += EditorGUIUtility.standardVerticalSpacing;
@@ -123,7 +107,6 @@ public class PreviewDrawer : PropertyDrawer
                         EditorGUI.IntField(position, field.Name, (sbyte)value);
                         break;
                     case "Char":
-                        //EditorGUI.IntField(position, field.Name, (char)value);
                         EditorGUI.TextField(position, field.Name, ((char)value).ToString());
                         break;
                     case "Int16":
@@ -208,13 +191,6 @@ public class PreviewDrawer : PropertyDrawer
                             EditorGUI.LabelField(position, new GUIContent(texture));
                             position.y += EditorGUIUtility.standardVerticalSpacing;
                         }
-                        //else if (field.FieldType == typeof(Material))
-                        //{
-                        //    position.y += EditorGUIUtility.singleLineHeight;
-                        //    Texture texture = (value as Material).mainTexture;
-                        //    EditorGUI.LabelField(position, new GUIContent(texture));
-                        //    position.y += EditorGUIUtility.standardVerticalSpacing;
-                        //}
                         break;
                     case "Range":
                         Range range = (Range)value;
