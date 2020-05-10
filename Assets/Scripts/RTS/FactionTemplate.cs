@@ -29,11 +29,12 @@ public class FactionTemplate : ScriptableObject
     [Space]
 
     public Material humanUnitsMaterial;
+    [Preview]
     public Material orcUnitsMaterial;
 
     [Space]
 
-    public byte allianceId;// { get; private set; }
+    public byte allianceId;
 
     public List<Unit> units { get; private set; }
 

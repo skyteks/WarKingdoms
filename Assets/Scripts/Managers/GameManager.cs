@@ -19,6 +19,7 @@ public class GameManager : Singleton<GameManager>
 #endif
     public GameMode gameMode = GameMode.Gameplay;
 
+    [Preview]
     public FactionTemplate playerFaction;
     public List<FactionTemplate> factions;
 
