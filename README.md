@@ -2,6 +2,8 @@
 
 A Warcraft-3-like Realtime Strategie Game
 
+https://www.youtube.com/playlist?list=PLL6EQjZiYj7Kilumpq9UtLevmKPRU_OL6
+
 ## Getting Started
 
 ### Prerequisites
