@@ -188,6 +188,10 @@ public class FieldOfView : MonoBehaviour
         var goneTargets = lastVisibleTargets.Except(visibleTargets);
         foreach (var unseen in goneTargets)
         {
+            if (unseen == null)
+            {
+                continue;
+            }
             Unit unit = unseen.GetComponent<Unit>();
             if (unit == null) continue;
             if (FactionTemplate.IsAlliedWith(unit.faction, GameManager.Instance.playerFaction)) continue;

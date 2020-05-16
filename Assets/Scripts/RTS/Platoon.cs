@@ -59,7 +59,7 @@ public class Platoon : MonoBehaviour
 #endif
 
     //Executes a command on all Units
-    public void ExecuteCommand(AICommand command)
+    public void ExecuteCommand(AICommand command, bool followUpCommand)
     {
 #if UNITY_EDITOR
         debugCommandLocations = new Location[0];
@@ -68,7 +68,7 @@ public class Platoon : MonoBehaviour
         {
             for (int i = 0; i < units.Count; i++)
             {
-                units[i].AddCommand(command, true);
+                units[i].AddCommand(command, !followUpCommand);
             }
             return;
             //yield break;
@@ -109,7 +109,7 @@ public class Platoon : MonoBehaviour
             Vector3 nextOffset = remainingOffsets.OrderBy(offset => Vector3.Distance(sortedUnits[i].transform.position, origin + rotation * offset)).First();
             remainingOffsets.Remove(nextOffset);
             command.destination = destination + rotation * nextOffset;
-            sortedUnits[i].AddCommand(command, true);
+            sortedUnits[i].AddCommand(command, !followUpCommand);
             //yield return null;
         }
     }
@@ -128,7 +128,7 @@ public class Platoon : MonoBehaviour
         units.Add(unitToAdd);
 
         unitToAdd.SetCombatReady(true);
-;    }
+    }
 
     //Removes an Unit from the Platoon and returns if the operation was successful
     public bool RemoveUnit(Unit unitToRemove)

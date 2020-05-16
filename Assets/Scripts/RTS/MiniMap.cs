@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 /// <summary>
@@ -63,7 +61,11 @@ public class MiniMap : UIClickable
     private void MoveSelectionToMinimapClickPosition(Vector2 clickPosition)
     {
         GameManager gameManager = GameManager.Instance;
-        if (gameManager.GetSelectionLength() == 0) return;
+        if (gameManager.GetSelectionLength() == 0)
+        {
+            return;
+        }
+
         InputManager inputManager = InputManager.Instance;
         Vector3 hitPoint;
         if (CameraManager.GetCameraViewPointOnGroundPlane(miniMapCamera, clickPosition, out hitPoint, inputManager.groundLayerMask))
@@ -71,13 +73,15 @@ public class MiniMap : UIClickable
             bool attackComand = Input.GetButton("Attack");
             if (attackComand)
             {
-                gameManager.AttackMoveSelectedUnitsTo(hitPoint);
+                bool followUpCommand = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+                gameManager.AttackMoveSelectedUnitsTo(hitPoint, followUpCommand);
                 Debug.DrawLine(miniMapCamera.transform.position, hitPoint, Color.Lerp(Color.black, Color.Lerp(Color.yellow, Color.red, 0.6f), 0.6f), 1f);
                 inputManager.AnimateMoveOrderCursor(hitPoint, inputManager.attackMoveCommandColor);
             }
             else
             {
-                gameManager.MoveSelectedUnitsTo(hitPoint);
+                bool followUpCommand = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+                gameManager.MoveSelectedUnitsTo(hitPoint, followUpCommand);
                 Debug.DrawLine(miniMapCamera.transform.position, hitPoint, Color.Lerp(Color.black, Color.green, 0.6f), 1f);
                 inputManager.AnimateMoveOrderCursor(hitPoint, inputManager.moveCommandColor);
             }

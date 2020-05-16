@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5149563482757477240
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9117246173218412915}
+  m_Layer: 0
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9117246173218412915
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5149563482757477240}
+  m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
+  m_LocalPosition: {x: -0.111000195, y: 0.02200013, z: 0.022000104}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8668921274425726660}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 90}
 --- !u!65 &2828475616286731518
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -101,6 +131,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: c34f0ae223ad81c4f82f0a5fe5902c3f,
         type: 2}
+    - target: {fileID: 114393224487344650, guid: 2928e101c1e5b6e4c915c5893e1a830e,
+        type: 3}
+      propertyPath: projectileFirePoint
+      value: 
+      objectReference: {fileID: 9117246173218412915}
     - target: {fileID: 1852408184581222, guid: 2928e101c1e5b6e4c915c5893e1a830e, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -207,3 +242,9 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 9500000, guid: 908ab5e4207288843bed6c9191cd2955, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 908ab5e4207288843bed6c9191cd2955, type: 3}
+--- !u!4 &8668921274425726660 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400014, guid: 908ab5e4207288843bed6c9191cd2955,
+    type: 3}
+  m_PrefabInstance: {fileID: 8668921274426117194}
+  m_PrefabAsset: {fileID: 0}

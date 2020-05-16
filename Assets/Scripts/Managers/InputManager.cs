@@ -141,7 +141,7 @@ public class InputManager : Singleton<InputManager>
                                 {
                                     gameManager.SetSelection(newSelectedUnit);
                                 }
-                                else if(newSelectedUnit != null)//TEST
+                                else if (newSelectedUnit != null)//TEST
                                 {
                                     gameManager.SetSelection(newSelectedUnit);
                                 }
@@ -168,18 +168,19 @@ public class InputManager : Singleton<InputManager>
                         Unit targetUnit = hit.collider.GetComponent<Unit>();
                         if (targetUnit != null)
                         {
+                            bool followUpCommand = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+                            bool forceCommand = Input.GetKey(KeyCode.LeftControl);
+                            bool attackCommand = Input.GetButton("Attack");
                             if (!FactionTemplate.IsAlliedWith(targetUnit.faction, gameManager.playerFaction))
                             {
-                                gameManager.AttackTarget(targetUnit);
+                                gameManager.AttackTarget(targetUnit, followUpCommand);
                                 Debug.DrawLine(ray.origin, hit.point, Color.red, 1f);
                             }
                             else
                             {
-                                bool forceCommand = Input.GetKey(KeyCode.LeftControl);
-                                bool attackComand = Input.GetButton("Attack");
-                                if (forceCommand && attackComand)
+                                if (forceCommand && attackCommand)
                                 {
-                                    gameManager.AttackTarget(targetUnit);
+                                    gameManager.AttackTarget(targetUnit, followUpCommand);
                                     Debug.DrawLine(ray.origin, hit.point, Color.red, 1f);
                                 }
                                 else
@@ -203,16 +204,17 @@ public class InputManager : Singleton<InputManager>
                         Vector3 hitPoint;
                         if (CameraManager.GetCameraScreenPointOnGround(mainCamera, Input.mousePosition, out hitPoint, groundLayerMask))
                         {
+                            bool followUpCommand = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
                             bool attackComand = Input.GetButton("Attack");
                             if (attackComand)
                             {
-                                gameManager.AttackMoveSelectedUnitsTo(hitPoint);
+                                gameManager.AttackMoveSelectedUnitsTo(hitPoint, followUpCommand);
                                 Debug.DrawLine(ray.origin, hitPoint, Color.Lerp(Color.yellow, Color.red, 0.6f), 1f);
                                 AnimateMoveOrderCursor(hitPoint, attackMoveCommandColor);
                             }
                             else
                             {
-                                gameManager.MoveSelectedUnitsTo(hitPoint);
+                                gameManager.MoveSelectedUnitsTo(hitPoint, followUpCommand);
                                 Debug.DrawLine(ray.origin, hitPoint, Color.green, 1f);
                                 AnimateMoveOrderCursor(hitPoint, moveCommandColor);
                             }
@@ -289,7 +291,7 @@ public class InputManager : Singleton<InputManager>
 
                     if (!mouseIsMovingCamera)
                     {
-                    //Keyboard movements only happen if mouse is not causing the camera to move already
+                        //Keyboard movements only happen if mouse is not causing the camera to move already
                         float horKeyValue = Input.GetAxis("Horizontal");
                         float vertKeyValue = Input.GetAxis("Vertical");
                         if (horKeyValue != 0f || vertKeyValue != 0f)

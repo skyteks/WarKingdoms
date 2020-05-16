@@ -54,9 +54,9 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    public void IssueCommand(AICommand cmd)
+    public void IssueCommand(AICommand cmd, bool followUpCommand)
     {
-        selectedPlatoon.ExecuteCommand(cmd);
+        selectedPlatoon.ExecuteCommand(cmd, followUpCommand);
     }
 
     public int GetSelectionLength()
@@ -131,22 +131,22 @@ public class GameManager : Singleton<GameManager>
         UIManager.Instance.ClearSelection();
     }
 
-    public void MoveSelectedUnitsTo(Vector3 pos)
+    public void MoveSelectedUnitsTo(Vector3 pos, bool followUpCommand)
     {
         AICommand newCommand = new AICommand(AICommand.CommandType.MoveTo, pos);
-        IssueCommand(newCommand);
+        IssueCommand(newCommand, followUpCommand);
     }
 
-    public void AttackMoveSelectedUnitsTo(Vector3 pos)
+    public void AttackMoveSelectedUnitsTo(Vector3 pos, bool followUpCommand)
     {
         AICommand newCommand = new AICommand(AICommand.CommandType.AttackMoveTo, pos);
-        IssueCommand(newCommand);
+        IssueCommand(newCommand, followUpCommand);
     }
 
-    public void AttackTarget(Unit tgtUnit)
+    public void AttackTarget(Unit tgtUnit, bool followUpCommand)
     {
         AICommand newCommand = new AICommand(AICommand.CommandType.AttackTarget, tgtUnit);
-        IssueCommand(newCommand);
+        IssueCommand(newCommand, followUpCommand);
     }
 
     public List<Unit> GetAllUnits()
