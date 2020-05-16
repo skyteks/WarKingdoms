@@ -29,11 +29,13 @@ public class Projectile : MonoBehaviour
     public float trackSpeed = 10;
     public ProjectileRotationModes projectileRotationMode;
     public bool useFactionMaterial;
+    public ParticleSystem terrainImpactEffect;
 
     private Transform targetObject;
     private Vector3 targetPosition;
     private int damage;
     private Unit owner;
+    private bool hitSuccess;
 
     private Rigidbody rigid;
     private Renderer render;
@@ -59,24 +61,43 @@ public class Projectile : MonoBehaviour
         AdjustAngleToRotationMode();
     }
 
-    void OnCollisionEnter(Collision collision)
-    {
-    }
-
     void OnTriggerEnter(Collider other)
     {
         if (projectileFlyMode == ProjectileFlyModes.Tracking && other.transform != targetObject)
         {
             return;
         }
-        if (TryHitUnit(other.transform))
+        if (projectileFlyMode == ProjectileFlyModes.PhysicalArc && other.gameObject.layer == LayerMask.NameToLayer("Terrain"))
         {
             Destroy(gameObject);
+            return;
+        }
+        hitSuccess = TryHitUnit(other.transform);
+        if (hitSuccess)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Debug.LogError("A projectile did not have an action", this.gameObject);
+    }
+
+    void OnDestroy()
+    {
+        if (terrainImpactEffect != null && !hitSuccess)
+        {
+            terrainImpactEffect.transform.SetParent(null);
+            terrainImpactEffect.transform.rotation = Quaternion.Euler(Vector3.right * -90f);
+            terrainImpactEffect.Play();
+            Destroy(terrainImpactEffect.gameObject, terrainImpactEffect.main.duration);
         }
     }
 
     void OnDrawGizmos()//Selected()
     {
+        if (rigid == null)
+        {
+            return;
+        }
         Gizmos.color = Color.Lerp(Color.yellow, Color.red, 0.8f);
         switch (projectileFlyMode)
         {
@@ -208,7 +229,7 @@ public class Projectile : MonoBehaviour
         transform.position = Vector3.MoveTowards(transform.position, targetObject.position + Vector3.up, Time.deltaTime * trackSpeed);
         if (Vector3.Distance(transform.position, targetObject.position + Vector3.up) < 0.001f)
         {
-            TryHitUnit(targetObject);
+            hitSuccess = TryHitUnit(targetObject);
             Destroy(gameObject);
         }
     }
