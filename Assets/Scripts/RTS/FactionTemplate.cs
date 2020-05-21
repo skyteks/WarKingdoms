@@ -26,13 +26,6 @@ public class FactionTemplate : ScriptableObject
     public FactionColor factionColorName = FactionColor.black;
     public Color color = Color.black;
 
-    [Space]
-
-    public Material humanUnitsMaterial;
-    public Material orcUnitsMaterial;
-
-    [Space]
-
     public byte allianceId;
 
     public List<Unit> units { get; private set; }
@@ -54,19 +47,5 @@ public class FactionTemplate : ScriptableObject
             return false;
         }
         return faction1.allianceId == faction2.allianceId;
-    }
-
-    public Material GetMaterial(Race race)
-    {
-        switch (race)
-        {
-            case Race.Human:
-                return humanUnitsMaterial;
-            case Race.Orc:
-                return orcUnitsMaterial;
-            default:
-                Debug.LogError("Race doesn't have a Unit material for this faction color", this);
-                return null;
-        }
     }
 }

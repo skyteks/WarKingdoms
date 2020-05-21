@@ -7,10 +7,10 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Orc_Standard_Units_tan
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: _EMISSION
-  m_LightmapFlags: 1
+  m_Name: Teamcolor_Orc
+  m_Shader: {fileID: 4800000, guid: bca8d012fca79c744a6f952bfee63ba7, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -40,7 +40,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: ec806933424538b4f84fa25338c04bf1, type: 3}
+        m_Texture: {fileID: 2800000, guid: 49a0d5be183628f44a54dab29933f6e4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -53,6 +53,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TeamColorMap:
+        m_Texture: {fileID: 2800000, guid: 6e21ba092a6f0b542af9eacdfafbe327, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -75,3 +79,4 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _TeamColor: {r: 1, g: 0, b: 0, a: 1}

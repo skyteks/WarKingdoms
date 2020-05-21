@@ -11,27 +11,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Orc Grunt
       objectReference: {fileID: 0}
-    - target: {fileID: 95138031281430410, guid: 2928e101c1e5b6e4c915c5893e1a830e,
-        type: 3}
-      propertyPath: m_Avatar
-      value: 
-      objectReference: {fileID: 9000000, guid: 39137e143153bfa40b27cc40e5a803b1, type: 3}
-    - target: {fileID: 95138031281430410, guid: 2928e101c1e5b6e4c915c5893e1a830e,
-        type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: 0f70546ceb9bf7b4dbe6dc141d661f86, type: 2}
-    - target: {fileID: 114393224487344650, guid: 2928e101c1e5b6e4c915c5893e1a830e,
-        type: 3}
-      propertyPath: template
-      value: 
-      objectReference: {fileID: 11400000, guid: 11bbfe619e84ca648b2407a3d3419c2b,
-        type: 2}
-    - target: {fileID: 114393224487344650, guid: 2928e101c1e5b6e4c915c5893e1a830e,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 4798272592709608, guid: 2928e101c1e5b6e4c915c5893e1a830e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -76,14 +55,35 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 195803719427457422, guid: 2928e101c1e5b6e4c915c5893e1a830e,
+    - target: {fileID: 95138031281430410, guid: 2928e101c1e5b6e4c915c5893e1a830e,
         type: 3}
-      propertyPath: m_ObstacleAvoidanceType
-      value: 3
+      propertyPath: m_Avatar
+      value: 
+      objectReference: {fileID: 9000000, guid: 39137e143153bfa40b27cc40e5a803b1, type: 3}
+    - target: {fileID: 95138031281430410, guid: 2928e101c1e5b6e4c915c5893e1a830e,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 0f70546ceb9bf7b4dbe6dc141d661f86, type: 2}
+    - target: {fileID: 114393224487344650, guid: 2928e101c1e5b6e4c915c5893e1a830e,
+        type: 3}
+      propertyPath: template
+      value: 
+      objectReference: {fileID: 11400000, guid: 11bbfe619e84ca648b2407a3d3419c2b,
+        type: 2}
+    - target: {fileID: 114393224487344650, guid: 2928e101c1e5b6e4c915c5893e1a830e,
+        type: 3}
+      propertyPath: faction
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 1852408184581222, guid: 2928e101c1e5b6e4c915c5893e1a830e, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 195803719427457422, guid: 2928e101c1e5b6e4c915c5893e1a830e,
+        type: 3}
+      propertyPath: m_ObstacleAvoidanceType
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1107830643762534, guid: 2928e101c1e5b6e4c915c5893e1a830e, type: 3}
       propertyPath: m_IsActive
@@ -176,6 +176,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 13700048, guid: 6316901adeee6f74d83e95ae3b82ff4e, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 85c407ce764279e44a7e5b7cb7ef65aa, type: 2}
     m_RemovedComponents:
     - {fileID: 9500000, guid: 6316901adeee6f74d83e95ae3b82ff4e, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 6316901adeee6f74d83e95ae3b82ff4e, type: 3}

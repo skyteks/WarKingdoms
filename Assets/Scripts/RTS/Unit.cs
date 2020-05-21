@@ -296,18 +296,15 @@ public class Unit : MonoBehaviour
 
     private void SetColorMaterial()
     {
-        Material factionMaterial = faction.GetMaterial(template.race);
         foreach (Renderer render in modelRenderers)
         {
             if (render.materials.Length == 1)
             {
-                render.material = factionMaterial;
+                render.material.SetColor("_TeamColor", faction.color);
             }
             else
             {
-                Material[] materialArray = render.materials;
-                materialArray[materialArray.Length - 1] = factionMaterial;
-                render.materials = materialArray;
+                render.materials[render.materials.Length - 1].SetColor("_TeamColor", faction.color);
             }
         }
     }

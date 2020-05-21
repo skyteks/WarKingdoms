@@ -135,7 +135,7 @@ public class Projectile : MonoBehaviour
 
         if (useFactionMaterial)
         {
-            SetColorMaterial();
+            SetMaterialColor();
         }
 
         switch (projectileFlyMode)
@@ -200,22 +200,19 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    private void SetColorMaterial()
+    private void SetMaterialColor()
     {
         if (render == null)
         {
             return;
         }
-        Material factionMaterial = owner.faction.GetMaterial(owner.template.race);
         if (render.materials.Length == 1)
         {
-            render.material = factionMaterial;
+            render.material.SetColor("_TeamColor", owner.faction.color);
         }
         else
         {
-            Material[] materialArray = render.materials;
-            materialArray[materialArray.Length - 1] = factionMaterial;
-            render.materials = materialArray;
+            render.materials[render.materials.Length - 1].SetColor("_TeamColor", owner.faction.color);
         }
     }
 
