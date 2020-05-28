@@ -28,14 +28,15 @@ public class PortraitButton : UnitButton
             healthText.color = Color.Lerp(healthColorRed, healthColorOrange, fill.LinearRemap(0f, 0.5f));
         }
         manaText.text = (Unit.template.original.mana > 0) ? string.Concat(Unit.template.mana, " / ", Unit.template.original.mana) : "";
+        manaText.color = manaColor;
         damageText.text = string.Concat(Unit.template.damage.x, " - ", Unit.template.damage.y);
         attackSpeedText.text = Unit.template.attackSpeed.ToString();
         //movementSpeedText.text = Unit.template.movementSpeed.ToString();
     }
 
-    public override void SetupButton(Unit unitForButton, Color healthGreen, Color healthOrange, Color healthRed)
+    public override void SetupButton(Unit unitForButton, Color healthGreen, Color healthOrange, Color healthRed, Color manaBlue)
     {
-        base.SetupButton(unitForButton, healthGreen, healthOrange, healthRed);
+        base.SetupButton(unitForButton, healthGreen, healthOrange, healthRed, manaBlue);
         gameObject.SetActive(true);
     }
 

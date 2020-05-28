@@ -318,14 +318,13 @@ public class Unit : MonoBehaviour
         if (clear || command.commandType == AICommand.CommandType.Stop)
         {
             commandList.Clear();
-            commandExecuted = true;
-            commandRecieved = false;
-            if (command.commandType == AICommand.CommandType.Stop)
-            {
-                return;
-            }
         }
-        commandList.Add(command);
+        commandExecuted = true;
+        commandRecieved = false;
+        if (command.commandType != AICommand.CommandType.Stop)
+        {
+            commandList.Add(command);
+        }
     }
 
     public void InsertCommand(AICommand command, int position = 0)
@@ -901,5 +900,10 @@ public class Unit : MonoBehaviour
 
         Projectile projectileInstance = Instantiate(template.projectile, projectileFirePoint.position, projectileFirePoint.rotation).GetComponent<Projectile>();
         projectileInstance.LaunchAt(targetOfAttack.transform, damage, this);
+    }
+
+    public float GetSelectionCircleSize()
+    {
+        return selectionCircle.transform.localScale.x;
     }
 }

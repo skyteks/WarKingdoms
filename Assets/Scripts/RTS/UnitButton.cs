@@ -9,9 +9,11 @@ public class UnitButton : UIClickable
 {
     public Image portrait;
     public Image healthbarSlice;
+    public Image manabarSlice;
     protected Color healthColorGreen;
     protected Color healthColorOrange;
     protected Color healthColorRed;
+    protected Color manaColor;
 
     public Unit Unit { get; protected set; }
 
@@ -29,12 +31,13 @@ public class UnitButton : UIClickable
         }
     }
 
-    public virtual void SetupButton(Unit unitForButton, Color healthGreen, Color healthOrange, Color healthRed)
+    public virtual void SetupButton(Unit unitForButton, Color healthGreen, Color healthOrange, Color healthRed, Color manaBlue)
     {
         Unit = unitForButton;
         healthColorGreen = healthGreen;
         healthColorOrange = healthOrange;
         healthColorRed = healthRed;
+        manaColor = manaBlue;
     }
 
     public virtual void UpdateButton()
@@ -51,6 +54,18 @@ public class UnitButton : UIClickable
             else
             {
                 healthbarSlice.color = Color.Lerp(healthColorRed, healthColorOrange, fill.LinearRemap(0f, 0.5f));
+            }
+        }
+        if (manabarSlice != null)
+        {
+            if (Unit.template.original.mana == 0)
+            {
+                manabarSlice.transform.parent.gameObject.SetActive(false);
+            }
+            else
+            {
+                manabarSlice.fillAmount = (float)Unit.template.mana / (float)Unit.template.original.mana;
+                manabarSlice.color = manaColor;
             }
         }
     }

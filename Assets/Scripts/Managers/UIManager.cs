@@ -22,6 +22,7 @@ public class UIManager : Singleton<UIManager>
     public Color healthColorGreen = Color.green;
     public Color healthColorRed = Color.red;
     public Color healthColorOrange = Color.Lerp(Color.red, Color.yellow, 0.5f);
+    public Color manaColor = Color.blue;
 
     [Space]
 
@@ -55,7 +56,7 @@ public class UIManager : Singleton<UIManager>
                 foreach (Unit unit in GameManager.Instance.GetAllVisibleUnits())
                 {
                     AddHealthbar(unit);
-                    
+
                 }
             }
             else
@@ -79,8 +80,8 @@ public class UIManager : Singleton<UIManager>
     public void SetSelectionRectangle(Rect rectSize)
     {
         selectionRectangle.rectTransform.position = rectSize.center;
+        selectionRectangle.rectTransform.sizeDelta = rectSize.size;
         selectionRectangle.rectTransform.ForceUpdateRectTransforms();
-        selectionRectangle.rectTransform.sizeDelta = new Vector2(rectSize.width, rectSize.height);
     }
 
     public void AddToSelection(Unit newSelectedUnit)
@@ -88,7 +89,7 @@ public class UIManager : Singleton<UIManager>
         bool showPortrait = GameManager.Instance.GetSelectionLength() == 1;
         if (showPortrait)
         {
-            selectedPortraitUI.SetupButton(newSelectedUnit, healthColorGreen, healthColorOrange, healthColorRed);
+            selectedPortraitUI.SetupButton(newSelectedUnit, healthColorGreen, healthColorOrange, healthColorRed, manaColor);
         }
         else
         {
@@ -97,7 +98,7 @@ public class UIManager : Singleton<UIManager>
         selectionLayoutGroup.gameObject.SetActive(!showPortrait);
 
         GameObject holder = Instantiate<GameObject>(selectedUnitUIPrefab, selectionLayoutGroup.transform);
-        holder.GetComponent<UnitButton>().SetupButton(newSelectedUnit, healthColorGreen, healthColorOrange, healthColorRed);
+        holder.GetComponent<UnitButton>().SetupButton(newSelectedUnit, healthColorGreen, healthColorOrange, healthColorRed, manaColor);
     }
 
     public void UpdateSelection()
@@ -140,7 +141,6 @@ public class UIManager : Singleton<UIManager>
             child.gameObject.SetActive(false);
         }
         selectedPortraitUI.ClearButton();
-
     }
 
     public void AddHealthbar(Unit unit)
@@ -156,6 +156,12 @@ public class UIManager : Singleton<UIManager>
 
         unit.OnDeath += RemoveHealthbar;
         unit.OnDisapearInFOW += RemoveHealthbar;
+
+        holder.GetComponent<UIAnchor>().screenOffset *= unit.GetSelectionCircleSize() * 1.1f;
+        RectTransform rectTransform = holder.FindDeepChild("HealthbarSlice").parent.GetComponent<RectTransform>();
+        rectTransform.sizeDelta = rectTransform.sizeDelta.ToScale(new Vector2(unit.GetSelectionCircleSize(), 1f));
+        rectTransform = holder.FindDeepChild("ManabarSlice").parent.GetComponent<RectTransform>();
+        rectTransform.sizeDelta = rectTransform.sizeDelta.ToScale(new Vector2(unit.GetSelectionCircleSize(), 1f));
     }
 
     public void UpdateHealthbars()
@@ -197,6 +203,17 @@ public class UIManager : Singleton<UIManager>
                 case HealthbarColoringModes.Teamcolor:
                     healthbarSlice.color = unit.faction.color;
                     break;
+            }
+
+            Image manabarSlice = child.FindDeepChild("ManabarSlice").GetComponent<Image>();
+            if (unit.template.original.mana == 0)
+            {
+                manabarSlice.transform.parent.gameObject.SetActive(false);
+            }
+            else
+            {
+                manabarSlice.fillAmount = (float)unit.template.mana / (float)unit.template.original.mana;
+                manabarSlice.color = manaColor;
             }
         }
     }

@@ -2520,6 +2520,7 @@ MonoBehaviour:
   selectionState: 0
   portrait: {fileID: 638477732}
   healthbarSlice: {fileID: 0}
+  manabarSlice: {fileID: 0}
   healthText: {fileID: 1843384549}
   manaText: {fileID: 415489548}
   damageText: {fileID: 2138574976}
@@ -4653,8 +4654,9 @@ MonoBehaviour:
   healthColorGreen: {r: 0.053549763, g: 0.7058823, b: 0, a: 1}
   healthColorRed: {r: 1, g: 0, b: 0, a: 1}
   healthColorOrange: {r: 1, g: 0.585702, b: 0, a: 1}
-  healthbarColoringMode: 2
-  minimapColoringMode: 1
+  manaColor: {r: 0, g: 0, b: 1, a: 1}
+  healthbarColoringMode: 1
+  minimapColoringMode: 0
   selectionRectangle: {fileID: 1935518528}
   selectionLayoutGroup: {fileID: 359466322}
   selectedUnitUIPrefab: {fileID: 1415296774041510, guid: dd6331a2c470fbd40bac3af10a82a1db,
@@ -8408,6 +8410,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1737565539}
   - component: {fileID: 1737565538}
+  - component: {fileID: 1737565540}
   m_Layer: 0
   m_Name: Human Barracks
   m_TagString: Untagged
@@ -8425,7 +8428,7 @@ BoxCollider:
   m_GameObject: {fileID: 1737565537}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 2.5, y: 1, z: 2.5}
   m_Center: {x: 0, y: 0.5, z: 0}
@@ -8448,6 +8451,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!208 &1737565540
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1737565537}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.5, y: 1, z: 1.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 1, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &1751813875
 GameObject:
   m_ObjectHideFlags: 0
@@ -10224,10 +10243,20 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4286905150462399718, guid: 2d921e20393bf8944919a89b13e75a51,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8430199755080643353, guid: 2d921e20393bf8944919a89b13e75a51,
         type: 3}
       propertyPath: m_Name
       value: Human Barracks
+      objectReference: {fileID: 0}
+    - target: {fileID: 4145935068742668248, guid: 2d921e20393bf8944919a89b13e75a51,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6027058134838234269, guid: 2d921e20393bf8944919a89b13e75a51,
         type: 3}
@@ -10282,11 +10311,6 @@ PrefabInstance:
     - target: {fileID: 6027058134838234269, guid: 2d921e20393bf8944919a89b13e75a51,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4286905150462399718, guid: 2d921e20393bf8944919a89b13e75a51,
-        type: 3}
-      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
