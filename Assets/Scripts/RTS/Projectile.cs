@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Handles projectile flight and collision
+/// </summary>
 public class Projectile : MonoBehaviour
 {
     public enum ProjectileFlyModes
@@ -233,8 +236,8 @@ public class Projectile : MonoBehaviour
 
     private bool TryHitUnit(Transform target)
     {
-        Unit hitUnit = target.GetComponent<Unit>();
-        if (!Unit.IsDeadOrNull(hitUnit))
+        ClickableObject hitUnit = target.GetComponent<ClickableObject>();
+        if (!hitUnit.IsDeadOrNull(hitUnit))
         {
             hitUnit.SufferAttack(damage);
             return true;

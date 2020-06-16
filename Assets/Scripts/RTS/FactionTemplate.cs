@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Stores faction stats
+/// </summary>
 [CreateAssetMenu(fileName = "new Faction Template", menuName = "RTS/Faction Template", order = 2)]
 public class FactionTemplate : ScriptableObject
 {
@@ -29,15 +32,18 @@ public class FactionTemplate : ScriptableObject
     public byte allianceId;
 
     public List<Unit> units { get; private set; }
+    public List<Building> buildings { get; private set; }
 
     void OnEnable()
     {
         units = new List<Unit>();
+        buildings = new List<Building>();
     }
 
     void OnDisable()
     {
         units = new List<Unit>();
+        buildings = new List<Building>();
     }
 
     public static bool IsAlliedWith(FactionTemplate faction1, FactionTemplate faction2)

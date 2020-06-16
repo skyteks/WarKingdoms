@@ -37,7 +37,7 @@ public class FieldOfView : MonoBehaviour
         }
     }
 
-    public Unit unit;
+    public ClickableObject unit;
 
     [Range(0f, 360f)]
     public float viewAngle = 360f;
@@ -175,7 +175,7 @@ public class FieldOfView : MonoBehaviour
         {
             yield return Yielders.Get(delay);
             if (!FactionTemplate.IsAlliedWith(unit.faction, GameManager.Instance.playerFaction)) continue;
-            if (unit.state == Unit.UnitStates.Dead) yield break;
+            if (unit.IsDeadOrNull(unit)) yield break;
 
             MarkTargetsVisibility();
         }

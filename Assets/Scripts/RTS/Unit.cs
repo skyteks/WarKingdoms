@@ -8,7 +8,8 @@ using UnityEngine.Events;
 /// <summary>
 /// Unit semi-AI handles movement and stats
 /// </summary>
-public class Unit : MonoBehaviour
+[RequireComponent(typeof(NavMeshAgent))]
+public class Unit : ClickableObject
 {
     public enum UnitStates
     {
@@ -21,69 +22,33 @@ public class Unit : MonoBehaviour
         Dead,
     }
 
-    public static List<Unit> globalUnitsList;
-    private static int layerDefaultVisible;
-    private static int layerDefaultHidden;
-    private static int layerMiniMapVisible;
-    private static int layerMiniMapHidden;
-
     public UnitStates state = UnitStates.Idleing;
-    public FactionTemplate faction;
-    public bool visible;
-    public float visionFadeTime = 1f;
     public float combatReadySwitchTime = 7f;
-    [Preview]
-    public UnitTemplate template;
     public Transform projectileFirePoint;
 
     //references
-    private NavMeshAgent navMeshAgent;
-    private Animator animator;
-    private MeshRenderer selectionCircle, miniMapCircle, visionCircle;
-    private FieldOfView fieldOfView;
-    private Transform modelHolder;
-    private Renderer[] modelRenderers;
+    protected NavMeshAgent navMeshAgent;
+    protected Animator animator;
 
     //private bool isSelected; //is the Unit currently selected by the Player
     [HideInInspector]
     public List<AICommand> commandList = new List<AICommand>();
-    private bool commandRecieved, commandExecuted;
-    private Unit targetOfAttack;
-    private Unit[] hostiles;
-    private float lastGuardCheckTime, guardCheckInterval = 1f;
-    private bool agentReady = false;
-    public UnityAction<Unit> OnDeath;
-    public UnityAction<Unit> OnDisapearInFOW;
-    private Coroutine LerpingCombatReady;
+    protected bool commandRecieved, commandExecuted;
+    protected ClickableObject targetOfAttack;
+    protected ClickableObject[] hostiles;
+    protected float lastGuardCheckTime, guardCheckInterval = 1f;
+    protected bool agentReady = false;
+    protected Coroutine LerpingCombatReady;
 
-    static Unit()
+    protected override void Awake()
     {
-        globalUnitsList = new List<Unit>();
-    }
-
-    void Awake()
-    {
+        base.Awake();
         navMeshAgent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
-        selectionCircle = transform.Find("SelectionCircle").GetComponent<MeshRenderer>();
-        miniMapCircle = transform.Find("MiniMapCircle").GetComponent<MeshRenderer>();
-        visionCircle = transform.Find("FieldOfView").GetComponent<MeshRenderer>();
-        fieldOfView = transform.Find("FieldOfView").GetComponent<FieldOfView>();
-        modelHolder = transform.Find("Model");
-        modelRenderers = modelHolder.GetComponentsInChildren<Renderer>(true);
-
-        SetLayers();
     }
 
-    void Start()
+    protected override void Start()
     {
-        //Randomization of NavMeshAgent speed. More fun!
-        //float rndmFactor = navMeshAgent.speed * .15f;
-        //navMeshAgent.speed += Random.Range(-rndmFactor, rndmFactor);
-
-        template = template.Clone(); //we copy the template otherwise it's going to overwrite the original asset!
-
-        globalUnitsList.Add(this);
         faction.units.Add(this);
 
         SetColorMaterial();
@@ -93,21 +58,11 @@ public class Unit : MonoBehaviour
 
         StartCoroutine(DequeueCommands());
 
-        visionCircle.material.color = visionCircle.material.color.ToWithA(0f);
-        if (FactionTemplate.IsAlliedWith(faction, GameManager.Instance.playerFaction))
-        {
-            StartCoroutine(VisionFade(visionFadeTime, false));
-            SetVisibility(true);
-        }
-        else
-        {
-            fieldOfView.enabled = false;
-            visible = true;
-            SetVisibility(false);
-        }
+        base.Start();
+        
     }
 
-    void Update()
+    protected void Update()
     {
         //Little hack to give time to the NavMesh agent to set its destination.
         //without this, the Unit would switch its state before the NavMeshAgent can kick off, leading to unpredictable results
@@ -189,7 +144,7 @@ public class Unit : MonoBehaviour
                 if (Time.time > lastGuardCheckTime + guardCheckInterval)
                 {
                     lastGuardCheckTime = Time.time;
-                    Unit[] closestEnemies = GetNearestHostileUnits();
+                    ClickableObject[] closestEnemies = GetNearestHostileUnits();
                     for (int i = 0; i < closestEnemies.Length; i++)
                     {
                         commandExecuted = true;
@@ -281,32 +236,9 @@ public class Unit : MonoBehaviour
     }
 #endif
 
-    public static bool IsDeadOrNull(Unit unit)
+    public override bool IsDeadOrNull(ClickableObject unit)
     {
-        return (unit == null || unit.state == UnitStates.Dead);
-    }
-
-    private static void SetLayers()
-    {
-        layerDefaultVisible = LayerMask.NameToLayer("Default");
-        layerDefaultHidden = LayerMask.NameToLayer("Default Hidden");
-        layerMiniMapVisible = LayerMask.NameToLayer("MiniMap Only");
-        layerMiniMapHidden = LayerMask.NameToLayer("MiniMap Hidden");
-    }
-
-    private void SetColorMaterial()
-    {
-        foreach (Renderer render in modelRenderers)
-        {
-            if (render.materials.Length == 1)
-            {
-                render.material.SetColor("_TeamColor", faction.color);
-            }
-            else
-            {
-                render.materials[render.materials.Length - 1].SetColor("_TeamColor", faction.color);
-            }
-        }
+        return unit == null || (unit as Unit).state == UnitStates.Dead;
     }
 
     public void AddCommand(AICommand command, bool clear = false)
@@ -505,7 +437,7 @@ public class Unit : MonoBehaviour
     }
 
     //move towards a target to attack it
-    private void MoveToTarget(Unit target)
+    private void MoveToTarget(ClickableObject target)
     {
         if (!IsDeadOrNull(target))
         {
@@ -564,32 +496,26 @@ public class Unit : MonoBehaviour
     }
 
     //called by an attacker
-    public void SufferAttack(int damage)
+    public override void SufferAttack(int damage)
     {
         if (state == UnitStates.Dead)
         {
             return;
         }
 
-        template.health -= damage;
-
-        if (template.health <= 0)
-        {
-            Die();
-        }
+        base.Die();
     }
 
     //called in SufferAttack, but can also be from a Timeline clip
-    [ContextMenu("Die")]
-    private void Die()
+    protected override void Die()
     {
         if (Application.isEditor && !Application.isPlaying)
         {
             return;
         }
-        AdjustModelAngleToGround();
+        base.Die();
 
-        template.health = 0;
+        AdjustModelAngleToGround();
 
         commandList.Clear();
         commandExecuted = true;
@@ -610,11 +536,6 @@ public class Unit : MonoBehaviour
             OnDeath.Invoke(this);
         }
 
-        //To avoid the object participating in any Raycast or tag search
-        //gameObject.tag = "Untagged";
-        gameObject.layer = 0;
-
-        globalUnitsList.Remove(this);
         faction.units.Remove(this);
 
         //Remove unneeded Components
@@ -628,10 +549,7 @@ public class Unit : MonoBehaviour
         //{
         //    Destroy(animator, 10f); //give it some time to complete the animation
         //}
-        selectionCircle.enabled = false;
-        miniMapCircle.enabled = false;
         navMeshAgent.enabled = false;
-        GetComponent<Collider>().enabled = false; //will make it unselectable on click
         StartCoroutine(DecayIntoGround());
     }
 
@@ -648,37 +566,7 @@ public class Unit : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private IEnumerator VisionFade(float fadeTime, bool fadeOut)
-    {
-        Color newColor = visionCircle.material.color;
-        float deadline = Time.time + fadeTime;
-        while (Time.time < deadline)
-        {
-            //newColor = sightCircle.material.color;
-            newColor.a = newColor.a + Time.deltaTime * fadeTime * -fadeOut.ToSignFloat();
-            visionCircle.material.color = newColor;
-            yield return null;
-        }
-        if (fadeOut)
-        {
-            Destroy(visionCircle);
-        }
-    }
-
-    private IEnumerator HideSeenThings(float fadeTime)
-    {
-        if (fadeTime != 0f)
-        {
-            yield return Yielders.Get(fadeTime);
-        }
-
-        float radius = template.guardDistance;
-        template.guardDistance = 0f;
-        fieldOfView.MarkTargetsVisibility();
-        template.guardDistance = radius;
-    }
-
-    private Unit[] GetNearestHostileUnits()
+    private ClickableObject[] GetNearestHostileUnits()
     {
         hostiles = FindObjectsOfType<Unit>().Where(unit => !FactionTemplate.IsAlliedWith(unit.faction, faction)).Where(unit => Vector3.Distance(unit.transform.position, transform.position) < template.guardDistance).ToArray();
 
@@ -686,11 +574,11 @@ public class Unit : MonoBehaviour
         return hostiles;
     }
 
-    private Unit GetNearestHostileUnit()
+    private ClickableObject GetNearestHostileUnit()
     {
         hostiles = FindObjectsOfType<Unit>().Where(unit => !FactionTemplate.IsAlliedWith(unit.faction, faction)).ToArray();
 
-        Unit nearestEnemy = null;
+        ClickableObject nearestEnemy = null;
         float nearestEnemyDistance = float.PositiveInfinity;
         for (int i = 0; i < hostiles.Count(); i++)
         {
@@ -713,30 +601,7 @@ public class Unit : MonoBehaviour
         return nearestEnemy;
     }
 
-    public void SetSelected(bool selected)
-    {
-        //Set transparency dependent on selection
-
-        GameManager gameManager = GameManager.Instance;
-        Color newColor;
-        if (faction == gameManager.playerFaction)
-        {
-            newColor = Color.green;
-        }
-        else if (FactionTemplate.IsAlliedWith(faction, gameManager.playerFaction))
-        {
-            newColor = Color.yellow;
-        }
-        else
-        {
-            newColor = Color.red;
-        }
-        miniMapCircle.material.color = newColor;
-        newColor.a = (selected) ? 1f : .3f;
-        selectionCircle.material.color = newColor;
-    }
-
-    public void SetVisibility(bool visibility)
+    public override void SetVisibility(bool visibility)
     {
         if (visibility)
         {
@@ -753,40 +618,7 @@ public class Unit : MonoBehaviour
             }
         }
 
-        visible = visibility;
-
-        IEnumerable<GameObject> parts = GetComponentsInChildren<Transform>().Where(form =>
-            form.gameObject.layer == layerDefaultVisible ||
-            form.gameObject.layer == layerDefaultHidden ||
-            form.gameObject.layer == layerMiniMapVisible ||
-            form.gameObject.layer == layerMiniMapHidden
-        ).Select(form => form.gameObject);
-
-        foreach (GameObject part in parts)
-        {
-            if (part.layer == layerDefaultVisible || part.layer == layerDefaultHidden)
-            {
-                if (visibility)
-                {
-                    part.layer = layerDefaultVisible;
-                }
-                else
-                {
-                    part.layer = layerDefaultHidden;
-                }
-            }
-            else
-            {
-                if (visibility)
-                {
-                    part.layer = layerMiniMapVisible;
-                }
-                else
-                {
-                    part.layer = layerMiniMapHidden;
-                }
-            }
-        }
+        base.SetVisibility(visibility);
 
         if (visible)
         {
@@ -900,10 +732,5 @@ public class Unit : MonoBehaviour
 
         Projectile projectileInstance = Instantiate(template.projectile, projectileFirePoint.position, projectileFirePoint.rotation).GetComponent<Projectile>();
         projectileInstance.LaunchAt(targetOfAttack.transform, damage, this);
-    }
-
-    public float GetSelectionCircleSize()
-    {
-        return selectionCircle.transform.localScale.x;
     }
 }

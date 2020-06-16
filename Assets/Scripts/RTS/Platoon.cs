@@ -326,8 +326,11 @@ public class Platoon : MonoBehaviour
     }
 
     //Fired when a unit belonging to this Platoon dies
-    private void UnitDeadHandler(Unit whoDied)
+    private void UnitDeadHandler(ClickableObject whoDied)
     {
-        RemoveUnit(whoDied); //will also remove the handler
+        if (whoDied is Unit)
+        {
+            RemoveUnit(whoDied as Unit); //will also remove the handler
+        }
     }
 }

@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// Moves and animates the movement command cursor
+/// </summary>
 public class MovementCursor : MonoBehaviour
 {
     private Animation anim;

@@ -143,7 +143,7 @@ public class UIManager : Singleton<UIManager>
         selectedPortraitUI.ClearButton();
     }
 
-    public void AddHealthbar(Unit unit)
+    public void AddHealthbar(ClickableObject unit)
     {
         if (!showHealthbars)
         {
@@ -175,7 +175,6 @@ public class UIManager : Singleton<UIManager>
             switch (healthbarColoringMode)
             {
                 case HealthbarColoringModes.FriendFoe:
-                    //TODO: allied color
                     GameManager gameManager = GameManager.Instance;
                     if (unit.faction == gameManager.playerFaction)
                     {
@@ -218,7 +217,7 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
-    public void RemoveHealthbar(Unit unitToRemoveFrom)
+    public void RemoveHealthbar(ClickableObject unitToRemoveFrom)
     {
         Transform holder = healthbarsGroup.transform.GetChildren().Where(holderr => holderr.GetComponent<UIAnchor>().objectToFollow.GetComponent<Unit>() == unitToRemoveFrom).FirstOrDefault();
         if (holder == null)
@@ -226,7 +225,7 @@ public class UIManager : Singleton<UIManager>
             return;
         }
 
-        Unit unit = holder.GetComponent<UIAnchor>().objectToFollow.GetComponent<Unit>();
+        ClickableObject unit = holder.GetComponent<UIAnchor>().objectToFollow.GetComponent<ClickableObject>();
         unit.OnDeath -= RemoveHealthbar;
         unit.OnDisapearInFOW -= RemoveHealthbar;
 

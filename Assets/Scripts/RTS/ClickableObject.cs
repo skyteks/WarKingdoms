@@ -1,0 +1,224 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.Events;
+
+public abstract class ClickableObject : MonoBehaviour
+{
+    protected static int layerDefaultVisible;
+    protected static int layerDefaultHidden;
+    protected static int layerMiniMapVisible;
+    protected static int layerMiniMapHidden;
+
+    public static List<ClickableObject> globalObjectsList;
+
+    [Preview]
+    public FactionTemplate faction;
+    public bool visible;
+    [Preview]
+    public UnitTemplate template;
+    public float visionFadeTime = 1f;
+
+    protected Transform modelHolder;
+    protected MeshRenderer selectionCircle, miniMapCircle, visionCircle;
+    protected Renderer[] modelRenderers;
+    protected FieldOfView fieldOfView;
+
+    public UnityAction<ClickableObject> OnDeath;
+    public UnityAction<ClickableObject> OnDisapearInFOW;
+
+    static ClickableObject()
+    {
+        globalObjectsList = new List<ClickableObject>();
+    }
+
+    protected virtual void Awake()
+    {
+        selectionCircle = transform.Find("SelectionCircle").GetComponent<MeshRenderer>();
+        miniMapCircle = transform.Find("MiniMapCircle").GetComponent<MeshRenderer>();
+        visionCircle = transform.Find("FieldOfView").GetComponent<MeshRenderer>();
+        modelHolder = transform.Find("Model");
+        modelRenderers = modelHolder.GetComponentsInChildren<Renderer>(true);
+        fieldOfView = transform.Find("FieldOfView").GetComponent<FieldOfView>();
+
+        SetLayers();
+    }
+
+    protected virtual void Start()
+    {
+        globalObjectsList.Add(this);
+
+        template = template.Clone(); //we copy the template otherwise it's going to overwrite the original asset!
+
+        visionCircle.material.color = visionCircle.material.color.ToWithA(0f);
+        if (FactionTemplate.IsAlliedWith(faction, GameManager.Instance.playerFaction))
+        {
+            StartCoroutine(VisionFade(visionFadeTime, false));
+            SetVisibility(true);
+        }
+        else
+        {
+            fieldOfView.enabled = false;
+            visible = true;
+            SetVisibility(false);
+        }
+    }
+
+    public abstract bool IsDeadOrNull(ClickableObject unit);
+
+    protected static void SetLayers()
+    {
+        layerDefaultVisible = LayerMask.NameToLayer("Default");
+        layerDefaultHidden = LayerMask.NameToLayer("Default Hidden");
+        layerMiniMapVisible = LayerMask.NameToLayer("MiniMap Only");
+        layerMiniMapHidden = LayerMask.NameToLayer("MiniMap Hidden");
+    }
+
+    protected void SetColorMaterial()
+    {
+        foreach (Renderer render in modelRenderers)
+        {
+            //render.materials[render.materials.Length - 1].SetColor("_TeamColor", faction.color);
+
+            MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
+            render.GetPropertyBlock(materialPropertyBlock, render.materials.Length - 1);
+            materialPropertyBlock.SetColor("_TeamColor", faction.color);
+            render.SetPropertyBlock(materialPropertyBlock);
+        }
+    }
+
+    public virtual void SetVisibility(bool visibility)
+    {
+        visible = visibility;
+
+        IEnumerable<GameObject> parts = GetComponentsInChildren<Transform>().Where(form =>
+            form.gameObject.layer == layerDefaultVisible ||
+            form.gameObject.layer == layerDefaultHidden ||
+            form.gameObject.layer == layerMiniMapVisible ||
+            form.gameObject.layer == layerMiniMapHidden
+        ).Select(form => form.gameObject);
+
+        foreach (GameObject part in parts)
+        {
+            if (part.layer == layerDefaultVisible || part.layer == layerDefaultHidden)
+            {
+                if (visibility)
+                {
+                    part.layer = layerDefaultVisible;
+                }
+                else
+                {
+                    part.layer = layerDefaultHidden;
+                }
+            }
+            else
+            {
+                if (visibility)
+                {
+                    part.layer = layerMiniMapVisible;
+                }
+                else
+                {
+                    part.layer = layerMiniMapHidden;
+                }
+            }
+        }
+    }
+
+    public float GetSelectionCircleSize()
+    {
+        return selectionCircle.transform.localScale.x;
+    }
+
+    public void SetSelected(bool selected)
+    {
+        //Set transparency dependent on selection
+
+        GameManager gameManager = GameManager.Instance;
+        Color newColor;
+        if (faction == gameManager.playerFaction)
+        {
+            newColor = Color.green;
+        }
+        else if (FactionTemplate.IsAlliedWith(faction, gameManager.playerFaction))
+        {
+            newColor = Color.yellow;
+        }
+        else
+        {
+            newColor = Color.red;
+        }
+        miniMapCircle.material.color = newColor;
+        newColor.a = (selected) ? 1f : .3f;
+        selectionCircle.material.color = newColor;
+    }
+
+    //called in SufferAttack, but can also be from a Timeline clip
+    [ContextMenu("Die")]
+    protected virtual void Die()
+    {
+        if (Application.isEditor && !Application.isPlaying)
+        {
+            return;
+        }
+        template.health = 0;
+
+        //Fire an event so any Platoon containing this Unit will be notified
+        if (OnDeath != null)
+        {
+            OnDeath.Invoke(this);
+        }
+
+        //To avoid the object participating in any Raycast or tag search
+        //gameObject.tag = "Untagged";
+        gameObject.layer = 0;
+
+        globalObjectsList.Remove(this);
+
+        //Remove unneeded Components
+        selectionCircle.enabled = false;
+        miniMapCircle.enabled = false;
+        GetComponent<Collider>().enabled = false; //will make it unselectable on click
+    }
+
+    public virtual void SufferAttack(int damage)
+    {
+        template.health -= damage;
+
+        if (template.health <= 0)
+        {
+            Die();
+        }
+    }
+
+    protected IEnumerator VisionFade(float fadeTime, bool fadeOut)
+    {
+        Color newColor = visionCircle.material.color;
+        float deadline = Time.time + fadeTime;
+        while (Time.time < deadline)
+        {
+            //newColor = sightCircle.material.color;
+            newColor.a = newColor.a + Time.deltaTime * fadeTime * -fadeOut.ToSignFloat();
+            visionCircle.material.color = newColor;
+            yield return null;
+        }
+        if (fadeOut)
+        {
+            Destroy(visionCircle);
+        }
+    }
+
+    protected IEnumerator HideSeenThings(float fadeTime)
+    {
+        if (fadeTime != 0f)
+        {
+            yield return Yielders.Get(fadeTime);
+        }
+
+        float radius = template.guardDistance;
+        template.guardDistance = 0f;
+        fieldOfView.MarkTargetsVisibility();
+        template.guardDistance = radius;
+    }
+}

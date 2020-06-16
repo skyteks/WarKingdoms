@@ -143,20 +143,20 @@ public class GameManager : Singleton<GameManager>
         IssueCommand(newCommand, followUpCommand);
     }
 
-    public void AttackTarget(Unit tgtUnit, bool followUpCommand)
+    public void AttackTarget(ClickableObject targetUnit, bool followUpCommand)
     {
-        AICommand newCommand = new AICommand(AICommand.CommandType.AttackTarget, tgtUnit);
+        AICommand newCommand = new AICommand(AICommand.CommandType.AttackTarget, targetUnit);
         IssueCommand(newCommand, followUpCommand);
     }
 
-    public List<Unit> GetAllUnits()
+    public List<ClickableObject> GetAllUnits()
     {
-        return Unit.globalUnitsList;
+        return ClickableObject.globalObjectsList;
     }
 
-    public List<Unit> GetAllVisibleUnits()
+    public List<ClickableObject> GetAllVisibleUnits()
     {
-        return Unit.globalUnitsList.Where(unit => unit.visible).ToList();
+        return ClickableObject.globalObjectsList.Where(unit => unit.visible).ToList();
     }
 
     //Called by the TimeMachine Clip (of type Pause)

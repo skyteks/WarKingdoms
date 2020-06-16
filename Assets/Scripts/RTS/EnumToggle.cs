@@ -2,6 +2,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// A toggle button for UI to switch between enum modes
+/// </summary>
 public class EnumToggle : MonoBehaviour
 {
     public Text minimapUnitColorText;
