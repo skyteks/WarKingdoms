@@ -59,7 +59,6 @@ public class Unit : ClickableObject
         StartCoroutine(DequeueCommands());
 
         base.Start();
-        
     }
 
     protected void Update()
@@ -111,7 +110,7 @@ public class Unit : ClickableObject
 
             case UnitStates.MovingToTarget:
                 //check if target has been killed by somebody else
-                if (IsDeadOrNull(targetOfAttack))
+                if (targetOfAttack.IsDeadOrNull(targetOfAttack))
                 {
                     commandExecuted = true;
                     //Idle();
@@ -158,7 +157,7 @@ public class Unit : ClickableObject
             case UnitStates.Attacking:
                 //check if target has been killed by somebody else
                 commandExecuted = true;
-                if (IsDeadOrNull(targetOfAttack))
+                if (targetOfAttack.IsDeadOrNull(targetOfAttack))
                 {
                     if (animator != null)
                     {
@@ -278,7 +277,7 @@ public class Unit : ClickableObject
             case AICommand.CommandType.Guard:
                 return !command.destination.IsNaN();
             case AICommand.CommandType.AttackTarget:
-                return !IsDeadOrNull(command.target) && command.target != this;
+                return !command.target.IsDeadOrNull(command.target) && command.target != this;
             case AICommand.CommandType.Stop:
             case AICommand.CommandType.Die:
                 return true;
@@ -439,7 +438,7 @@ public class Unit : ClickableObject
     //move towards a target to attack it
     private void MoveToTarget(ClickableObject target)
     {
-        if (!IsDeadOrNull(target))
+        if (!target.IsDeadOrNull(target))
         {
             state = UnitStates.MovingToTarget;
             targetOfAttack = target;
@@ -462,7 +461,7 @@ public class Unit : ClickableObject
     private void StartAttacking()
     {
         //somebody might have killed the target while this Unit was approaching it
-        if (!IsDeadOrNull(targetOfAttack))
+        if (!targetOfAttack.IsDeadOrNull(targetOfAttack))
         {
             state = UnitStates.Attacking;
             agentReady = false;
@@ -477,7 +476,7 @@ public class Unit : ClickableObject
 
     public void TriggerAttackAnimEvent(int Int)//Functionname equals Eventname
     {
-        if (state == UnitStates.Dead || IsDeadOrNull(targetOfAttack))
+        if (state == UnitStates.Dead || targetOfAttack.IsDeadOrNull(targetOfAttack))
         {
             //already dead
             animator.SetBool("DoAttack", false);
@@ -637,27 +636,33 @@ public class Unit : ClickableObject
     {
         GameManager gameManager = GameManager.Instance;
         UIManager uiManager = UIManager.Instance;
-        Material minimapCircleMaterial = miniMapCircle.material;
+
+        Color newColor = Color.clear;
         switch (uiManager.minimapColoringMode)
         {
             case UIManager.MinimapColoringModes.FriendFoe:
                 if (faction == gameManager.playerFaction)
                 {
-                    minimapCircleMaterial.color = Color.green;
+                    newColor = Color.green;
                 }
                 else if (FactionTemplate.IsAlliedWith(faction, gameManager.playerFaction))
                 {
-                    minimapCircleMaterial.color = Color.yellow;
+                    newColor = Color.yellow;
                 }
                 else
                 {
-                    minimapCircleMaterial.color = Color.red;
+                    newColor = Color.red;
                 }
                 break;
             case UIManager.MinimapColoringModes.Teamcolor:
-                minimapCircleMaterial.color = faction.color;
+                newColor = faction.color;
                 break;
         }
+
+        MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
+        miniMapCircle.GetPropertyBlock(materialPropertyBlock, 0);
+        materialPropertyBlock.SetColor("_Color", newColor);
+        miniMapCircle.SetPropertyBlock(materialPropertyBlock);
     }
 
     public void AdjustModelAngleToGround()

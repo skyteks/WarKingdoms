@@ -136,7 +136,7 @@ public abstract class ClickableObject : MonoBehaviour
         //Set transparency dependent on selection
 
         GameManager gameManager = GameManager.Instance;
-        Color newColor;
+        Color newColor = Color.clear;
         if (faction == gameManager.playerFaction)
         {
             newColor = Color.green;
@@ -149,9 +149,12 @@ public abstract class ClickableObject : MonoBehaviour
         {
             newColor = Color.red;
         }
-        miniMapCircle.material.color = newColor;
-        newColor.a = (selected) ? 1f : .3f;
-        selectionCircle.material.color = newColor;
+        newColor.a = selected ? 1f : 0.3f;
+
+        MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
+        selectionCircle.GetPropertyBlock(materialPropertyBlock, 0);
+        materialPropertyBlock.SetColor("_Color", newColor);
+        selectionCircle.SetPropertyBlock(materialPropertyBlock);
     }
 
     //called in SufferAttack, but can also be from a Timeline clip
@@ -196,11 +199,15 @@ public abstract class ClickableObject : MonoBehaviour
     {
         Color newColor = visionCircle.material.color;
         float deadline = Time.time + fadeTime;
+        MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
         while (Time.time < deadline)
         {
             //newColor = sightCircle.material.color;
             newColor.a = newColor.a + Time.deltaTime * fadeTime * -fadeOut.ToSignFloat();
-            visionCircle.material.color = newColor;
+
+            visionCircle.GetPropertyBlock(materialPropertyBlock, 0);
+            materialPropertyBlock.SetColor("_Color", newColor);
+            visionCircle.SetPropertyBlock(materialPropertyBlock);
             yield return null;
         }
         if (fadeOut)

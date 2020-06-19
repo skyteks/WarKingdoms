@@ -192,14 +192,14 @@ public class FieldOfView : MonoBehaviour
             {
                 continue;
             }
-            Unit unit = unseen.GetComponent<Unit>();
+            ClickableObject unit = unseen.GetComponent<ClickableObject>();
             if (unit == null) continue;
             if (FactionTemplate.IsAlliedWith(unit.faction, GameManager.Instance.playerFaction)) continue;
             unit.SetVisibility(false);
         }
         foreach (var seen in visibleTargets)
         {
-            Unit unit = seen.GetComponent<Unit>();
+            ClickableObject unit = seen.GetComponent<ClickableObject>();
             if (unit == null) continue;
             if (FactionTemplate.IsAlliedWith(unit.faction, GameManager.Instance.playerFaction)) continue;
             unit.SetVisibility(true);
@@ -224,14 +224,23 @@ public class FieldOfView : MonoBehaviour
         {
             Transform target = targetsInViewRadius[i].transform;
             if (target == unit.transform) continue;
+            FieldOfView other = target.GetComponentInChildren<FieldOfView>();
+            if (other != null)
+            {
+                target = other.transform;
+            }
             Vector3 dirToTarget = (target.position - transform.position).normalized;
-            if (viewAngle == 360f || Vector3.Angle(transform.forward, dirToTarget) < viewAngle / 2f)
+            if (viewAngle == 360f || Vector3.Angle(transform.forward, dirToTarget) < (viewAngle / 2f))
             {
                 float distToTarget = Vector3.Distance(transform.position, target.position);
-                //Debug.DrawRay(transform.position, dirToTarget * distToTarget, Color.cyan);
                 if (!Physics.Raycast(transform.position, dirToTarget, distToTarget, obstacleMask))
                 {
-                    visibleTargetsInViewRadius.Add(target);
+                    visibleTargetsInViewRadius.Add(other != null ? target.GetComponentInParent<ClickableObject>().transform : target);
+                    //Debug.DrawRay(transform.position, dirToTarget * distToTarget, Color.cyan, 0.1f);
+                }
+                else
+                {
+                    //Debug.DrawRay(transform.position, dirToTarget * distToTarget, Color.red, 0.1f);
                 }
             }
         }

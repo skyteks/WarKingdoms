@@ -53,7 +53,7 @@ public class UIManager : Singleton<UIManager>
             showHealthbars = !showHealthbars;
             if (showHealthbars)
             {
-                foreach (Unit unit in GameManager.Instance.GetAllVisibleUnits())
+                foreach (ClickableObject unit in GameManager.Instance.GetAllVisibleUnits())
                 {
                     AddHealthbar(unit);
 
@@ -169,7 +169,7 @@ public class UIManager : Singleton<UIManager>
         Transform[] children = healthbarsGroup.transform.GetChildren();
         foreach (var child in children)
         {
-            Unit unit = child.GetComponent<UIAnchor>().objectToFollow.GetComponent<Unit>();
+            ClickableObject unit = child.GetComponent<UIAnchor>().objectToFollow.GetComponent<ClickableObject>();
             Image healthbarSlice = child.FindDeepChild("HealthbarSlice").GetComponent<Image>();
             healthbarSlice.fillAmount = (float)unit.template.health / (float)unit.template.original.health;
             switch (healthbarColoringMode)

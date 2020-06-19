@@ -165,7 +165,7 @@ public class InputManager : Singleton<InputManager>
                     bool moveCommand = false;
                     if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitsLayerMask))
                     {
-                        Unit targetUnit = hit.collider.GetComponent<Unit>();
+                        ClickableObject targetUnit = hit.collider.GetComponent<ClickableObject>();
                         if (targetUnit != null)
                         {
                             bool followUpCommand = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
