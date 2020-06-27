@@ -65,7 +65,15 @@ public abstract class ClickableObject : MonoBehaviour
         }
     }
 
-    public abstract bool IsDeadOrNull(ClickableObject unit);
+    public static bool IsDeadOrNull(ClickableObject unit)
+    {
+        if (unit is Unit)
+            return Unit.IsDeadOrNull(unit);
+        else if (unit is Building)
+            return Building.IsDeadOrNull(unit);
+        else
+            return unit == null;
+    }
 
     protected static void SetLayers()
     {

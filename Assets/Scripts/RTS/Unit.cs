@@ -110,13 +110,15 @@ public class Unit : ClickableObject
 
             case UnitStates.MovingToTarget:
                 //check if target has been killed by somebody else
-                if (targetOfAttack.IsDeadOrNull(targetOfAttack))
+                if (IsDeadOrNull(targetOfAttack))
                 {
                     commandExecuted = true;
                     //Idle();
                 }
                 else
                 {
+                    navMeshAgent.SetDestination(targetOfAttack.transform.position); //update target position in case it's moving
+
                     if (commandList.Count >= 2 && commandList[1].commandType == AICommand.CommandType.Guard)
                     {
                         if (Vector3.Distance(commandList[1].destination, transform.position) > template.guardDistance * 2f)
@@ -130,10 +132,6 @@ public class Unit : ClickableObject
                     {
                         navMeshAgent.velocity = Vector3.zero;
                         StartAttacking();
-                    }
-                    else
-                    {
-                        navMeshAgent.SetDestination(targetOfAttack.transform.position); //update target position in case it's moving
                     }
                 }
                 AdjustModelAngleToGround();
@@ -157,7 +155,8 @@ public class Unit : ClickableObject
             case UnitStates.Attacking:
                 //check if target has been killed by somebody else
                 commandExecuted = true;
-                if (targetOfAttack.IsDeadOrNull(targetOfAttack))
+                navMeshAgent.SetDestination(targetOfAttack.transform.position); //update target position in case it's moving
+                if (IsDeadOrNull(targetOfAttack))
                 {
                     if (animator != null)
                     {
@@ -172,7 +171,7 @@ public class Unit : ClickableObject
                         InsertCommand(new AICommand(AICommand.CommandType.MoveTo, commandList[1].destination), 1);
                     }
                 }
-                else if (Vector3.Distance(targetOfAttack.transform.position, transform.position) > template.engageDistance)
+                else if (navMeshAgent.remainingDistance > template.engageDistance)//if (Vector3.Distance(targetOfAttack.transform.position, transform.position) > template.engageDistance)
                 {
                     //Check if the target moved away for some reason
                     if (animator != null)
@@ -235,9 +234,9 @@ public class Unit : ClickableObject
     }
 #endif
 
-    public override bool IsDeadOrNull(ClickableObject unit)
+    public new static bool IsDeadOrNull(ClickableObject unit)
     {
-        return unit == null || (unit as Unit).state == UnitStates.Dead;
+        return unit == null || ((unit is Unit) ? (unit as Unit).state == UnitStates.Dead : ClickableObject.IsDeadOrNull(unit));
     }
 
     public void AddCommand(AICommand command, bool clear = false)
@@ -277,7 +276,7 @@ public class Unit : ClickableObject
             case AICommand.CommandType.Guard:
                 return !command.destination.IsNaN();
             case AICommand.CommandType.AttackTarget:
-                return !command.target.IsDeadOrNull(command.target) && command.target != this;
+                return !IsDeadOrNull(command.target) && command.target != this;
             case AICommand.CommandType.Stop:
             case AICommand.CommandType.Die:
                 return true;
@@ -438,7 +437,7 @@ public class Unit : ClickableObject
     //move towards a target to attack it
     private void MoveToTarget(ClickableObject target)
     {
-        if (!target.IsDeadOrNull(target))
+        if (!IsDeadOrNull(target))
         {
             state = UnitStates.MovingToTarget;
             targetOfAttack = target;
@@ -461,7 +460,7 @@ public class Unit : ClickableObject
     private void StartAttacking()
     {
         //somebody might have killed the target while this Unit was approaching it
-        if (!targetOfAttack.IsDeadOrNull(targetOfAttack))
+        if (!IsDeadOrNull(targetOfAttack))
         {
             state = UnitStates.Attacking;
             agentReady = false;
@@ -476,7 +475,7 @@ public class Unit : ClickableObject
 
     public void TriggerAttackAnimEvent(int Int)//Functionname equals Eventname
     {
-        if (state == UnitStates.Dead || targetOfAttack.IsDeadOrNull(targetOfAttack))
+        if (state == UnitStates.Dead || IsDeadOrNull(targetOfAttack))
         {
             //already dead
             animator.SetBool("DoAttack", false);
@@ -486,7 +485,7 @@ public class Unit : ClickableObject
         int damage = Random.Range(template.damage.x, template.damage.y + 1);
         if (template.projectile != null)
         {
-            ShootProjectile(damage);
+            ShootProjectileAtTarget(damage);
         }
         else
         {
@@ -502,7 +501,7 @@ public class Unit : ClickableObject
             return;
         }
 
-        base.Die();
+        base.SufferAttack(damage);
     }
 
     //called in SufferAttack, but can also be from a Timeline clip
@@ -540,14 +539,6 @@ public class Unit : ClickableObject
         //Remove unneeded Components
         StartCoroutine(HideSeenThings(visionFadeTime / 2f));
         StartCoroutine(VisionFade(visionFadeTime, true));
-        //Destroy(selectionCircle);
-        //Destroy(miniMapCircle);
-        //Destroy(navMeshAgent);
-        //Destroy(GetComponent<Collider>()); //will make it unselectable on click
-        //if (animator != null)
-        //{
-        //    Destroy(animator, 10f); //give it some time to complete the animation
-        //}
         navMeshAgent.enabled = false;
         StartCoroutine(DecayIntoGround());
     }
@@ -722,7 +713,7 @@ public class Unit : ClickableObject
         }
     }
 
-    private void ShootProjectile(int damage)
+    private void ShootProjectileAtTarget(int damage)
     {
         if (template.projectile == null || template.projectile.GetComponent<Projectile>() == null)
         {

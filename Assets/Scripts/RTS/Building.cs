@@ -39,16 +39,15 @@ public class Building : ClickableObject
         base.Start();
     }
 
-    public override bool IsDeadOrNull(ClickableObject unit)
+    public new static bool IsDeadOrNull(ClickableObject unit)
     {
-        return unit == null || (unit as Building).state == BuildingStates.Dead;
+        return unit == null || ((unit is Building) ? (unit as Building).state == BuildingStates.Dead : ClickableObject.IsDeadOrNull(unit));
     }
 
     protected IEnumerator DecayIntoGround()
     {
-        yield return Yielders.Get(5f);
         float startY = transform.position.y;
-        float depth = 2f;
+        float depth = 5f;
         while (transform.position.y > startY - depth)
         {
             transform.position += Vector3.down * Time.deltaTime * 0.1f;
@@ -118,7 +117,7 @@ public class Building : ClickableObject
             return;
         }
 
-        base.Die();
+        base.SufferAttack(damage);
     }
 
     protected override void Die()
@@ -128,6 +127,8 @@ public class Building : ClickableObject
             return;
         }
         base.Die();
+
+        state = BuildingStates.Dead; //still makes sense to set it, because somebody might be interacting with this script before it is destroyed
 
         SetSelected(false);
 
@@ -142,14 +143,6 @@ public class Building : ClickableObject
         //Remove unneeded Components
         StartCoroutine(HideSeenThings(visionFadeTime / 2f));
         StartCoroutine(VisionFade(visionFadeTime, true));
-        //Destroy(selectionCircle);
-        //Destroy(miniMapCircle);
-        //Destroy(navMeshAgent);
-        //Destroy(GetComponent<Collider>()); //will make it unselectable on click
-        //if (animator != null)
-        //{
-        //    Destroy(animator, 10f); //give it some time to complete the animation
-        //}
         navMeshObstacle.enabled = false;
         StartCoroutine(DecayIntoGround());
     }

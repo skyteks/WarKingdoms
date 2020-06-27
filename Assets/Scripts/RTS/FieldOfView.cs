@@ -175,7 +175,7 @@ public class FieldOfView : MonoBehaviour
         {
             yield return Yielders.Get(delay);
             if (!FactionTemplate.IsAlliedWith(unit.faction, GameManager.Instance.playerFaction)) continue;
-            if (unit.IsDeadOrNull(unit)) yield break;
+            if (ClickableObject.IsDeadOrNull(unit)) yield break;
 
             MarkTargetsVisibility();
         }
@@ -188,13 +188,11 @@ public class FieldOfView : MonoBehaviour
         var goneTargets = lastVisibleTargets.Except(visibleTargets);
         foreach (var unseen in goneTargets)
         {
-            if (unseen == null)
-            {
-                continue;
-            }
+            if (unseen == null) continue;
             ClickableObject unit = unseen.GetComponent<ClickableObject>();
             if (unit == null) continue;
             if (FactionTemplate.IsAlliedWith(unit.faction, GameManager.Instance.playerFaction)) continue;
+            if (ClickableObject.IsDeadOrNull(unit)) continue;//Don't hide dead enemies, we wanna see the death anim
             unit.SetVisibility(false);
         }
         foreach (var seen in visibleTargets)

@@ -219,7 +219,7 @@ public class UIManager : Singleton<UIManager>
 
     public void RemoveHealthbar(ClickableObject unitToRemoveFrom)
     {
-        Transform holder = healthbarsGroup.transform.GetChildren().Where(holderr => holderr.GetComponent<UIAnchor>().objectToFollow.GetComponent<Unit>() == unitToRemoveFrom).FirstOrDefault();
+        Transform holder = healthbarsGroup.transform.GetChildren().Where(holderr => holderr.GetComponent<UIAnchor>().objectToFollow.GetComponent<ClickableObject>() == unitToRemoveFrom).FirstOrDefault();
         if (holder == null)
         {
             return;

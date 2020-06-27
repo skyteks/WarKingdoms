@@ -237,7 +237,7 @@ public class Projectile : MonoBehaviour
     private bool TryHitUnit(Transform target)
     {
         ClickableObject hitUnit = target.GetComponent<ClickableObject>();
-        if (!hitUnit.IsDeadOrNull(hitUnit))
+        if (!ClickableObject.IsDeadOrNull(hitUnit))
         {
             hitUnit.SufferAttack(damage);
             return true;
