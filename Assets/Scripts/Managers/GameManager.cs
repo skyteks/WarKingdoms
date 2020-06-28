@@ -119,6 +119,7 @@ public class GameManager : Singleton<GameManager>
         {
             return;
         }
+        ChangeSelectionOnType(newSelectedUnits[0]);
         foreach (Unit newSelectedUnit in newSelectedUnits)
         {
             AddToPlattoon(newSelectedUnit);
@@ -135,11 +136,9 @@ public class GameManager : Singleton<GameManager>
         {
             return false;
         }
+        ChangeSelectionOnType(newSelectedUnit);
         selectedPlatoon.AddUnit(newSelectedUnit);
-        if (newSelectedUnit.faction == playerFaction)
-        {
-            newSelectedUnit.SetSelected(true);
-        }
+        newSelectedUnit.SetSelected(true);
         UIManager.Instance.AddToSelection(newSelectedUnit);
         return true;
     }
@@ -162,10 +161,7 @@ public class GameManager : Singleton<GameManager>
         else
         {
             selectedObject = newSelectedUnit;
-            if (newSelectedUnit.faction == playerFaction)
-            {
-                newSelectedUnit.SetSelected(true);
-            }
+            newSelectedUnit.SetSelected(true);
             UIManager.Instance.AddToSelection(newSelectedUnit);
         }
     }
@@ -188,10 +184,7 @@ public class GameManager : Singleton<GameManager>
                 throw new NullReferenceException();
             }
         }
-        if (unitToRemove.faction == playerFaction)
-        {
-            unitToRemove.SetSelected(false);
-        }
+        unitToRemove.SetSelected(false);
     }
 
     public void ClearSelection()
@@ -204,10 +197,7 @@ public class GameManager : Singleton<GameManager>
     {
         if (selectedObject != null)
         {
-            if (selectedObject.faction == playerFaction)
-            {
-                selectedObject.SetSelected(false);
-            }
+            selectedObject.SetSelected(false);
             selectedObject = null;
 
             UIManager.Instance.ClearSelection();
@@ -223,10 +213,7 @@ public class GameManager : Singleton<GameManager>
 
         foreach (Unit unit in selectedPlatoon.units)
         {
-            if (unit.faction == playerFaction)
-            {
-                unit.SetSelected(false);
-            }
+            unit.SetSelected(false);
         }
 
         selectedPlatoon.Clear();
