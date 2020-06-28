@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -13,17 +14,18 @@ public class Building : ClickableObject
         Dead,
     }
 
-
     public BuildingStates state = BuildingStates.Idleing;
 
     //references
     protected NavMeshObstacle navMeshObstacle;
+    protected ParticleSystem[] burnEffects;
 
     protected override void Awake()
     {
         base.Awake();
         navMeshObstacle = GetComponent<NavMeshObstacle>();
         fieldOfView = GetComponentInChildren<FieldOfView>();
+        burnEffects = transform.Find("BurnPoints").GetChildren().Select(child => child.GetComponent<ParticleSystem>()).ToArray();
     }
 
     protected override void Start()
@@ -84,6 +86,44 @@ public class Building : ClickableObject
         }
 
         base.SufferAttack(damage);
+
+        TriggerBurnEffects();
+    }
+
+    protected void TriggerBurnEffects()
+    {
+        float healthPerc = template.health / (float)template.original.health;
+
+        if (healthPerc <= 0f || state == BuildingStates.Dead)
+        {
+            foreach (var effect in burnEffects)
+            {
+                effect.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            }
+        }
+        else if(burnEffects.Length == 4)
+        {
+            bool[] shouldBurn = new bool[4];
+            shouldBurn[0] = healthPerc < 0.75f;
+            shouldBurn[1] = healthPerc < 0.5f;
+            shouldBurn[2] = healthPerc < 0.25f;
+            shouldBurn[3] = healthPerc < 0.25f;
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (shouldBurn[i] != burnEffects[i].isPlaying)
+                {
+                    if (shouldBurn[i])
+                    {
+                        burnEffects[i].Play(true);
+                    }
+                    else
+                    {
+                        burnEffects[i].Stop(true, ParticleSystemStopBehavior.StopEmitting);
+                    }
+                }
+            }
+        }
     }
 
     protected override void Die()
@@ -97,6 +137,8 @@ public class Building : ClickableObject
         state = BuildingStates.Dead; //still makes sense to set it, because somebody might be interacting with this script before it is destroyed
 
         SetSelected(false);
+
+        TriggerBurnEffects();
 
         //Fire an event so any Platoon containing this Unit will be notified
         if (OnDeath != null)
