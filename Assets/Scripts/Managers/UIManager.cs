@@ -86,10 +86,12 @@ public class UIManager : Singleton<UIManager>
 
     public void AddToSelection(ClickableObject newSelectedUnit)
     {
-        bool showPortrait = GameManager.Instance.GetSelectionLength() == 1;
+        GameManager gameManager = GameManager.Instance;
+        bool showPortrait = gameManager.GetSelectionLength() == 1;
         if (showPortrait)
         {
             selectedPortraitUI.SetupButton(newSelectedUnit, healthColorGreen, healthColorOrange, healthColorRed, manaColor);
+            newSelectedUnit.OnDeath += RemoveFromSelection;
         }
         else
         {
@@ -125,6 +127,8 @@ public class UIManager : Singleton<UIManager>
         {
             return;
         }
+
+        unitToRemove.OnDeath -= RemoveFromSelection;
 
         child.SetParent(null);
         Destroy(child.gameObject);
