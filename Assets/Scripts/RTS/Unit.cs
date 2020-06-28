@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Events;
 
 /// <summary>
 /// Unit semi-AI handles movement and stats
@@ -61,7 +60,7 @@ public class Unit : ClickableObject
         base.Start();
     }
 
-    protected void Update()
+    protected override void Update()
     {
         //Little hack to give time to the NavMesh agent to set its destination.
         //without this, the Unit would switch its state before the NavMeshAgent can kick off, leading to unpredictable results
@@ -71,7 +70,7 @@ public class Unit : ClickableObject
             return;
         }
 
-        UpdateMinimapUI();
+        base.Update();
 
         switch (state)
         {
@@ -94,7 +93,7 @@ public class Unit : ClickableObject
                     if (fieldOfView.lastVisibleTargets.Count > 0)
                     {
                         //var enemies = fieldOfView.lastVisibleTargets.Where(target => !IsDeadOrNull(target.GetComponent<Unit>()) && !FactionTemplate.IsAlliedWith(faction, target.GetComponent<Unit>().faction));
-                        var enemies = fieldOfView.lastVisibleTargets.Where(target => !FactionTemplate.IsAlliedWith(target.GetComponent<Unit>().faction, faction) && target.GetComponent<Unit>().state != UnitStates.Dead);
+                        var enemies = fieldOfView.lastVisibleTargets.Where(target => !FactionTemplate.IsAlliedWith(target.GetComponent<ClickableObject>().faction, faction) && !ClickableObject.IsDeadOrNull(target.GetComponent<ClickableObject>()));
                         if (enemies.Count() > 0)
                         {
                             var closestEnemy = enemies.FindClosestToPoint(transform.position).GetComponent<Unit>();
@@ -208,12 +207,6 @@ public class Unit : ClickableObject
         {
             animator.SetFloat("Speed", navMeshAgentSpeed * .05f);
         }
-
-        //float scalingCorrection = template.guardDistance * 2f * 1.05f;
-        //if (visionCircle.transform.localScale.x != template.guardDistance * scalingCorrection)
-        //{
-        //    visionCircle.transform.localScale = Vector3.one * scalingCorrection;
-        //}
     }
 
 #if UNITY_EDITOR
@@ -621,39 +614,6 @@ public class Unit : ClickableObject
                 OnDisapearInFOW.Invoke(this);
             }
         }
-    }
-
-    private void UpdateMinimapUI()
-    {
-        GameManager gameManager = GameManager.Instance;
-        UIManager uiManager = UIManager.Instance;
-
-        Color newColor = Color.clear;
-        switch (uiManager.minimapColoringMode)
-        {
-            case UIManager.MinimapColoringModes.FriendFoe:
-                if (faction == gameManager.playerFaction)
-                {
-                    newColor = Color.green;
-                }
-                else if (FactionTemplate.IsAlliedWith(faction, gameManager.playerFaction))
-                {
-                    newColor = Color.yellow;
-                }
-                else
-                {
-                    newColor = Color.red;
-                }
-                break;
-            case UIManager.MinimapColoringModes.Teamcolor:
-                newColor = faction.color;
-                break;
-        }
-
-        MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
-        miniMapCircle.GetPropertyBlock(materialPropertyBlock, 0);
-        materialPropertyBlock.SetColor("_Color", newColor);
-        miniMapCircle.SetPropertyBlock(materialPropertyBlock);
     }
 
     public void AdjustModelAngleToGround()

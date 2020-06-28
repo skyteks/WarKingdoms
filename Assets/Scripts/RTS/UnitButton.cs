@@ -15,7 +15,7 @@ public class UnitButton : UIClickable
     protected Color healthColorRed;
     protected Color manaColor;
 
-    public Unit Unit { get; protected set; }
+    public ClickableObject Unit { get; protected set; }
 
     public override void OnPointerDown(PointerEventData e)
     {
@@ -31,7 +31,7 @@ public class UnitButton : UIClickable
         }
     }
 
-    public virtual void SetupButton(Unit unitForButton, Color healthGreen, Color healthOrange, Color healthRed, Color manaBlue)
+    public virtual void SetupButton(ClickableObject unitForButton, Color healthGreen, Color healthOrange, Color healthRed, Color manaBlue)
     {
         Unit = unitForButton;
         healthColorGreen = healthGreen;

@@ -108,14 +108,18 @@ public class InputManager : Singleton<InputManager>
                         }
 
                         //consider the mouse release as the end of a box selection
-                        List<Unit> allSelectables = gameManager.playerFaction.units;
-                        for (int i = 0; i < allSelectables.Count; i++)
+                        List<Unit> allSelectables = new List<Unit>(gameManager.playerFaction.units);
+                        for (int i = allSelectables.Count - 1; i >= 0; i--)
                         {
                             Vector2 screenPos = mainCamera.WorldToScreenPoint(allSelectables[i].transform.position);
-                            if (selectionRect.Contains(screenPos))
+                            if (!selectionRect.Contains(screenPos))
                             {
-                                gameManager.AddToSelection(allSelectables[i]);
+                                allSelectables.RemoveAt(i);
                             }
+                        }
+                        if (allSelectables.Count > 0)
+                        {
+                            gameManager.AddToSelection(allSelectables);
                         }
 
                         //hide the box
@@ -136,7 +140,7 @@ public class InputManager : Singleton<InputManager>
 
                             if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitsLayerMask))
                             {
-                                Unit newSelectedUnit = hit.collider.GetComponent<Unit>();
+                                ClickableObject newSelectedUnit = hit.collider.GetComponent<ClickableObject>();
                                 if (newSelectedUnit != null && newSelectedUnit.faction == gameManager.playerFaction)
                                 {
                                     gameManager.SetSelection(newSelectedUnit);
@@ -156,7 +160,7 @@ public class InputManager : Singleton<InputManager>
                 //-------------- RIGHT MOUSE BUTTON DOWN --------------
                 if (Input.GetMouseButtonDown(1)
                     && gameManager.GetSelectionLength() > 0
-                    && !(gameManager.GetSelectionLength() == 1 && gameManager.GetSelectionUnits()[0].faction != gameManager.playerFaction)
+                    && !(gameManager.GetSelectionLength() == 1 && gameManager.GetPlattoonUnits()[0].faction != gameManager.playerFaction)
                     && !EventSystem.current.IsPointerOverGameObject())
                 {
                     RaycastHit hit;

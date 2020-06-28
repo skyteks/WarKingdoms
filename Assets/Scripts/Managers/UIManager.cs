@@ -84,7 +84,7 @@ public class UIManager : Singleton<UIManager>
         selectionRectangle.rectTransform.ForceUpdateRectTransforms();
     }
 
-    public void AddToSelection(Unit newSelectedUnit)
+    public void AddToSelection(ClickableObject newSelectedUnit)
     {
         bool showPortrait = GameManager.Instance.GetSelectionLength() == 1;
         if (showPortrait)
@@ -118,7 +118,7 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
-    public void RemoveFromSelection(Unit unitToRemove)
+    public void RemoveFromSelection(ClickableObject unitToRemove)
     {
         Transform child = selectionLayoutGroup.transform.GetChildren().Where(holder => holder.GetComponent<UnitButton>().Unit == unitToRemove).FirstOrDefault();
         if (child == null)

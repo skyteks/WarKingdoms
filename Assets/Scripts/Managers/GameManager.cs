@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -12,12 +13,18 @@ public class GameManager : Singleton<GameManager>
         Gameplay,
         Cutscene,
     }
+    public enum SelectionOnType
+    {
+        Units,
+        Buildings,
+    }
 
 #if UNITY_EDITOR
     public bool editorFrameRateLock30 = true;
     [Space]
 #endif
     public GameMode gameMode = GameMode.Gameplay;
+    public SelectionOnType selectionOnType = SelectionOnType.Units;
 
     [Preview]
     public FactionTemplate playerFaction;
@@ -25,6 +32,7 @@ public class GameManager : Singleton<GameManager>
 
 
     public Platoon selectedPlatoon { get; private set; }
+    public ClickableObject selectedObject { get; private set; }
     private UnityEngine.Playables.PlayableDirector activeDirector;
 
     private bool showHealthbars;
@@ -54,6 +62,18 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    private void ChangeSelectionOnType(ClickableObject unit)
+    {
+        if (unit is Unit)
+        {
+            selectionOnType = SelectionOnType.Units;
+        }
+        else
+        {
+            selectionOnType = SelectionOnType.Buildings;
+        }
+    }
+
     public void IssueCommand(AICommand cmd, bool followUpCommand)
     {
         selectedPlatoon.ExecuteCommand(cmd, followUpCommand);
@@ -61,41 +81,65 @@ public class GameManager : Singleton<GameManager>
 
     public int GetSelectionLength()
     {
-        return selectedPlatoon.units.Count;
+        if (selectionOnType == SelectionOnType.Units)
+        {
+            return selectedPlatoon.units.Count;
+        }
+        else
+        {
+            return (selectedObject != null).ToInt();
+        }
     }
 
-    public Transform[] GetSelectionTransforms()
+    public Transform[] GetPlattoonTransforms()
     {
         return selectedPlatoon.units.Select(x => x.transform).ToArray();
     }
 
-    public List<Unit> GetSelectionUnits()
+    public List<Unit> GetPlattoonUnits()
     {
         return selectedPlatoon.units;
     }
 
-    public bool IsInsideSelection(Unit newSelectedUnit)
+    public bool IsInsideSelection(ClickableObject newSelectedUnit)
     {
-        return selectedPlatoon.IncludesUnit(newSelectedUnit);
+        if (newSelectedUnit is Unit)
+        {
+            return selectedPlatoon.IncludesUnit(newSelectedUnit as Unit);
+        }
+        else
+        {
+            return selectedObject == newSelectedUnit;
+        }
     }
 
     public void AddToSelection(IList<Unit> newSelectedUnits)
     {
+        if (selectionOnType != SelectionOnType.Units && GetSelectionLength() != 0)
+        {
+            return;
+        }
         foreach (Unit newSelectedUnit in newSelectedUnits)
         {
-            AddToSelection(newSelectedUnit);
+            AddToPlattoon(newSelectedUnit);
         }
     }
 
-    public bool AddToSelection(Unit newSelectedUnit)
+    private bool AddToPlattoon(Unit newSelectedUnit)
     {
+        if (selectionOnType != SelectionOnType.Units && GetSelectionLength() != 0)
+        {
+            return false;
+        }
         if (selectedPlatoon.IncludesUnit(newSelectedUnit))
         {
             return false;
         }
-
         selectedPlatoon.AddUnit(newSelectedUnit);
-        newSelectedUnit.SetSelected(true);
+        if (newSelectedUnit.faction == playerFaction)
+        {
+            newSelectedUnit.SetSelected(true);
+        }
         UIManager.Instance.AddToSelection(newSelectedUnit);
         return true;
     }
@@ -103,27 +147,86 @@ public class GameManager : Singleton<GameManager>
     public void SetSelection(IList<Unit> newSelectedUnits)
     {
         ClearSelection();
+        ChangeSelectionOnType(newSelectedUnits[0]);
         AddToSelection(newSelectedUnits);
     }
 
-    public void SetSelection(Unit newSelectedUnit)
+    public void SetSelection(ClickableObject newSelectedUnit)
     {
         ClearSelection();
-        AddToSelection(newSelectedUnit);
+        ChangeSelectionOnType(newSelectedUnit);
+        if (newSelectedUnit is Unit)
+        {
+            AddToPlattoon(newSelectedUnit as Unit);
+        }
+        else
+        {
+            selectedObject = newSelectedUnit;
+            if (newSelectedUnit.faction == playerFaction)
+            {
+                newSelectedUnit.SetSelected(true);
+            }
+            UIManager.Instance.AddToSelection(newSelectedUnit);
+        }
     }
 
-    public void RemoveFromSelection(Unit unitToRemove)
+    public void RemoveFromSelection(ClickableObject unitToRemove)
     {
-        selectedPlatoon.RemoveUnit(unitToRemove);
-        unitToRemove.SetSelected(false);
-        UIManager.Instance.RemoveFromSelection(unitToRemove);
+        if (unitToRemove is Unit)
+        {
+            selectedPlatoon.RemoveUnit(unitToRemove as Unit);
+            UIManager.Instance.RemoveFromSelection(unitToRemove as Unit);
+        }
+        else
+        {
+            if (selectedObject == unitToRemove)
+            {
+                ClearObject();
+            }
+            else
+            {
+                throw new NullReferenceException();
+            }
+        }
+        if (unitToRemove.faction == playerFaction)
+        {
+            unitToRemove.SetSelected(false);
+        }
     }
 
     public void ClearSelection()
     {
+        ClearPlattoon();
+        ClearObject();
+    }
+
+    private void ClearObject()
+    {
+        if (selectedObject != null)
+        {
+            if (selectedObject.faction == playerFaction)
+            {
+                selectedObject.SetSelected(false);
+            }
+            selectedObject = null;
+
+            UIManager.Instance.ClearSelection();
+        }
+    }
+
+    private void ClearPlattoon()
+    {
+        if (selectedPlatoon.units.Count == 0)
+        {
+            return;
+        }
+
         foreach (Unit unit in selectedPlatoon.units)
         {
-            unit.SetSelected(false);
+            if (unit.faction == playerFaction)
+            {
+                unit.SetSelected(false);
+            }
         }
 
         selectedPlatoon.Clear();

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
@@ -7,6 +6,10 @@ using UnityEngine.UI;
 /// </summary>
 public class PortraitButton : UnitButton
 {
+    public Text damageTitle;
+    public Text armorTitle;
+    public Text attackSpeedTitle;
+
     public Text healthText;
     public Text manaText;
     public Text damageText;
@@ -17,24 +20,63 @@ public class PortraitButton : UnitButton
     public override void UpdateButton()
     {
         base.UpdateButton();
-        float fill = (float)Unit.template.health / (float)Unit.template.original.health;
-        healthText.text = string.Concat(Unit.template.health, " / ", Unit.template.original.health);
-        if (fill > 0.5f)
+        if (Unit.template.original.health > 1)
         {
-            healthText.color = Color.Lerp(healthColorOrange, healthColorGreen, fill.LinearRemap(0.5f, 1f));
+            healthText.enabled = true;
+            float fill = (float)Unit.template.health / (float)Unit.template.original.health;
+            healthText.text = string.Concat(Unit.template.health, " / ", Unit.template.original.health);
+            if (fill > 0.5f)
+            {
+                healthText.color = Color.Lerp(healthColorOrange, healthColorGreen, fill.LinearRemap(0.5f, 1f));
+            }
+            else
+            {
+                healthText.color = Color.Lerp(healthColorRed, healthColorOrange, fill.LinearRemap(0f, 0.5f));
+            }
         }
         else
         {
-            healthText.color = Color.Lerp(healthColorRed, healthColorOrange, fill.LinearRemap(0f, 0.5f));
+            healthText.enabled = false;
         }
-        manaText.text = (Unit.template.original.mana > 0) ? string.Concat(Unit.template.mana, " / ", Unit.template.original.mana) : "";
-        manaText.color = manaColor;
-        damageText.text = string.Concat(Unit.template.damage.x, " - ", Unit.template.damage.y);
-        attackSpeedText.text = Unit.template.attackSpeed.ToString();
+
+        if (Unit.template.original.mana > 0)
+        {
+            manaText.enabled = true;
+            manaText.text = string.Concat(Unit.template.mana, " / ", Unit.template.original.mana);
+            manaText.color = manaColor;
+        }
+        else
+        {
+            manaText.enabled = false;
+        }
+
+        if (Unit.template.damage.y > 0)
+        {
+            damageTitle.enabled = true;
+            damageText.enabled = true;
+            damageText.text = string.Concat(Unit.template.damage.x, " - ", Unit.template.damage.y);
+        }
+        else
+        {
+            damageTitle.enabled = false;
+            damageText.enabled = false;
+        }
+
+        if (Unit.template.attackSpeed > 0)
+        {
+            attackSpeedTitle.enabled = true;
+            attackSpeedText.enabled = true;
+            attackSpeedText.text = Unit.template.attackSpeed.ToString();
+        }
+        else
+        {
+            attackSpeedTitle.enabled = false;
+            attackSpeedText.enabled = false;
+        }
         //movementSpeedText.text = Unit.template.movementSpeed.ToString();
     }
 
-    public override void SetupButton(Unit unitForButton, Color healthGreen, Color healthOrange, Color healthRed, Color manaBlue)
+    public override void SetupButton(ClickableObject unitForButton, Color healthGreen, Color healthOrange, Color healthRed, Color manaBlue)
     {
         base.SetupButton(unitForButton, healthGreen, healthOrange, healthRed, manaBlue);
         gameObject.SetActive(true);

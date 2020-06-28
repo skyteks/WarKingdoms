@@ -73,7 +73,10 @@ public class FieldOfView : MonoBehaviour
     private void OnEnable()
     {
         MeshRenderer render = GetComponent<MeshRenderer>();
-        if (render != null) render.enabled = true;
+        if (render != null)
+        {
+            render.enabled = true;
+        }
 
         StartCoroutine(FindTargetsWithDelay(0.1f));
     }
@@ -81,7 +84,10 @@ public class FieldOfView : MonoBehaviour
     private void OnDisable()
     {
         MeshRenderer render = GetComponent<MeshRenderer>();
-        if (render != null) render.enabled = false;
+        if (render != null)
+        {
+            render.enabled = false;
+        }
     }
 
     void Start()
@@ -114,17 +120,36 @@ public class FieldOfView : MonoBehaviour
     [ContextMenu("Create Mesh")]
     private void CreateMesh()
     {
-        if (Application.isPlaying) return;
-        if (viewMeshFilter == null) viewMeshFilter = GetComponent<MeshFilter>();
-        if (viewMeshFilter.sharedMesh == null || viewMeshFilter.mesh == null || viewMesh == null) SetMesh();
+        if (Application.isPlaying)
+        {
+            return;
+        }
+
+        if (viewMeshFilter == null)
+        {
+            viewMeshFilter = GetComponent<MeshFilter>();
+        }
+
+        if (viewMeshFilter.sharedMesh == null || viewMeshFilter.mesh == null || viewMesh == null)
+        {
+            SetMesh();
+        }
+
         GenerateMesh();
     }
 #endif
 
     private bool ShouldRegenerateMesh()
     {
-        if (obstacleMask == obstacleMask.ToEverything()) return true;
-        if (obstacleMask == obstacleMask.ToNothing()) return false;
+        if (obstacleMask == obstacleMask.ToEverything())
+        {
+            return true;
+        }
+
+        if (obstacleMask == obstacleMask.ToNothing())
+        {
+            return false;
+        }
 
         bool draw = false;
 
@@ -165,8 +190,14 @@ public class FieldOfView : MonoBehaviour
     {
         viewMesh = new Mesh();
         viewMesh.name = "View Mesh (Generated)";
-        if (Application.isPlaying) viewMeshFilter.mesh = viewMesh;
-        else viewMeshFilter.sharedMesh = viewMesh;
+        if (Application.isPlaying)
+        {
+            viewMeshFilter.mesh = viewMesh;
+        }
+        else
+        {
+            viewMeshFilter.sharedMesh = viewMesh;
+        }
     }
 
     private IEnumerator FindTargetsWithDelay(float delay)
@@ -174,8 +205,15 @@ public class FieldOfView : MonoBehaviour
         for (; ; )
         {
             yield return Yielders.Get(delay);
-            if (!FactionTemplate.IsAlliedWith(unit.faction, GameManager.Instance.playerFaction)) continue;
-            if (ClickableObject.IsDeadOrNull(unit)) yield break;
+            if (!FactionTemplate.IsAlliedWith(unit.faction, GameManager.Instance.playerFaction))
+            {
+                continue;
+            }
+
+            if (ClickableObject.IsDeadOrNull(unit))
+            {
+                yield break;
+            }
 
             MarkTargetsVisibility();
         }
@@ -188,18 +226,42 @@ public class FieldOfView : MonoBehaviour
         var goneTargets = lastVisibleTargets.Except(visibleTargets);
         foreach (var unseen in goneTargets)
         {
-            if (unseen == null) continue;
+            if (unseen == null)
+            {
+                continue;
+            }
+
             ClickableObject unit = unseen.GetComponent<ClickableObject>();
-            if (unit == null) continue;
-            if (FactionTemplate.IsAlliedWith(unit.faction, GameManager.Instance.playerFaction)) continue;
-            if (ClickableObject.IsDeadOrNull(unit)) continue;//Don't hide dead enemies, we wanna see the death anim
+            if (unit == null)
+            {
+                continue;
+            }
+
+            if (FactionTemplate.IsAlliedWith(unit.faction, GameManager.Instance.playerFaction))
+            {
+                continue;
+            }
+
+            if (ClickableObject.IsDeadOrNull(unit))
+            {
+                continue;//Don't hide dead enemies, we wanna see the death anim
+            }
+
             unit.SetVisibility(false);
         }
         foreach (var seen in visibleTargets)
         {
             ClickableObject unit = seen.GetComponent<ClickableObject>();
-            if (unit == null) continue;
-            if (FactionTemplate.IsAlliedWith(unit.faction, GameManager.Instance.playerFaction)) continue;
+            if (unit == null)
+            {
+                continue;
+            }
+
+            if (FactionTemplate.IsAlliedWith(unit.faction, GameManager.Instance.playerFaction))
+            {
+                continue;
+            }
+
             unit.SetVisibility(true);
         }
 
@@ -216,12 +278,19 @@ public class FieldOfView : MonoBehaviour
             visibleTargetsInViewRadius.Remove(unit.transform);
             return visibleTargetsInViewRadius;
         }
-        else visibleTargetsInViewRadius = new List<Transform>(targetsInViewRadius.Length);
+        else
+        {
+            visibleTargetsInViewRadius = new List<Transform>(targetsInViewRadius.Length);
+        }
 
         for (int i = 0; i < targetsInViewRadius.Length; i++)
         {
             Transform target = targetsInViewRadius[i].transform;
-            if (target == unit.transform) continue;
+            if (target == unit.transform)
+            {
+                continue;
+            }
+
             FieldOfView other = target.GetComponentInChildren<FieldOfView>();
             if (other != null)
             {

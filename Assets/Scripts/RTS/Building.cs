@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -74,39 +73,6 @@ public class Building : ClickableObject
         }
 
         base.SetVisibility(visibility);
-    }
-
-    private void UpdateMinimapUI()
-    {
-        GameManager gameManager = GameManager.Instance;
-        UIManager uiManager = UIManager.Instance;
-
-        Color color = Color.clear;
-        switch (uiManager.minimapColoringMode)
-        {
-            case UIManager.MinimapColoringModes.FriendFoe:
-                if (faction == gameManager.playerFaction)
-                {
-                    color = Color.green;
-                }
-                else if (FactionTemplate.IsAlliedWith(faction, gameManager.playerFaction))
-                {
-                    color = Color.yellow;
-                }
-                else
-                {
-                    color = Color.red;
-                }
-                break;
-            case UIManager.MinimapColoringModes.Teamcolor:
-                color = faction.color;
-                break;
-        }
-
-        MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
-        miniMapCircle.GetPropertyBlock(materialPropertyBlock, 0);
-        materialPropertyBlock.SetColor("_Color", color);
-        miniMapCircle.SetPropertyBlock(materialPropertyBlock);
     }
 
     //called by an attacker

@@ -127,7 +127,10 @@ public class Platoon : MonoBehaviour
         unitToAdd.OnDeath += UnitDeadHandler;
         units.Add(unitToAdd);
 
-        unitToAdd.SetCombatReady(true);
+        if (unitToAdd.faction == GameManager.Instance.playerFaction)
+        {
+            unitToAdd.SetCombatReady(true);
+        }
     }
 
     //Removes an Unit from the Platoon and returns if the operation was successful
@@ -143,7 +146,10 @@ public class Platoon : MonoBehaviour
             units.Remove(unitToRemove);
             unitToRemove.OnDeath -= UnitDeadHandler;
 
-            unitToRemove.SetCombatReady(false);
+            if (unitToRemove.faction == GameManager.Instance.playerFaction)
+            {
+                unitToRemove.SetCombatReady(false);
+            }
         }
 
         return isThere;
@@ -157,7 +163,11 @@ public class Platoon : MonoBehaviour
         foreach (Unit unitToRemove in units)
         {
             unitToRemove.OnDeath -= UnitDeadHandler;
-            unitToRemove.SetCombatReady(false);
+
+            if (unitToRemove.faction == GameManager.Instance.playerFaction)
+            {
+                unitToRemove.SetCombatReady(false);
+            }
         }
         units.Clear();
     }

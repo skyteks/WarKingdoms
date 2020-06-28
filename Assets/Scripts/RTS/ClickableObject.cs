@@ -65,14 +65,25 @@ public abstract class ClickableObject : MonoBehaviour
         }
     }
 
+    protected virtual void Update()
+    {
+        UpdateMinimapUI();
+    }
+
     public static bool IsDeadOrNull(ClickableObject unit)
     {
         if (unit is Unit)
+        {
             return Unit.IsDeadOrNull(unit);
+        }
         else if (unit is Building)
+        {
             return Building.IsDeadOrNull(unit);
+        }
         else
+        {
             return unit == null;
+        }
     }
 
     protected static void SetLayers()
@@ -94,6 +105,39 @@ public abstract class ClickableObject : MonoBehaviour
             materialPropertyBlock.SetColor("_TeamColor", faction.color);
             render.SetPropertyBlock(materialPropertyBlock);
         }
+    }
+
+    protected void UpdateMinimapUI()
+    {
+        GameManager gameManager = GameManager.Instance;
+        UIManager uiManager = UIManager.Instance;
+
+        Color newColor = Color.clear;
+        switch (uiManager.minimapColoringMode)
+        {
+            case UIManager.MinimapColoringModes.FriendFoe:
+                if (faction == gameManager.playerFaction)
+                {
+                    newColor = Color.green;
+                }
+                else if (FactionTemplate.IsAlliedWith(faction, gameManager.playerFaction))
+                {
+                    newColor = Color.yellow;
+                }
+                else
+                {
+                    newColor = Color.red;
+                }
+                break;
+            case UIManager.MinimapColoringModes.Teamcolor:
+                newColor = faction.color;
+                break;
+        }
+
+        MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
+        miniMapCircle.GetPropertyBlock(materialPropertyBlock, 0);
+        materialPropertyBlock.SetColor("_Color", newColor);
+        miniMapCircle.SetPropertyBlock(materialPropertyBlock);
     }
 
     public virtual void SetVisibility(bool visibility)
@@ -142,7 +186,6 @@ public abstract class ClickableObject : MonoBehaviour
     public void SetSelected(bool selected)
     {
         //Set transparency dependent on selection
-
         GameManager gameManager = GameManager.Instance;
         Color newColor = Color.clear;
         if (faction == gameManager.playerFaction)
