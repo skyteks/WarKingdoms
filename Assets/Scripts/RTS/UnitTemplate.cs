@@ -38,6 +38,9 @@ public class UnitTemplate : ScriptableObject
 
     public float manaRegen = 0;
 
+    public int costGold = 0;
+    public int costWood = 0;
+
     public UnitTemplate Clone()
     {
         UnitTemplate clone = Instantiate<UnitTemplate>(this);

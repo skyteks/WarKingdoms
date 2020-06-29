@@ -30,6 +30,8 @@ public class GameManager : Singleton<GameManager>
     public FactionTemplate playerFaction;
     public List<FactionTemplate> factions;
 
+    public int startResourceGold = 300;
+    public int startResourceWood = 0;
 
     public Platoon selectedPlatoon { get; private set; }
     public ClickableObject selectedObject { get; private set; }
@@ -50,6 +52,12 @@ public class GameManager : Singleton<GameManager>
         if (playerFaction == null)
         {
             Debug.LogError("No player faction set", this);
+        }
+
+        foreach (FactionTemplate faction in factions)
+        {
+            faction.resourceGold = startResourceGold;
+            faction.resourceWood = startResourceWood;
         }
     }
 

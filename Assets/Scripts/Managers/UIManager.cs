@@ -39,6 +39,9 @@ public class UIManager : Singleton<UIManager>
     public Canvas healthbarsGroup;
     public GameObject healthbarUIPrefab;
 
+    public Text resourceGoldText;
+    public Text resourceWoodText;
+
     void Start()
     {
         ToggleSelectionRectangle(false);
@@ -48,12 +51,13 @@ public class UIManager : Singleton<UIManager>
 
     void Update()
     {
+        GameManager gameManager = GameManager.Instance;
         if (Input.GetKeyDown(KeyCode.LeftAlt))
         {
             showHealthbars = !showHealthbars;
             if (showHealthbars)
             {
-                foreach (ClickableObject unit in GameManager.Instance.GetAllVisibleUnits())
+                foreach (ClickableObject unit in gameManager.GetAllVisibleUnits())
                 {
                     AddHealthbar(unit);
 
@@ -63,6 +67,12 @@ public class UIManager : Singleton<UIManager>
             {
                 ClearHealthbars();
             }
+        }
+
+        if (resourceGoldText != null && resourceWoodText != null)
+        {
+            resourceGoldText.text = gameManager.playerFaction.resourceGold.ToString();
+            resourceWoodText.text = gameManager.playerFaction.resourceWood.ToString();
         }
     }
 
