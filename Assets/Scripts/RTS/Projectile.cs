@@ -184,7 +184,7 @@ public class Projectile : MonoBehaviour
                         transform.rotation = Quaternion.LookRotation(rigid.velocity.normalized, Vector3.up);
                         break;
                     case ProjectileFlyModes.Tracking:
-                        Vector3 distanceVector = (targetObject.position + Vector3.up - transform.position);
+                        Vector3 distanceVector = (targetObject.position - transform.position);
                         if (distanceVector.magnitude > 0f)
                         {
                             transform.rotation = Quaternion.LookRotation(distanceVector.normalized, Vector3.up);
@@ -226,8 +226,8 @@ public class Projectile : MonoBehaviour
 
     private void UpdateTrackStep()
     {
-        transform.position = Vector3.MoveTowards(transform.position, targetObject.position + Vector3.up, Time.deltaTime * trackSpeed);
-        if (Vector3.Distance(transform.position, targetObject.position + Vector3.up) < 0.001f)
+        transform.position = Vector3.MoveTowards(transform.position, targetObject.position, Time.deltaTime * trackSpeed);
+        if (Vector3.Distance(transform.position, targetObject.position) < 0.001f)
         {
             hitSuccess = TryHitUnit(targetObject);
             Destroy(gameObject);
@@ -236,7 +236,7 @@ public class Projectile : MonoBehaviour
 
     private bool TryHitUnit(Transform target)
     {
-        ClickableObject hitUnit = target.GetComponent<ClickableObject>();
+        ClickableObject hitUnit = target.GetComponentInParent<ClickableObject>();
         if (!ClickableObject.IsDeadOrNull(hitUnit))
         {
             hitUnit.SufferAttack(damage);

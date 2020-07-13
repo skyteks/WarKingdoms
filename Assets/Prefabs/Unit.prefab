@@ -31,6 +31,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 4983360568014859084}
   - {fileID: 4621098372439864}
   - {fileID: 4845099472474734}
   - {fileID: 4335943480541738}
@@ -72,12 +73,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c750a88ea93938444a4639fd2d42858a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state: 0
   faction: {fileID: 0}
   visible: 0
-  visionFadeTime: 1
-  combatReadySwitchTime: 7
   template: {fileID: 11400000, guid: 7eaf13cc549d085438c8b48343ae395c, type: 2}
+  visionFadeTime: 1
+  centerPoint: {fileID: 0}
+  state: 0
+  combatReadySwitchTime: 7
   projectileFirePoint: {fileID: 0}
   commandList: []
 --- !u!95 &95138031281430410
@@ -286,7 +288,7 @@ Transform:
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children: []
   m_Father: {fileID: 4798272592709608}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &33414918751801080
 MeshFilter:
@@ -365,7 +367,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4798272592709608}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &33917526685701180
 MeshFilter:
@@ -860,7 +862,7 @@ Transform:
   - {fileID: 4840146368383632}
   - {fileID: 4451838038363576}
   m_Father: {fileID: 4798272592709608}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1997862742137096
 GameObject:
@@ -892,7 +894,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4798272592709608}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &33473702585558226
 MeshFilter:
@@ -940,3 +942,33 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1 &1104616652216249136
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4983360568014859084}
+  m_Layer: 0
+  m_Name: CenterPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 6519382022992737161, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &4983360568014859084
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104616652216249136}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4798272592709608}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

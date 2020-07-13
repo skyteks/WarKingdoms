@@ -127,7 +127,8 @@ public class Unit : ClickableObject
                         }
                     }
                     //Check for distance from target
-                    if (navMeshAgent.remainingDistance < template.engageDistance)
+                    float actualRemainingDistance1 = Vector3.Distance(fieldOfView.transform.position, targetOfAttack.fieldOfView.transform.position);
+                    if (actualRemainingDistance1 < (template.engageDistance + targetOfAttack.sizeRadius))
                     {
                         navMeshAgent.velocity = Vector3.zero;
                         StartAttacking();
@@ -155,6 +156,7 @@ public class Unit : ClickableObject
                 //check if target has been killed by somebody else
                 commandExecuted = true;
                 navMeshAgent.SetDestination(targetOfAttack.transform.position); //update target position in case it's moving
+                float actualRemainingDistance2 = Vector3.Distance(fieldOfView.transform.position, targetOfAttack.fieldOfView.transform.position);
                 if (IsDeadOrNull(targetOfAttack))
                 {
                     if (animator != null)
@@ -170,7 +172,7 @@ public class Unit : ClickableObject
                         InsertCommand(new AICommand(AICommand.CommandType.MoveTo, commandList[1].destination), 1);
                     }
                 }
-                else if (navMeshAgent.remainingDistance > template.engageDistance)//if (Vector3.Distance(targetOfAttack.transform.position, transform.position) > template.engageDistance)
+                else if (actualRemainingDistance2 > (template.engageDistance + targetOfAttack.sizeRadius))
                 {
                     //Check if the target moved away for some reason
                     if (animator != null)
@@ -180,11 +182,12 @@ public class Unit : ClickableObject
 
                     MoveToTarget(targetOfAttack);
                 }
-                else if (Vector3.Angle(transform.forward, (targetOfAttack.transform.position - transform.position).normalized) > 10f)
+                else if (Vector3.Angle(transform.forward, (targetOfAttack.fieldOfView.transform.position - fieldOfView.transform.position).normalized) > 10f)
                 {
                     //look towards the target
-                    Vector3 desiredForward = (targetOfAttack.transform.position - transform.position).normalized;
+                    Vector3 desiredForward = (targetOfAttack.fieldOfView.transform.position - fieldOfView.transform.position).normalized;
                     transform.forward = Vector3.Lerp(transform.forward, desiredForward, Time.deltaTime * 10f);
+                    AdjustModelAngleToGround();
                 }
                 else
                 {
@@ -210,7 +213,7 @@ public class Unit : ClickableObject
     }
 
 #if UNITY_EDITOR
-    void OnDrawGizmos()
+    protected override void OnDrawGizmos()
     {
         if (navMeshAgent != null
             && navMeshAgent.isOnNavMesh
@@ -220,10 +223,7 @@ public class Unit : ClickableObject
             UnityEditor.Handles.DrawLine(transform.position, navMeshAgent.destination);
         }
 
-        UnityEditor.Handles.color = Color.cyan;
-        UnityEditor.Handles.DrawWireDisc(transform.position, Vector3.up, template.engageDistance);
-        UnityEditor.Handles.color = Color.gray;
-        UnityEditor.Handles.DrawWireDisc(transform.position, Vector3.up, template.guardDistance);
+        base.OnDrawGizmos();
     }
 #endif
 
@@ -687,6 +687,6 @@ public class Unit : ClickableObject
         }
 
         Projectile projectileInstance = Instantiate(template.projectile, projectileFirePoint.position, projectileFirePoint.rotation).GetComponent<Projectile>();
-        projectileInstance.LaunchAt(targetOfAttack.transform, damage, this);
+        projectileInstance.LaunchAt(targetOfAttack.fieldOfView.transform, damage, this);
     }
 }

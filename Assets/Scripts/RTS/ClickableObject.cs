@@ -23,10 +23,18 @@ public abstract class ClickableObject : MonoBehaviour
     protected Transform modelHolder;
     protected MeshRenderer selectionCircle, miniMapCircle, visionCircle;
     protected Renderer[] modelRenderers;
-    protected FieldOfView fieldOfView;
+    public FieldOfView fieldOfView;
 
     public UnityAction<ClickableObject> OnDeath;
     public UnityAction<ClickableObject> OnDisapearInFOW;
+
+    public float sizeRadius
+    {
+        get
+        {
+            return selectionCircle.transform.localScale.x * 0.5f;
+        }
+    }
 
     static ClickableObject()
     {
@@ -69,6 +77,35 @@ public abstract class ClickableObject : MonoBehaviour
     {
         UpdateMinimapUI();
     }
+
+#if UNITY_EDITOR
+    protected virtual void OnDrawGizmos()
+    {
+        if (selectionCircle == null)
+        {
+            selectionCircle = transform.Find("SelectionCircle").GetComponent<MeshRenderer>();
+        }
+        if (fieldOfView == null)
+        {
+            fieldOfView = transform.Find("FieldOfView").GetComponent<FieldOfView>();
+        }
+
+        if (!IsDeadOrNull(this))
+        {
+            UnityEditor.Handles.color = Color.cyan;
+            UnityEditor.Handles.DrawWireDisc(fieldOfView.transform.position, Vector3.up, template.engageDistance);
+            UnityEditor.Handles.color = Color.gray;
+            UnityEditor.Handles.DrawWireDisc(fieldOfView.transform.position, Vector3.up, template.guardDistance);
+
+            UnityEditor.Handles.color = Color.blue;
+        }
+        else
+        {
+            UnityEditor.Handles.color = Color.red;
+        }
+        UnityEditor.Handles.DrawWireDisc(transform.position, Vector3.up, sizeRadius);
+    }
+#endif
 
     public static bool IsDeadOrNull(ClickableObject unit)
     {

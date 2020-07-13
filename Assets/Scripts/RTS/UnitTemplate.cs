@@ -30,7 +30,6 @@ public class UnitTemplate : ScriptableObject
     [Tooltip("When it has reached this distance from its target, the Unit stops and attacks it")]
     public float engageDistance = 1f;
 
-
     [Tooltip("When guarding, if any enemy enters this range it will be attacked")]
     public float guardDistance = 5f;
 
