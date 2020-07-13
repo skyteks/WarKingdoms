@@ -160,7 +160,7 @@ public class InputManager : Singleton<InputManager>
                 //-------------- RIGHT MOUSE BUTTON DOWN --------------
                 if (Input.GetMouseButtonDown(1)
                     && gameManager.GetSelectionLength() > 0
-                    && !(gameManager.GetSelectionLength() == 1 && gameManager.GetPlattoonUnits()[0].faction != gameManager.playerFaction)
+                    && !(gameManager.GetSelectionLength() == 1 && gameManager.selectionOnType == GameManager.SelectionOnType.Units && gameManager.GetPlattoonUnits()[0].faction != gameManager.playerFaction)
                     && !EventSystem.current.IsPointerOverGameObject())
                 {
                     RaycastHit hit;
@@ -208,18 +208,27 @@ public class InputManager : Singleton<InputManager>
                         Vector3 hitPoint;
                         if (CameraManager.GetCameraScreenPointOnGround(mainCamera, Input.mousePosition, out hitPoint, groundLayerMask))
                         {
-                            bool followUpCommand = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-                            bool attackComand = Input.GetButton("Attack");
-                            if (attackComand)
+                            if (gameManager.selectionOnType == GameManager.SelectionOnType.Units)
                             {
-                                gameManager.AttackMoveSelectedUnitsTo(hitPoint, followUpCommand);
-                                Debug.DrawLine(ray.origin, hitPoint, Color.Lerp(Color.yellow, Color.red, 0.6f), 1f);
-                                AnimateMoveOrderCursor(hitPoint, attackMoveCommandColor);
+                                bool followUpCommand = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+                                bool attackComand = Input.GetButton("Attack");
+                                if (attackComand)
+                                {
+                                    gameManager.AttackMoveSelectedUnitsTo(hitPoint, followUpCommand);
+                                    Debug.DrawLine(ray.origin, hitPoint, Color.Lerp(Color.yellow, Color.red, 0.6f), 1f);
+                                    AnimateMoveOrderCursor(hitPoint, attackMoveCommandColor);
+                                }
+                                else
+                                {
+                                    gameManager.MoveSelectedUnitsTo(hitPoint, followUpCommand);
+                                    Debug.DrawLine(ray.origin, hitPoint, Color.green, 1f);
+                                    AnimateMoveOrderCursor(hitPoint, moveCommandColor);
+                                }
                             }
                             else
                             {
-                                gameManager.MoveSelectedUnitsTo(hitPoint, followUpCommand);
-                                Debug.DrawLine(ray.origin, hitPoint, Color.green, 1f);
+                                gameManager.SetWaypoint(hitPoint);
+                                Debug.DrawLine(ray.origin, hitPoint, Color.yellow, 1f);
                                 AnimateMoveOrderCursor(hitPoint, moveCommandColor);
                             }
                         }

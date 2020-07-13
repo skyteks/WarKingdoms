@@ -87,6 +87,15 @@ public class GameManager : Singleton<GameManager>
         selectedPlatoon.ExecuteCommand(cmd, followUpCommand);
     }
 
+    public void SetWaypoint(Vector3 pos)
+    {
+        Rekruiting rekruiting = selectedObject.GetComponent<Rekruiting>();
+        if (rekruiting != null)
+        {
+            rekruiting.SetWaypoint(pos);
+        }
+    }
+
     public int GetSelectionLength()
     {
         if (selectionOnType == SelectionOnType.Units)

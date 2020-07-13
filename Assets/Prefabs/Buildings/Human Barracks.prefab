@@ -339,6 +339,7 @@ GameObject:
   - component: {fileID: 8373508903984173417}
   - component: {fileID: 8373508903984173416}
   - component: {fileID: 8373508903984173423}
+  - component: {fileID: 7159213328213272492}
   m_Layer: 0
   m_Name: Human Barracks
   m_TagString: Untagged
@@ -378,7 +379,7 @@ NavMeshObstacle:
   m_Extents: {x: 1.5, y: 1, z: 1.5}
   m_MoveThreshold: 0.1
   m_Carve: 1
-  m_CarveOnlyStationary: 1
+  m_CarveOnlyStationary: 0
   m_Center: {x: 0, y: 1, z: 0}
   m_TimeToStationary: 0.5
 --- !u!114 &8373508903984173416
@@ -412,6 +413,22 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.5, y: 1, z: 2.5}
   m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!114 &7159213328213272492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8373508903984173420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca8dc8a063ad7ed479e1dfff516803b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rekruitablesPrefabs:
+  - {fileID: 6143523602997217605, guid: 30d3bd3b11ff24547a282c53692f9b08, type: 3}
+  waypointPos: {x: 0, y: 0, z: 0}
+  navmeshReady: 0
 --- !u!1 &8373508904559875560
 GameObject:
   m_ObjectHideFlags: 0
