@@ -92,12 +92,15 @@ public class FieldOfView : MonoBehaviour
 
     void Start()
     {
-        SetMesh();
+        if (FactionTemplate.IsAlliedWith(unit.faction, GameManager.Instance.playerFaction))
+        {
+            SetMesh();
+        }
     }
 
     void LateUpdate()
     {
-        if (ShouldRegenerateMesh())
+        if (FactionTemplate.IsAlliedWith(unit.faction, GameManager.Instance.playerFaction) && ShouldRegenerateMesh())
         {
             GenerateMesh();
         }
@@ -108,12 +111,25 @@ public class FieldOfView : MonoBehaviour
         int stepCount = Mathf.RoundToInt(viewAngle * meshResolution);
         float stepAngle = viewAngle / stepCount;
 
+        Gizmos.color = Color.blue;
         for (int i = 0; i < stepCount + 1; i++)
         {
             float angle = transform.eulerAngles.y - viewAngle / 2f + stepAngle * i;
             Vector3 dir = DirFromAngle(angle, true);
-            Debug.DrawRay(transform.position, dir * viewRadius, Color.blue);
+            Gizmos.DrawRay(transform.position, dir * viewRadius);
         }
+
+        /*
+        if (viewMeshFilter == null)
+        {
+            viewMeshFilter = GetComponent<MeshFilter>();
+        }
+        if (viewMeshFilter.mesh != null)
+        {
+            Gizmos.color = Color.white;
+            Gizmos.DrawWireMesh(viewMeshFilter.mesh, 0, transform.position, transform.rotation, transform.lossyScale);
+        }
+        */
     }
 
 #if UNITY_EDITOR
@@ -159,26 +175,19 @@ public class FieldOfView : MonoBehaviour
             obstacles = FindTargets(obstacleMask, true);
 
             draw = lastObstacles.Count != obstacles.Count;
-            if (!draw)
-            {
-                draw = !obstacles.ScrambledEqualsHashSet(lastObstacles);
-            }
+        }
+        if (!draw)
+        {
+            draw = !obstacles.ScrambledEqualsHashSet(lastObstacles);
+        }
+        if (!draw && obstacles.Count == 1)
+        {
+            draw |= Vector3.Distance(lastPosition, transform.position) > 0.01f;
+            draw |= Vector3.Angle(lastForward, transform.forward) > 0.1f;
         }
         if (draw)
         {
             lastObstacles = obstacles;
-        }
-
-        if (!draw)
-        {
-            if (obstacles.Count > 1)
-            {
-                draw |= Vector3.Distance(lastPosition, transform.position) > 0.01f;
-                draw |= Vector3.Angle(lastForward, transform.forward) > 0.1f;
-            }
-        }
-        if (draw)
-        {
             lastPosition = transform.position;
             lastForward = transform.forward;
         }
@@ -205,10 +214,6 @@ public class FieldOfView : MonoBehaviour
         for (; ; )
         {
             yield return Yielders.Get(delay);
-            if (!FactionTemplate.IsAlliedWith(unit.faction, GameManager.Instance.playerFaction))
-            {
-                continue;
-            }
 
             if (ClickableObject.IsDeadOrNull(unit))
             {
@@ -231,38 +236,43 @@ public class FieldOfView : MonoBehaviour
                 continue;
             }
 
-            ClickableObject unit = unseen.GetComponent<ClickableObject>();
-            if (unit == null)
+            if (!FactionTemplate.IsAlliedWith(unit.faction, GameManager.Instance.playerFaction))// if unit not allied to player, ignore
             {
                 continue;
             }
 
-            if (FactionTemplate.IsAlliedWith(unit.faction, GameManager.Instance.playerFaction))
+            ClickableObject target = unseen.GetComponent<ClickableObject>();
+            if (target == null)
             {
                 continue;
             }
 
-            if (ClickableObject.IsDeadOrNull(unit))
+            if (FactionTemplate.IsAlliedWith(target.faction, GameManager.Instance.playerFaction))// if target allied to player, ignore
+            {
+                continue;
+            }
+
+            if (ClickableObject.IsDeadOrNull(target))
             {
                 continue;//Don't hide dead enemies, we wanna see the death anim
             }
 
-            unit.SetVisibility(false);
+            target.SetVisibility(false);
         }
         foreach (var seen in visibleTargets)
         {
-            ClickableObject unit = seen.GetComponent<ClickableObject>();
-            if (unit == null)
+            if (!FactionTemplate.IsAlliedWith(unit.faction, GameManager.Instance.playerFaction))// if not allied to player, ignore
             {
                 continue;
             }
 
-            if (FactionTemplate.IsAlliedWith(unit.faction, GameManager.Instance.playerFaction))
+            ClickableObject target = seen.GetComponent<ClickableObject>();
+            if (target == null)
             {
                 continue;
             }
 
-            unit.SetVisibility(true);
+            target.SetVisibility(true);
         }
 
         lastVisibleTargets = visibleTargets;

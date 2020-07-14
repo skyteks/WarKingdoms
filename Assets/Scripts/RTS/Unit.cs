@@ -75,18 +75,19 @@ public class Unit : ClickableObject
         switch (state)
         {
             case UnitStates.MovingToSpot:
-                if (navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
+                if (Vector3.Distance(navMeshAgent.destination, transform.position) <= navMeshAgent.stoppingDistance)
                 {
                     Idle();
+                    commandExecuted = true;
                 }
                 AdjustModelAngleToGround();
                 break;
 
             case UnitStates.AttackMovingToSpot:
-                if (navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
+                if (Vector3.Distance(navMeshAgent.destination, transform.position) <= navMeshAgent.stoppingDistance)
                 {
-                    commandExecuted = true;
                     AddCommand(new AICommand(AICommand.CommandType.Guard));
+                    commandExecuted = true;
                 }
                 else
                 {
@@ -97,9 +98,6 @@ public class Unit : ClickableObject
                         if (enemies.Count() > 0)
                         {
                             var closestEnemy = enemies.FindClosestToPoint(transform.position).GetComponent<Unit>();
-                            //MoveToAttack(closestEnemy);
-                            commandExecuted = true;
-                            commandRecieved = false;
                             InsertCommand(new AICommand(AICommand.CommandType.AttackTarget, closestEnemy));
                         }
                     }
@@ -111,20 +109,30 @@ public class Unit : ClickableObject
                 //check if target has been killed by somebody else
                 if (IsDeadOrNull(targetOfAttack))
                 {
-                    commandExecuted = true;
                     //Idle();
+                    commandExecuted = true;
                 }
                 else
                 {
                     navMeshAgent.SetDestination(targetOfAttack.transform.position); //update target position in case it's moving
 
-                    if (commandList.Count >= 2 && commandList[1].commandType == AICommand.CommandType.Guard)
+                    if (commandList.Count >= 2)
                     {
-                        if (Vector3.Distance(commandList[1].destination, transform.position) > template.guardDistance * 2f)
+                        if (commandList[1].commandType == AICommand.CommandType.Guard)
                         {
-                            commandExecuted = true;
-                            InsertCommand(new AICommand(AICommand.CommandType.MoveTo, commandList[1].destination), 1);
+                            if (Vector3.Distance(commandList[1].destination, transform.position) > template.guardDistance * 2f)
+                            {
+                                InsertCommand(new AICommand(AICommand.CommandType.MoveTo, commandList[1].destination), 1);
+                            }
                         }
+                        if (commandList[1].commandType == AICommand.CommandType.AttackMoveTo)
+                        {
+                            if (Vector3.Distance(commandList[0].origin, transform.position) > template.guardDistance * 2f)
+                            {
+                                InsertCommand(new AICommand(AICommand.CommandType.MoveTo, commandList[1].destination), 1);
+                            }
+                        }
+                        
                     }
                     //Check for distance from target
                     float actualRemainingDistance1 = Vector3.Distance(fieldOfView.transform.position, targetOfAttack.fieldOfView.transform.position);
@@ -144,8 +152,6 @@ public class Unit : ClickableObject
                     ClickableObject[] closestEnemies = GetNearestHostileUnits();
                     for (int i = 0; i < closestEnemies.Length; i++)
                     {
-                        commandExecuted = true;
-                        commandRecieved = false;
                         InsertCommand(new AICommand(AICommand.CommandType.AttackTarget, closestEnemies[i]));
                     }
                     AdjustModelAngleToGround();
@@ -154,7 +160,6 @@ public class Unit : ClickableObject
 
             case UnitStates.Attacking:
                 //check if target has been killed by somebody else
-                commandExecuted = true;
                 navMeshAgent.SetDestination(targetOfAttack.transform.position); //update target position in case it's moving
                 float actualRemainingDistance2 = Vector3.Distance(fieldOfView.transform.position, targetOfAttack.fieldOfView.transform.position);
                 if (IsDeadOrNull(targetOfAttack))
@@ -164,6 +169,7 @@ public class Unit : ClickableObject
                         animator.SetBool("DoAttack", false);
                     }
                     Idle();
+                    commandExecuted = true;
                 }
                 else if (commandList.Count >= 2 && commandList[1].commandType == AICommand.CommandType.Guard)
                 {
@@ -241,9 +247,9 @@ public class Unit : ClickableObject
         if (clear || command.commandType == AICommand.CommandType.Stop)
         {
             commandList.Clear();
+            commandExecuted = false;
+            commandRecieved = false;
         }
-        commandExecuted = true;
-        commandRecieved = false;
         if (command.commandType != AICommand.CommandType.Stop)
         {
             commandList.Add(command);
@@ -256,6 +262,7 @@ public class Unit : ClickableObject
         {
             return;
         }
+        commandRecieved = false;
         commandList.Insert(position, command);
     }
 
@@ -279,8 +286,6 @@ public class Unit : ClickableObject
 
     private IEnumerator DequeueCommands()
     {
-        commandRecieved = false;
-        commandExecuted = true;
         switch (state)
         {
             case UnitStates.Idleing:
@@ -307,23 +312,21 @@ public class Unit : ClickableObject
             }
             else
             {
-                if (commandExecuted)
+                if (commandRecieved && commandExecuted)
+                {
+                    commandList.RemoveAt(0);
+                    commandRecieved = false;
+                    commandExecuted = false;
+                    if (commandList.Count == 0)
+                    {
+                        continue;
+                    }
+                }
+                if (!commandRecieved)
                 {
                     if (commandList.Count == 1 && (commandList[0].commandType == AICommand.CommandType.Guard))
                     {
                         yield return null;
-                        continue;
-                    }
-
-                    if (commandRecieved)
-                    {
-                        commandList.RemoveAt(0);
-                        commandRecieved = false;
-                    }
-                    commandExecuted = false;
-
-                    if (commandList.Count == 0)
-                    {
                         continue;
                     }
 
@@ -344,11 +347,8 @@ public class Unit : ClickableObject
             return;
         }
 
+        command.origin = transform.position;
 
-        //Debug.Log(string.Concat(name, " Execute cmd: ", command.commandType));
-
-        commandExecuted = false;
-        commandRecieved = true;
         switch (command.commandType)
         {
             case AICommand.CommandType.MoveTo:
@@ -375,6 +375,7 @@ public class Unit : ClickableObject
                 Die();
                 break;
         }
+        commandRecieved = true;
     }
 
     //move to a position and be idle
@@ -405,20 +406,20 @@ public class Unit : ClickableObject
     private void Idle()
     {
         state = UnitStates.Idleing;
-        commandExecuted = true;
 
         targetOfAttack = null;
         agentReady = false;
 
         navMeshAgent.isStopped = true;
         navMeshAgent.velocity = Vector3.zero;
+
+        commandExecuted = true;
     }
 
     //stop but watch for enemies nearby
     public void Guard()
     {
         state = UnitStates.Guarding;
-        commandExecuted = true;
 
         targetOfAttack = null;
         agentReady = false;
@@ -445,7 +446,6 @@ public class Unit : ClickableObject
         else
         {
             //if the command is dealt by a Timeline, the target might be already dead
-            commandExecuted = true;
         }
     }
 
@@ -461,7 +461,6 @@ public class Unit : ClickableObject
         }
         else
         {
-            commandExecuted = true;
             //AddCommand(new AICommand(AICommand.CommandType.Stop));
         }
     }
@@ -506,10 +505,11 @@ public class Unit : ClickableObject
         }
         base.Die();
 
+        commandExecuted = true;
+
         AdjustModelAngleToGround();
 
         commandList.Clear();
-        commandExecuted = true;
 
         state = UnitStates.Dead; //still makes sense to set it, because somebody might be interacting with this script before it is destroyed
         if (animator != null)

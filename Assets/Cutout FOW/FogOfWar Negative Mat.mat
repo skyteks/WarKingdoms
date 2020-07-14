@@ -4,8 +4,9 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: FogOfWar Negative Mat
   m_Shader: {fileID: 4800000, guid: 9a06a0c1c1c552c4d82603e1c8d5672c, type: 3}
   m_ShaderKeywords: _ALPHAPREMULTIPLY_ON _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
@@ -65,6 +66,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - PixelSnap: 0
+    - _Alpha: 0.6
     - _BlendOp: 0
     - _BumpScale: 1
     - _CameraFadingEnabled: 0

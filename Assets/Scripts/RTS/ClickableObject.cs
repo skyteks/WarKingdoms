@@ -51,14 +51,14 @@ public abstract class ClickableObject : MonoBehaviour
         fieldOfView = transform.Find("FieldOfView").GetComponent<FieldOfView>();
 
         SetLayers();
+
+        template = template.Clone(); //we copy the template otherwise it's going to overwrite the original asset!
+
+        globalObjectsList.Add(this);
     }
 
     protected virtual void Start()
     {
-        globalObjectsList.Add(this);
-
-        template = template.Clone(); //we copy the template otherwise it's going to overwrite the original asset!
-
         visionCircle.material.color = visionCircle.material.color.ToWithA(0f);
         if (FactionTemplate.IsAlliedWith(faction, GameManager.Instance.playerFaction))
         {
@@ -67,8 +67,8 @@ public abstract class ClickableObject : MonoBehaviour
         }
         else
         {
-            fieldOfView.enabled = false;
-            visible = true;
+            //fieldOfView.enabled = false;
+            visible = true;// to let SetVisibily run
             SetVisibility(false);
         }
     }
