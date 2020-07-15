@@ -1,13 +1,16 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 [RequireComponent(typeof(Building))]
 [RequireComponent(typeof(Rekruiting))]
 public class WaveSpawnerBrain : MonoBehaviour
 {
     private Rekruiting rekruiting;
-    public Transform waypoint;
-
+    private Building building;
+    public Transform[] waypoints;
+    private Vector3[] lanepoints;
+    public bool justOneUnit;
     public float timeToStart = 5f;
     public float timeBetweenUnits = 1f;
     public float timeBetweenWaves = 30f;
@@ -18,6 +21,7 @@ public class WaveSpawnerBrain : MonoBehaviour
     void Awake()
     {
         rekruiting = GetComponent<Rekruiting>();
+        building = GetComponent<Building>();
     }
 
     void OnEnable()
@@ -30,11 +34,37 @@ public class WaveSpawnerBrain : MonoBehaviour
         StopCoroutine(coroutine);
     }
 
+    void Update()
+    {
+        if (Building.IsDeadOrNull(building))
+        {
+            enabled = false;
+        }
+    }
+
+    private void SetLanePoints()
+    {
+        lanepoints = new Vector3[waypoints.Length];
+        for (int i = 0; i < waypoints.Length; i++)
+        {
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(waypoints[i].position, out hit, 2f, NavMesh.AllAreas))
+            {
+                lanepoints[i] = hit.position;
+            }
+            else if (NavMesh.SamplePosition(waypoints[i].position, out hit, 8f, NavMesh.AllAreas))
+            {
+                lanepoints[i] = hit.position;
+            }
+        }
+
+    }
+
     private IEnumerator Waves()
     {
         yield return null;
         yield return null;
-        rekruiting.SetWaypoint(waypoint.position);
+        SetLanePoints();
 
         bool second = false;
         yield return Yielders.Get(timeToStart);
@@ -43,6 +73,10 @@ public class WaveSpawnerBrain : MonoBehaviour
         {
             SpawnAndSendUnit(0);
             yield return Yielders.Get(timeBetweenUnits);
+            if (justOneUnit)
+            {
+                yield break;
+            }
             SpawnAndSendUnit(0);
             yield return Yielders.Get(timeBetweenUnits);
             SpawnAndSendUnit(0);
@@ -67,8 +101,11 @@ public class WaveSpawnerBrain : MonoBehaviour
     private void SpawnAndSendUnit(int index)
     {
         Unit unitInstance = rekruiting.SpawnUnit(index);
-        AICommand moveToWaypoint = new AICommand(AICommand.CommandType.AttackMoveTo, rekruiting.waypointPos);
-        unitInstance.AddCommand(moveToWaypoint, true);
+        for (int i = 0; i < lanepoints.Length; i++)
+        {
+            AICommand moveToWaypoint = new AICommand(AICommand.CommandType.AttackMoveTo, lanepoints[i]);
+            unitInstance.AddCommand(moveToWaypoint, i == 0);
+        }
 
         unitInstance.gameObject.name += " " + unitInstance.faction.name + " " + counter;
         counter++;

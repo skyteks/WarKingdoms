@@ -20,6 +20,8 @@ public class UnitTemplate : ScriptableObject
 
     public float healthRegen = 0.5f;
 
+    public int armor = 0;
+
     [Tooltip("Damage dealt each attack")]
     public Vector2Int damage = new Vector2Int(9, 11);
 

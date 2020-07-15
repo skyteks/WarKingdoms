@@ -62,6 +62,10 @@ public class PortraitButton : UnitButton
             damageText.enabled = false;
         }
 
+        armorTitle.enabled = true;
+        armorText.enabled = true;
+        armorText.text = Unit.template.armor.ToString();
+
         if (Unit.template.attackSpeed > 0)
         {
             attackSpeedTitle.enabled = true;

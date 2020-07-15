@@ -97,7 +97,7 @@ public class Unit : ClickableObject
                         var enemies = fieldOfView.lastVisibleTargets.Where(target => !FactionTemplate.IsAlliedWith(target.GetComponent<ClickableObject>().faction, faction) && !ClickableObject.IsDeadOrNull(target.GetComponent<ClickableObject>()));
                         if (enemies.Count() > 0)
                         {
-                            var closestEnemy = enemies.FindClosestToPoint(transform.position).GetComponent<Unit>();
+                            var closestEnemy = enemies.FindClosestToPoint(transform.position).GetComponent<ClickableObject>();
                             InsertCommand(new AICommand(AICommand.CommandType.AttackTarget, closestEnemy));
                         }
                     }
@@ -499,10 +499,6 @@ public class Unit : ClickableObject
     //called in SufferAttack, but can also be from a Timeline clip
     protected override void Die()
     {
-        if (Application.isEditor && !Application.isPlaying)
-        {
-            return;
-        }
         base.Die();
 
         commandExecuted = true;
@@ -521,16 +517,10 @@ public class Unit : ClickableObject
         GameManager.Instance.RemoveFromSelection(this);
         SetSelected(false);
 
-        //Fire an event so any Platoon containing this Unit will be notified
-        if (OnDeath != null)
-        {
-            OnDeath.Invoke(this);
-        }
-
         faction.units.Remove(this);
 
         //Remove unneeded Components
-        StartCoroutine(HideSeenThings(visionFadeTime / 2f));
+        StartCoroutine(HideSeenThings(visionFadeTime));
         StartCoroutine(VisionFade(visionFadeTime, true));
         navMeshAgent.enabled = false;
         StartCoroutine(DecayIntoGround());
@@ -584,24 +574,14 @@ public class Unit : ClickableObject
         return nearestEnemy;
     }
 
-    public override void SetVisibility(bool visibility)
+    public override void SetVisibility(bool visibility, bool force = false)
     {
-        if (visibility)
+        if (!force && visibility == visible)
         {
-            if (visible)
-            {
-                return;
-            }
-        }
-        else
-        {
-            if (!visible)
-            {
-                return;
-            }
+            return;
         }
 
-        base.SetVisibility(visibility);
+        base.SetVisibility(visibility, force);
 
         if (visible)
         {

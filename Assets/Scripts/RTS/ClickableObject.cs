@@ -36,6 +36,21 @@ public abstract class ClickableObject : MonoBehaviour
         }
     }
 
+    public float damageReductionMuliplier
+    {
+        get
+        {
+            if (template.armor >= 0)
+            {
+                return 100f / (100f + template.armor);
+            }
+            else
+            {
+                return 2f - (100f / (100f - template.armor));
+            }
+        }
+    }
+
     static ClickableObject()
     {
         globalObjectsList = new List<ClickableObject>();
@@ -63,13 +78,11 @@ public abstract class ClickableObject : MonoBehaviour
         if (FactionTemplate.IsAlliedWith(faction, GameManager.Instance.playerFaction))
         {
             StartCoroutine(VisionFade(visionFadeTime, false));
-            SetVisibility(true);
+            SetVisibility(true, true);
         }
         else
         {
-            //fieldOfView.enabled = false;
-            visible = true;// to let SetVisibily run
-            SetVisibility(false);
+            SetVisibility(false, true);
         }
     }
 
@@ -177,8 +190,13 @@ public abstract class ClickableObject : MonoBehaviour
         miniMapCircle.SetPropertyBlock(materialPropertyBlock);
     }
 
-    public virtual void SetVisibility(bool visibility)
+    public virtual void SetVisibility(bool visibility, bool force = false)
     {
+        if (!force && visibility == visible)
+        {
+            return;
+        }
+
         visible = visibility;
 
         IEnumerable<GameObject> parts = GetComponentsInChildren<Transform>().Where(form =>
@@ -246,13 +264,8 @@ public abstract class ClickableObject : MonoBehaviour
     }
 
     //called in SufferAttack, but can also be from a Timeline clip
-    [ContextMenu("Die")]
     protected virtual void Die()
     {
-        if (Application.isEditor && !Application.isPlaying)
-        {
-            return;
-        }
         template.health = 0;
 
         //Fire an event so any Platoon containing this Unit will be notified
@@ -275,6 +288,7 @@ public abstract class ClickableObject : MonoBehaviour
 
     public virtual void SufferAttack(int damage)
     {
+        damage = Mathf.RoundToInt(damage * damageReductionMuliplier);
         template.health -= damage;
 
         if (template.health <= 0)

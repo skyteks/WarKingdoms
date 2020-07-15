@@ -57,24 +57,26 @@ public class Building : ClickableObject
         Destroy(gameObject);
     }
 
-    public override void SetVisibility(bool visibility)
+    public override void SetVisibility(bool visibility, bool force = false)
     {
-        if (visibility)
+        if (!force && visibility == visible)
         {
-            if (visible)
-            {
-                return;
-            }
+            return;
+        }
+
+        base.SetVisibility(visibility, force);
+
+        if (visible)
+        {
+            UIManager.Instance.AddHealthbar(this);
         }
         else
         {
-            if (!visible)
+            if (OnDisapearInFOW != null)
             {
-                return;
+                OnDisapearInFOW.Invoke(this);
             }
         }
-
-        base.SetVisibility(visibility);
     }
 
     //called by an attacker
@@ -101,7 +103,7 @@ public class Building : ClickableObject
                 effect.Stop(true, ParticleSystemStopBehavior.StopEmitting);
             }
         }
-        else if(burnEffects.Length == 4)
+        else if (burnEffects.Length == 4)
         {
             bool[] shouldBurn = new bool[4];
             shouldBurn[0] = healthPerc < 0.75f;
@@ -128,10 +130,6 @@ public class Building : ClickableObject
 
     protected override void Die()
     {
-        if (Application.isEditor && !Application.isPlaying)
-        {
-            return;
-        }
         base.Die();
 
         state = BuildingStates.Dead; //still makes sense to set it, because somebody might be interacting with this script before it is destroyed
@@ -140,16 +138,10 @@ public class Building : ClickableObject
 
         TriggerBurnEffects();
 
-        //Fire an event so any Platoon containing this Unit will be notified
-        if (OnDeath != null)
-        {
-            OnDeath.Invoke(this);
-        }
-
         faction.buildings.Remove(this);
 
         //Remove unneeded Components
-        StartCoroutine(HideSeenThings(visionFadeTime / 2f));
+        StartCoroutine(HideSeenThings(visionFadeTime));
         StartCoroutine(VisionFade(visionFadeTime, true));
         navMeshObstacle.enabled = false;
         StartCoroutine(DecayIntoGround());

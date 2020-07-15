@@ -27,7 +27,7 @@ public class UIManager : Singleton<UIManager>
     [Space]
 
     public HealthbarColoringModes healthbarColoringMode;
-    public bool showHealthbars { get; private set; }
+    public bool showHealthbars;
     public MinimapColoringModes minimapColoringMode;
 
     [Space]
@@ -42,7 +42,7 @@ public class UIManager : Singleton<UIManager>
     public Text resourceGoldText;
     public Text resourceWoodText;
 
-    void Start()
+    void Awake()
     {
         ToggleSelectionRectangle(false);
         ClearSelection();
@@ -52,22 +52,6 @@ public class UIManager : Singleton<UIManager>
     void Update()
     {
         GameManager gameManager = GameManager.Instance;
-        if (Input.GetKeyDown(KeyCode.LeftAlt))
-        {
-            showHealthbars = !showHealthbars;
-            if (showHealthbars)
-            {
-                foreach (ClickableObject unit in gameManager.GetAllVisibleUnits())
-                {
-                    AddHealthbar(unit);
-
-                }
-            }
-            else
-            {
-                ClearHealthbars();
-            }
-        }
 
         if (resourceGoldText != null && resourceWoodText != null)
         {
