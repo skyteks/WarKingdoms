@@ -381,4 +381,123 @@ public static class Vector_Extension
         }
         return closestIndex;
     }
+
+    #region BoundingSphere
+    public static BoundingSphere GetBoundingBall(this IList<Vector3> points)
+    {
+        List<Vector3> boundaryPoints = new List<Vector3>(4);
+        return BallWithBounds(points, boundaryPoints);
+    }
+
+    private static BoundingSphere BallWithBounds(IList<Vector3> contained, List<Vector3> boundaryPoints)
+    {
+        if (contained.Count == 0 || boundaryPoints.Count == 4)
+        {
+            switch (boundaryPoints.Count)
+            {
+                case 0:
+                    return new BoundingSphere(Vector4.zero);
+                case 1:
+                    return new BoundingSphere(boundaryPoints[0], 0);
+                case 2:
+                    var halfSpan = 0.5f * (boundaryPoints[1] - boundaryPoints[0]);
+                    return new BoundingSphere(
+                             boundaryPoints[0] + halfSpan,
+                             halfSpan.magnitude
+                    );
+                case 3:
+                    return TriangleCircumSphere(
+                             boundaryPoints[0],
+                             boundaryPoints[1],
+                             boundaryPoints[2]
+                    );
+                case 4:
+                    return TetrahedronCircumSphere(
+                             boundaryPoints[0],
+                             boundaryPoints[1],
+                             boundaryPoints[2],
+                             boundaryPoints[3]
+                    );
+            }
+        }
+
+        int last = contained.Count - 1;
+        int removeAt = Random.Range(0, contained.Count);
+
+        Vector3 removed = contained[removeAt];
+        contained[removeAt] = contained[last];
+        contained.RemoveAt(last);
+
+        var ball = BallWithBounds(contained, boundaryPoints);
+
+        if (!ball.Contains(removed))
+        {
+            boundaryPoints.Add(removed);
+            ball = BallWithBounds(contained, boundaryPoints);
+            boundaryPoints.RemoveAt(boundaryPoints.Count - 1);
+        }
+
+        contained.Add(removed);
+        return ball;
+    }
+
+    private static BoundingSphere TriangleCircumSphere(Vector3 a, Vector3 b, Vector3 c)
+    {
+        Vector3 A = a - c;
+        Vector3 B = b - c;
+
+        Vector3 cross = Vector3.Cross(A, B);
+
+        Vector3 center = c + Vector3.Cross(A.sqrMagnitude * B - B.sqrMagnitude * A, cross)
+                       / (2f * cross.sqrMagnitude);
+
+        float radius = Vector3.Distance(a, center);
+
+        return new BoundingSphere(center, radius);
+    }
+
+    private static BoundingSphere TetrahedronCircumSphere(Vector3 p1,Vector3 p2,Vector3 p3,Vector3 p4)
+    {
+        // Construct a matrix with the vectors as columns 
+        // (Xs on one row, Ys on the next... and the last row all 1s)
+        Matrix4x4 matrix = new Matrix4x4(p1, p2, p3, p4);
+        matrix.SetRow(3, Vector4.one);
+
+        float a = matrix.determinant;
+
+        // Copy the matrix so we can modify it 
+        // and still read rows from the original.
+        var D = matrix;
+        Vector3 center;
+
+        Vector4 squares = new Vector4(
+                 p1.sqrMagnitude,
+                 p2.sqrMagnitude,
+                 p3.sqrMagnitude,
+                 p4.sqrMagnitude
+        );
+
+        D.SetRow(0, squares);
+        center.x = D.determinant;
+
+        D.SetRow(1, matrix.GetRow(0));
+        center.y = -D.determinant;
+
+        D.SetRow(2, matrix.GetRow(1));
+        center.z = D.determinant;
+
+        center /= 2f * a;
+        return new BoundingSphere(center, Vector3.Distance(p1, center));
+    }
+
+    public static bool Contains(this BoundingSphere sphere, Vector3 point)
+    {
+        return Vector3.Distance(sphere.position, point) <= sphere.radius;
+    }
+
+    public static bool Intersects(this BoundingSphere sphere1, BoundingSphere sphere2)
+    {
+        return Vector3.Distance(sphere1.position, sphere2.position) <= sphere1.radius + sphere2.radius;
+    }
+    #endregion
 }

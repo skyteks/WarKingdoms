@@ -281,7 +281,6 @@ public class GameManager : Singleton<GameManager>
 
     public void QuitGame()
     {
-        Debug.Log("quit game");
         Application.Quit();
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
