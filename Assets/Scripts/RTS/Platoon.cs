@@ -64,7 +64,7 @@ public class Platoon : MonoBehaviour
 #if UNITY_EDITOR
         debugCommandLocations = new Location[0];
 #endif
-        if (command.destination.IsNaN())
+        if (command.commandType != AICommand.CommandType.MoveTo && command.commandType != AICommand.CommandType.AttackMoveTo)
         {
             for (int i = 0; i < units.Count; i++)
             {
@@ -226,24 +226,6 @@ public class Platoon : MonoBehaviour
                 {
                     float sqrt = Mathf.Sqrt(count);
                     int i = 0;
-                    //if (sqrt % 1f == 0f)
-                    //{
-                    //    float halfSquareDiameter = (sqrt - 1f) * 0.5f * formationOffset;
-                    //    //for (int y = 0; y < sqrt && i < count; y++)
-                    //    for (int y = Mathf.FloorToInt(sqrt) - 1; y >= 0 && i < count; y--)
-                    //    {
-                    //        for (int x = 0; x < sqrt && i < count; x++, i++)
-                    //        {
-                    //            offsets[i] = new Vector3(
-                    //                x * formationOffset - halfSquareDiameter,
-                    //                0f,
-                    //                y * formationOffset - halfSquareDiameter
-                    //            );
-                    //        }
-                    //    }
-                    //}
-                    //else
-                    //{
                     float currentOffset = formationOffset;
 
                     int h = Mathf.FloorToInt(sqrt);
@@ -256,8 +238,6 @@ public class Platoon : MonoBehaviour
                         float x = 0;
                         if (remaining < w && formationMode == FormationModes.Rectangle)
                         {
-                            //int missing = w - remaining;
-                            //x += missing / 2f;
                             currentOffset = formationOffset * (w - 1f) / (remaining - 1);
                         }
                         for (; x < w && i < count; x++, i++)
@@ -269,7 +249,6 @@ public class Platoon : MonoBehaviour
                             );
                         }
                     }
-                    //}
                 }
                 if (formationMode == FormationModes.HexGrid)
                 {

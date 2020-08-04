@@ -30,8 +30,7 @@ public class Unit : ClickableObject
     protected Animator animator;
 
     //private bool isSelected; //is the Unit currently selected by the Player
-    [HideInInspector]
-    public List<AICommand> commandList = new List<AICommand>();
+    protected List<AICommand> commandList = new List<AICommand>();
     protected bool commandRecieved, commandExecuted;
     protected ClickableObject targetOfAttack;
     protected ClickableObject[] hostiles;
@@ -669,4 +668,11 @@ public class Unit : ClickableObject
         Projectile projectileInstance = Instantiate(template.projectile, projectileFirePoint.position, projectileFirePoint.rotation).GetComponent<Projectile>();
         projectileInstance.LaunchAt(targetOfAttack.fieldOfView.transform, damage, this);
     }
+
+#if UNITY_EDITOR
+    public List<AICommand> GetCommandList()
+    {
+        return commandList;
+    }
+#endif
 }

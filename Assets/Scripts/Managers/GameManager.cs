@@ -37,8 +37,6 @@ public class GameManager : Singleton<GameManager>
     public ClickableObject selectedObject { get; private set; }
     private UnityEngine.Playables.PlayableDirector activeDirector;
 
-    private bool showHealthbars;
-
     void Awake()
     {
         selectedPlatoon = GetComponent<Platoon>();

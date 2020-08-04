@@ -15,15 +15,14 @@ public class UnitEditor : Editor
     void OnEnable()
     {
         unit = (target as Unit);
-
-        reorderableList = new ReorderableList(unit.commandList, typeof(AICommand), false, true, false, false);
+        reorderableList = new ReorderableList(unit.GetCommandList(), typeof(AICommand), false, true, false, false);
         reorderableList.drawHeaderCallback += DrawHeaderCallBack;
         reorderableList.drawElementCallback += DrawElementCallback;
     }
 
     private void DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
     {
-        AICommand command = unit.commandList[index];
+        AICommand command = unit.GetCommandList()[index];
         Rect[] rects = rect.SplitOnXAxis(0.5f);
         for (int i = 0; i < rects.Length; i++) rects[i].height = EditorGUIUtility.singleLineHeight;
         rects[0].xMax -= 15f / 2f;
