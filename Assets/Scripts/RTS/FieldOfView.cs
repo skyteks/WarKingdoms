@@ -180,7 +180,7 @@ public class FieldOfView : MonoBehaviour
         {
             draw = !obstacles.ScrambledEqualsHashSet(lastObstacles);
         }
-        if (!draw && obstacles.Count == 1)
+        if (!draw && obstacles.Count >= 1)
         {
             draw |= Vector3.Distance(lastPosition, transform.position) > 0.01f;
             draw |= Vector3.Angle(lastForward, transform.forward) > 0.1f;

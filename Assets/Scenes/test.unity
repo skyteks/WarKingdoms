@@ -43,7 +43,7 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 11
+  serializedVersion: 12
   m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
@@ -96,8 +96,10 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_LightingSettings: {fileID: 4890085278179872738, guid: 3f2322290288f4c4d9b4807e825a9693,
+    type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -117,6 +119,8 @@ NavMeshSettings:
     manualTileSize: 0
     tileSize: 256
     accuratePlacement: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 23800000, guid: 4b5416dabda3b3842ad5eba3bb184d3e, type: 2}
@@ -172,6 +176,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -204,6 +210,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1001555644}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 7aa4cde9edcf14945898e034a7eb5183,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: 7aa4cde9edcf14945898e034a7eb5183,
         type: 3}
       propertyPath: m_Name
@@ -244,12 +256,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 7aa4cde9edcf14945898e034a7eb5183,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7aa4cde9edcf14945898e034a7eb5183, type: 3}
 --- !u!4 &12462246 stripped
@@ -312,6 +318,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.392}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -340,6 +348,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 401865775}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: 30d3bd3b11ff24547a282c53692f9b08,
         type: 3}
       propertyPath: m_Name
@@ -400,12 +414,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30d3bd3b11ff24547a282c53692f9b08, type: 3}
 --- !u!4 &128955740 stripped
@@ -473,6 +481,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0.4862745, b: 0, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -610,6 +620,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -872,6 +884,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 864037437}
+        m_TargetAssemblyTypeName: 
         m_MethodName: QuitGame
         m_Mode: 1
         m_Arguments:
@@ -897,6 +910,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -925,6 +940,28 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 6143523602997217605, guid: a7687a7a227c6444cbe9a24dfd595b81,
+        type: 3}
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 6143523602997217605, guid: 88db59efee6f68b4d997ce7614a7f97e,
+        type: 3}
+    - target: {fileID: 8373508903929679164, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 989875723}
     - target: {fileID: 8373508903984173420, guid: 125e509c875919d45ad17327fe3f53d8,
         type: 3}
       propertyPath: m_Name
@@ -1000,28 +1037,6 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.data[1]
-      value: 
-      objectReference: {fileID: 6143523602997217605, guid: a7687a7a227c6444cbe9a24dfd595b81,
-        type: 3}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.data[2]
-      value: 
-      objectReference: {fileID: 6143523602997217605, guid: 88db59efee6f68b4d997ce7614a7f97e,
-        type: 3}
-    - target: {fileID: 8373508903929679164, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 989875723}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 125e509c875919d45ad17327fe3f53d8, type: 3}
 --- !u!4 &203240116 stripped
@@ -1107,6 +1122,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1179,6 +1196,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1203,6 +1222,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &246849994
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1321,6 +1341,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1349,6 +1371,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 401865775}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: 30d3bd3b11ff24547a282c53692f9b08,
         type: 3}
       propertyPath: m_Name
@@ -1409,12 +1437,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30d3bd3b11ff24547a282c53692f9b08, type: 3}
 --- !u!1 &308645997
@@ -1470,6 +1492,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0.4862745, b: 0, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1607,6 +1631,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1745,6 +1771,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1769,6 +1797,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &361773251
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1797,6 +1826,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 401865775}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: 30d3bd3b11ff24547a282c53692f9b08,
         type: 3}
       propertyPath: m_Name
@@ -1857,12 +1892,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30d3bd3b11ff24547a282c53692f9b08, type: 3}
 --- !u!1 &381519349 stripped
@@ -1992,6 +2021,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.488204, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2084,6 +2115,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2116,6 +2149,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1001555644}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 621440ea81ee59f4181a7ffd82ceae91,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: 621440ea81ee59f4181a7ffd82ceae91,
         type: 3}
       propertyPath: m_Name
@@ -2156,12 +2195,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 621440ea81ee59f4181a7ffd82ceae91,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 621440ea81ee59f4181a7ffd82ceae91, type: 3}
 --- !u!4 &430980040 stripped
@@ -2187,8 +2220,8 @@ Mesh:
     firstVertex: 0
     vertexCount: 8
     localAABB:
-      m_Center: {x: 0, y: 2.3263083, z: 37.657963}
-      m_Extent: {x: 29.7704, y: 14.5806055, z: 6.7990456}
+      m_Center: {x: 0, y: 2.3263073, z: 37.657963}
+      m_Extent: {x: 29.769072, y: 14.580606, z: 6.7990456}
   m_Shapes:
     vertices: []
     shapes: []
@@ -2267,7 +2300,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 192
-    _typelessdata: 58c3a7c19a1144c110dff641000000000000803f0000000058c3a7419a1144c110dff641000000000000803f00000000c729eec15c418741fad33142000000000000803f00000000c729ee415c418741fad33142000000000000803f00000000a0dfa1c1de1436c1ec21fa41000000000000803f00000000a0dfa141de1436c1ec21fa41000000000000803f000000007f0de4c1fe4280418c323042000000000000803f000000007f0de441fe4280418c323042000000000000803f00000000
+    _typelessdata: 73c1a7c19c1144c110dff641000000000000803f0000000073c1a7419c1144c110dff641000000000000803f000000000f27eec15c418741fad33142000000000000803f000000000f27ee415c418741fad33142000000000000803f00000000b5dda1c1de1436c1ec21fa41000000000000803f00000000b5dda141de1436c1ec21fa41000000000000803f00000000cd0ae4c1fe4280418c323042000000000000803f00000000cd0ae441fe4280418c323042000000000000803f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -2321,8 +2354,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: 0, y: 2.3263083, z: 37.657963}
-    m_Extent: {x: 29.7704, y: 14.5806055, z: 6.7990456}
+    m_Center: {x: 0, y: 2.3263073, z: 37.657963}
+    m_Extent: {x: 29.769072, y: 14.580606, z: 6.7990456}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -2330,6 +2363,7 @@ Mesh:
   m_MeshMetrics[1]: 1
   m_MeshOptimizationFlags: 1
   m_StreamData:
+    serializedVersion: 2
     offset: 0
     size: 0
     path: 
@@ -2415,6 +2449,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2498,6 +2534,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.392}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2663,6 +2701,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2717,6 +2757,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 401865775}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: 30d3bd3b11ff24547a282c53692f9b08,
         type: 3}
       propertyPath: m_Name
@@ -2777,12 +2823,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30d3bd3b11ff24547a282c53692f9b08, type: 3}
 --- !u!1 &592036063
@@ -2840,6 +2880,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2864,6 +2906,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &592036067
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2974,6 +3017,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -3047,6 +3092,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -3126,6 +3173,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -3250,6 +3299,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -3318,6 +3369,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -3342,6 +3395,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &683294233
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3370,6 +3424,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1001555644}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 88db59efee6f68b4d997ce7614a7f97e,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: 88db59efee6f68b4d997ce7614a7f97e,
         type: 3}
       propertyPath: m_Name
@@ -3430,12 +3490,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 88db59efee6f68b4d997ce7614a7f97e,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 88db59efee6f68b4d997ce7614a7f97e, type: 3}
 --- !u!4 &685821796 stripped
@@ -3495,7 +3549,7 @@ Terrain:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 687637739}
   m_Enabled: 1
-  serializedVersion: 5
+  serializedVersion: 6
   m_TerrainData: {fileID: 15600000, guid: 26bea55934790184f99ddd7274514057, type: 2}
   m_TreeDistance: 5000
   m_TreeBillboardDistance: 50
@@ -3518,6 +3572,7 @@ Terrain:
   m_ScaleInLightmap: 0.0256
   m_LightmapParameters: {fileID: 15203, guid: 0000000000000000f000000000000000, type: 0}
   m_GroupingID: 0
+  m_RenderingLayerMask: 1
   m_AllowAutoConnect: 1
 --- !u!1 &693494391
 GameObject:
@@ -3571,6 +3626,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -3603,6 +3660,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 401865775}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: 30d3bd3b11ff24547a282c53692f9b08,
         type: 3}
       propertyPath: m_Name
@@ -3663,12 +3726,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30d3bd3b11ff24547a282c53692f9b08, type: 3}
 --- !u!1001 &714469142
@@ -3678,6 +3735,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 401865775}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: 30d3bd3b11ff24547a282c53692f9b08,
         type: 3}
       propertyPath: m_Name
@@ -3738,12 +3801,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30d3bd3b11ff24547a282c53692f9b08, type: 3}
 --- !u!1 &715219064
@@ -3843,6 +3900,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -3916,6 +3975,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -3948,6 +4009,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 401865775}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: 30d3bd3b11ff24547a282c53692f9b08,
         type: 3}
       propertyPath: m_Name
@@ -4008,12 +4075,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30d3bd3b11ff24547a282c53692f9b08, type: 3}
 --- !u!1 &744065295
@@ -4099,6 +4160,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 564212399}
+        m_TargetAssemblyTypeName: 
         m_MethodName: TogglePlatoonFormationMode
         m_Mode: 1
         m_Arguments:
@@ -4124,6 +4186,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -4152,6 +4216,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 401865775}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: 30d3bd3b11ff24547a282c53692f9b08,
         type: 3}
       propertyPath: m_Name
@@ -4212,12 +4282,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30d3bd3b11ff24547a282c53692f9b08, type: 3}
 --- !u!1 &752661164
@@ -4317,6 +4381,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -4390,6 +4456,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -4545,8 +4613,9 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 796157185}
   m_Enabled: 1
-  serializedVersion: 9
+  serializedVersion: 10
   m_Type: 1
+  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1.3
   m_Range: 10
@@ -4708,6 +4777,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -4782,6 +4853,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -4829,6 +4902,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1001555644}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: c8d732245a078ff4ba57bd236397bfa3,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: c8d732245a078ff4ba57bd236397bfa3,
         type: 3}
       propertyPath: m_Name
@@ -4869,12 +4948,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: c8d732245a078ff4ba57bd236397bfa3,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c8d732245a078ff4ba57bd236397bfa3, type: 3}
 --- !u!4 &850525987 stripped
@@ -4890,6 +4963,35 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 6143523602997217605, guid: 2a1cfb5a10692844fad0e59371651377,
+        type: 3}
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 6143523602997217605, guid: 238d3e16e8ffba04e8b97e499c905820,
+        type: 3}
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.data[0]
+      value: 
+      objectReference: {fileID: 6143523602997217605, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+    - target: {fileID: 8373508903984173416, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: 12e6ffecf876f624dacb14c580a201eb,
+        type: 2}
     - target: {fileID: 8373508903984173420, guid: 125e509c875919d45ad17327fe3f53d8,
         type: 3}
       propertyPath: m_Name
@@ -4965,35 +5067,6 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.data[1]
-      value: 
-      objectReference: {fileID: 6143523602997217605, guid: 2a1cfb5a10692844fad0e59371651377,
-        type: 3}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.data[2]
-      value: 
-      objectReference: {fileID: 6143523602997217605, guid: 238d3e16e8ffba04e8b97e499c905820,
-        type: 3}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.data[0]
-      value: 
-      objectReference: {fileID: 6143523602997217605, guid: 9a6476a774e7514469db4f7665d98ac2,
-        type: 3}
-    - target: {fileID: 8373508903984173416, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: 12e6ffecf876f624dacb14c580a201eb,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 125e509c875919d45ad17327fe3f53d8, type: 3}
 --- !u!1 &851748651 stripped
@@ -5338,6 +5411,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0.4862745, b: 0, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -5436,6 +5511,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -5502,6 +5579,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 955481991}
+        m_TargetAssemblyTypeName: 
         m_MethodName: set_enabled
         m_Mode: 6
         m_Arguments:
@@ -5516,6 +5594,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 955481991}
+        m_TargetAssemblyTypeName: 
         m_MethodName: set_enabled
         m_Mode: 6
         m_Arguments:
@@ -5543,6 +5622,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -5567,6 +5648,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &955481992
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -5755,6 +5837,7 @@ Mesh:
   m_MeshMetrics[1]: 1
   m_MeshOptimizationFlags: 1
   m_StreamData:
+    serializedVersion: 2
     offset: 0
     size: 0
     path: 
@@ -5925,7 +6008,7 @@ Terrain:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1024617143}
   m_Enabled: 1
-  serializedVersion: 5
+  serializedVersion: 6
   m_TerrainData: {fileID: 15600000, guid: c3af3e29502ba23459decd41faaa3b4a, type: 2}
   m_TreeDistance: 5000
   m_TreeBillboardDistance: 50
@@ -5948,6 +6031,7 @@ Terrain:
   m_ScaleInLightmap: 0.0256
   m_LightmapParameters: {fileID: 15203, guid: 0000000000000000f000000000000000, type: 0}
   m_GroupingID: 0
+  m_RenderingLayerMask: 1
   m_AllowAutoConnect: 1
 --- !u!1001 &1062275079
 PrefabInstance:
@@ -5956,6 +6040,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1001555644}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: a7687a7a227c6444cbe9a24dfd595b81,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: a7687a7a227c6444cbe9a24dfd595b81,
         type: 3}
       propertyPath: m_Name
@@ -5996,12 +6086,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: a7687a7a227c6444cbe9a24dfd595b81,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a7687a7a227c6444cbe9a24dfd595b81, type: 3}
 --- !u!4 &1062275080 stripped
@@ -6017,6 +6101,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 401865775}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: 30d3bd3b11ff24547a282c53692f9b08,
         type: 3}
       propertyPath: m_Name
@@ -6077,12 +6167,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30d3bd3b11ff24547a282c53692f9b08, type: 3}
 --- !u!4 &1090260208 stripped
@@ -6144,6 +6228,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -6237,6 +6323,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0.4862745, b: 0, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -6290,6 +6378,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 401865775}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: 30d3bd3b11ff24547a282c53692f9b08,
         type: 3}
       propertyPath: m_Name
@@ -6350,12 +6444,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30d3bd3b11ff24547a282c53692f9b08, type: 3}
 --- !u!1001 &1186215652
@@ -6365,6 +6453,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 401865775}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: 30d3bd3b11ff24547a282c53692f9b08,
         type: 3}
       propertyPath: m_Name
@@ -6425,12 +6519,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30d3bd3b11ff24547a282c53692f9b08, type: 3}
 --- !u!1 &1191810926
@@ -6530,6 +6618,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -6603,6 +6693,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -6680,6 +6772,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -6709,11 +6803,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1001555644}
     m_Modifications:
-    - target: {fileID: 729119159435421255, guid: 789d37fc86081704a9a1591be8c12a59,
-        type: 3}
-      propertyPath: m_Name
-      value: Orc Worker
-      objectReference: {fileID: 0}
     - target: {fileID: 724157626918239545, guid: 789d37fc86081704a9a1591be8c12a59,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -6749,6 +6838,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 729119159435421255, guid: 789d37fc86081704a9a1591be8c12a59,
+        type: 3}
+      propertyPath: m_Name
+      value: Orc Worker
+      objectReference: {fileID: 0}
     - target: {fileID: 832002160600473819, guid: 789d37fc86081704a9a1591be8c12a59,
         type: 3}
       propertyPath: faction
@@ -6770,6 +6864,17 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 401865775}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: state
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6113541555682152409, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: 12e6ffecf876f624dacb14c580a201eb,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: 9a6476a774e7514469db4f7665d98ac2,
         type: 3}
       propertyPath: m_Name
@@ -6845,17 +6950,6 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 9a6476a774e7514469db4f7665d98ac2,
-        type: 3}
-      propertyPath: state
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 9a6476a774e7514469db4f7665d98ac2,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: 12e6ffecf876f624dacb14c580a201eb,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a6476a774e7514469db4f7665d98ac2, type: 3}
 --- !u!4 &1219788685 stripped
@@ -6916,6 +7010,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -7038,6 +7134,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -7115,6 +7213,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.392}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -7161,8 +7261,9 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1256338508}
   m_Enabled: 1
-  serializedVersion: 9
+  serializedVersion: 10
   m_Type: 1
+  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1.3
   m_Range: 10
@@ -7327,6 +7428,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1001555644}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: 9a6476a774e7514469db4f7665d98ac2,
         type: 3}
       propertyPath: m_Name
@@ -7367,12 +7474,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 9a6476a774e7514469db4f7665d98ac2,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a6476a774e7514469db4f7665d98ac2, type: 3}
 --- !u!4 &1327074478 stripped
@@ -7464,6 +7565,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 564212399}
+        m_TargetAssemblyTypeName: 
         m_MethodName: ToggleHealthbarColor
         m_Mode: 1
         m_Arguments:
@@ -7489,6 +7591,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -7517,6 +7621,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 401865775}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: 30d3bd3b11ff24547a282c53692f9b08,
         type: 3}
       propertyPath: m_Name
@@ -7577,12 +7687,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30d3bd3b11ff24547a282c53692f9b08, type: 3}
 --- !u!1 &1409297255 stripped
@@ -7846,6 +7950,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -8009,6 +8115,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -8100,6 +8208,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.392}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -8304,6 +8414,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -8336,6 +8448,28 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 6143523602997217605, guid: a7687a7a227c6444cbe9a24dfd595b81,
+        type: 3}
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 6143523602997217605, guid: 88db59efee6f68b4d997ce7614a7f97e,
+        type: 3}
+    - target: {fileID: 8373508903929679164, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 989875723}
     - target: {fileID: 8373508903984173420, guid: 125e509c875919d45ad17327fe3f53d8,
         type: 3}
       propertyPath: m_Name
@@ -8411,28 +8545,6 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.data[1]
-      value: 
-      objectReference: {fileID: 6143523602997217605, guid: a7687a7a227c6444cbe9a24dfd595b81,
-        type: 3}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.data[2]
-      value: 
-      objectReference: {fileID: 6143523602997217605, guid: 88db59efee6f68b4d997ce7614a7f97e,
-        type: 3}
-    - target: {fileID: 8373508903929679164, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 989875723}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 125e509c875919d45ad17327fe3f53d8, type: 3}
 --- !u!1 &1614222300 stripped
@@ -8473,6 +8585,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1001555644}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 2a1cfb5a10692844fad0e59371651377,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: 2a1cfb5a10692844fad0e59371651377,
         type: 3}
       propertyPath: m_Name
@@ -8513,12 +8631,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 2a1cfb5a10692844fad0e59371651377,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2a1cfb5a10692844fad0e59371651377, type: 3}
 --- !u!4 &1632232298 stripped
@@ -8579,6 +8691,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -8611,6 +8725,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1001555644}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: 30d3bd3b11ff24547a282c53692f9b08,
         type: 3}
       propertyPath: m_Name
@@ -8651,12 +8771,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30d3bd3b11ff24547a282c53692f9b08, type: 3}
 --- !u!4 &1639282911 stripped
@@ -8717,6 +8831,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -8794,6 +8910,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -8916,6 +9034,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -8990,6 +9110,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -9113,6 +9235,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 564212399}
+        m_TargetAssemblyTypeName: 
         m_MethodName: ToggleMinimapColor
         m_Mode: 1
         m_Arguments:
@@ -9138,6 +9261,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -9172,6 +9297,35 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 6143523602997217605, guid: 2a1cfb5a10692844fad0e59371651377,
+        type: 3}
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 6143523602997217605, guid: 238d3e16e8ffba04e8b97e499c905820,
+        type: 3}
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.data[0]
+      value: 
+      objectReference: {fileID: 6143523602997217605, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+    - target: {fileID: 8373508903984173416, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: 12e6ffecf876f624dacb14c580a201eb,
+        type: 2}
     - target: {fileID: 8373508903984173420, guid: 125e509c875919d45ad17327fe3f53d8,
         type: 3}
       propertyPath: m_Name
@@ -9247,35 +9401,6 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.data[1]
-      value: 
-      objectReference: {fileID: 6143523602997217605, guid: 2a1cfb5a10692844fad0e59371651377,
-        type: 3}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.data[2]
-      value: 
-      objectReference: {fileID: 6143523602997217605, guid: 238d3e16e8ffba04e8b97e499c905820,
-        type: 3}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.data[0]
-      value: 
-      objectReference: {fileID: 6143523602997217605, guid: 9a6476a774e7514469db4f7665d98ac2,
-        type: 3}
-    - target: {fileID: 8373508903984173416, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: 12e6ffecf876f624dacb14c580a201eb,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 125e509c875919d45ad17327fe3f53d8, type: 3}
 --- !u!1 &1814372348
@@ -9330,6 +9455,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -9408,6 +9535,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 1, b: 0, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -9545,6 +9674,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -9579,6 +9710,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1001555644}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: ee438f477076ce547a2348da8741634f,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: ee438f477076ce547a2348da8741634f,
         type: 3}
       propertyPath: m_Name
@@ -9619,12 +9756,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: ee438f477076ce547a2348da8741634f,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ee438f477076ce547a2348da8741634f, type: 3}
 --- !u!4 &1902178747 stripped
@@ -9666,6 +9797,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -9690,6 +9823,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &1928576860
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9758,6 +9892,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 1, b: 0.006896496, a: 1}
   m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -9805,6 +9941,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1001555644}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 238d3e16e8ffba04e8b97e499c905820,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
+        type: 2}
     - target: {fileID: 6143523602997217605, guid: 238d3e16e8ffba04e8b97e499c905820,
         type: 3}
       propertyPath: m_Name
@@ -9845,12 +9987,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 238d3e16e8ffba04e8b97e499c905820,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 238d3e16e8ffba04e8b97e499c905820, type: 3}
 --- !u!4 &1941036575 stripped
@@ -9872,6 +10008,35 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 6143523602997217605, guid: 2a1cfb5a10692844fad0e59371651377,
+        type: 3}
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 6143523602997217605, guid: 238d3e16e8ffba04e8b97e499c905820,
+        type: 3}
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.data[0]
+      value: 
+      objectReference: {fileID: 6143523602997217605, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+    - target: {fileID: 8373508903984173416, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: 12e6ffecf876f624dacb14c580a201eb,
+        type: 2}
     - target: {fileID: 8373508903984173420, guid: 125e509c875919d45ad17327fe3f53d8,
         type: 3}
       propertyPath: m_Name
@@ -9947,35 +10112,6 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.data[1]
-      value: 
-      objectReference: {fileID: 6143523602997217605, guid: 2a1cfb5a10692844fad0e59371651377,
-        type: 3}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.data[2]
-      value: 
-      objectReference: {fileID: 6143523602997217605, guid: 238d3e16e8ffba04e8b97e499c905820,
-        type: 3}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.data[0]
-      value: 
-      objectReference: {fileID: 6143523602997217605, guid: 9a6476a774e7514469db4f7665d98ac2,
-        type: 3}
-    - target: {fileID: 8373508903984173416, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: 12e6ffecf876f624dacb14c580a201eb,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 125e509c875919d45ad17327fe3f53d8, type: 3}
 --- !u!1 &1972627584 stripped
@@ -10047,6 +10183,17 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 401865775}
     m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: 85c4d6ddd476c4b40aa973060d5f71cc,
+        type: 2}
+    - target: {fileID: 6113541555682152409, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: state
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6143523602997217605, guid: 9a6476a774e7514469db4f7665d98ac2,
         type: 3}
       propertyPath: m_Name
@@ -10111,17 +10258,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6113541555682152409, guid: 9a6476a774e7514469db4f7665d98ac2,
-        type: 3}
-      propertyPath: faction
-      value: 
-      objectReference: {fileID: 11400000, guid: 85c4d6ddd476c4b40aa973060d5f71cc,
-        type: 2}
-    - target: {fileID: 6113541555682152409, guid: 9a6476a774e7514469db4f7665d98ac2,
-        type: 3}
-      propertyPath: state
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a6476a774e7514469db4f7665d98ac2, type: 3}
@@ -10192,6 +10328,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.392}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -10278,6 +10416,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -10355,6 +10495,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -10433,6 +10575,8 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -10555,11 +10699,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1001555644}
     m_Modifications:
-    - target: {fileID: 729119159435421255, guid: 27612a38bb9d3224794c36fa857a45f3,
-        type: 3}
-      propertyPath: m_Name
-      value: Human Worker
-      objectReference: {fileID: 0}
     - target: {fileID: 724157626918239545, guid: 27612a38bb9d3224794c36fa857a45f3,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -10594,6 +10733,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 729119159435421255, guid: 27612a38bb9d3224794c36fa857a45f3,
+        type: 3}
+      propertyPath: m_Name
+      value: Human Worker
       objectReference: {fileID: 0}
     - target: {fileID: 832002160600473819, guid: 27612a38bb9d3224794c36fa857a45f3,
         type: 3}
@@ -10637,10 +10781,13 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1513710341}
     m_Modifications:
-    - target: {fileID: 6344745091169111547, guid: 00a59fbb0f7a4bf459e921086d772127,
-        type: 3}
-      propertyPath: m_Name
-      value: HealthbarUIElement
+    - target: {fileID: 1946839784, guid: 00a59fbb0f7a4bf459e921086d772127, type: 3}
+      propertyPath: canvas
+      value: 
+      objectReference: {fileID: 1513710342}
+    - target: {fileID: 1946839784, guid: 00a59fbb0f7a4bf459e921086d772127, type: 3}
+      propertyPath: objectToFollow
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6344745091169111546, guid: 00a59fbb0f7a4bf459e921086d772127,
         type: 3}
@@ -10747,13 +10894,10 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1946839784, guid: 00a59fbb0f7a4bf459e921086d772127, type: 3}
-      propertyPath: canvas
-      value: 
-      objectReference: {fileID: 1513710342}
-    - target: {fileID: 1946839784, guid: 00a59fbb0f7a4bf459e921086d772127, type: 3}
-      propertyPath: objectToFollow
-      value: 
+    - target: {fileID: 6344745091169111547, guid: 00a59fbb0f7a4bf459e921086d772127,
+        type: 3}
+      propertyPath: m_Name
+      value: HealthbarUIElement
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 00a59fbb0f7a4bf459e921086d772127, type: 3}
@@ -10764,6 +10908,28 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 6143523602997217605, guid: a7687a7a227c6444cbe9a24dfd595b81,
+        type: 3}
+    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: rekruitablesPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 6143523602997217605, guid: 88db59efee6f68b4d997ce7614a7f97e,
+        type: 3}
+    - target: {fileID: 8373508903929679164, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 989875723}
     - target: {fileID: 8373508903984173420, guid: 125e509c875919d45ad17327fe3f53d8,
         type: 3}
       propertyPath: m_Name
@@ -10839,27 +11005,5 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.data[1]
-      value: 
-      objectReference: {fileID: 6143523602997217605, guid: a7687a7a227c6444cbe9a24dfd595b81,
-        type: 3}
-    - target: {fileID: 7159213328213272492, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: rekruitablesPrefabs.Array.data[2]
-      value: 
-      objectReference: {fileID: 6143523602997217605, guid: 88db59efee6f68b4d997ce7614a7f97e,
-        type: 3}
-    - target: {fileID: 8373508903929679164, guid: 125e509c875919d45ad17327fe3f53d8,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 989875723}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 125e509c875919d45ad17327fe3f53d8, type: 3}

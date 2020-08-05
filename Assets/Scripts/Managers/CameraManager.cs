@@ -134,10 +134,10 @@ public class CameraManager : Singleton<CameraManager>
         hitPoint = Vector3.one * float.NaN;
         Ray ray = camera.ViewportPointToRay(viewportPoint);
 
-        RaycastHit hitInfo;
-        if (Physics.Raycast(ray, out hitInfo, 100f, groundMask))
+        float hitInfo;
+        if (groundPlane.Raycast(ray, out hitInfo))
         {
-            hitPoint = hitInfo.point;
+            hitPoint = ray.origin + ray.direction.normalized * hitInfo;
             return true;
         }
         return false;

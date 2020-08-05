@@ -185,7 +185,7 @@ public class Projectile : MonoBehaviour
                         break;
                     case ProjectileFlyModes.Tracking:
                         Vector3 distanceVector = (targetObject.position - transform.position);
-                        if (distanceVector.magnitude > 0f)
+                        if (distanceVector.normalized.magnitude > 0f)
                         {
                             transform.rotation = Quaternion.LookRotation(distanceVector.normalized, Vector3.up);
                         }
