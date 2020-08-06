@@ -8,6 +8,12 @@ public class BuildingPlacement : MonoBehaviour
     private Transform buildingCursorHolo;
     private BoxCollider buildingCollider;
     private bool placeable;
+
+    void Start()
+    {
+        holoMaterial = Material.Instantiate(holoMaterial);
+    }
+
     void Update()
     {
         if (buildingPrefab != null)
@@ -28,14 +34,7 @@ public class BuildingPlacement : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0) && placeable)
             {
-                GameObject buildingInstance = GameObject.Instantiate(buildingPrefab, buildingCursorHolo.position, buildingCursorHolo.rotation);
-                Building building = buildingInstance.GetComponent<Building>();
-                building.faction = GameManager.Instance.playerFaction;
-
-                Destroy(buildingCursorHolo.gameObject);
-                buildingPrefab = null;
-                buildingCursorHolo = null;
-                buildingCollider = null;
+                PlaceBuilding();
             }
         }
     }
@@ -43,6 +42,19 @@ public class BuildingPlacement : MonoBehaviour
     public void SetBuildingToPlace(GameObject buildingToPlacePrefab)
     {
         buildingPrefab = buildingToPlacePrefab;
+    }
+
+    private void PlaceBuilding()
+    {
+        GameObject buildingInstance = GameObject.Instantiate(buildingPrefab, buildingCursorHolo.position, buildingCursorHolo.rotation);
+        Building building = buildingInstance.GetComponent<Building>();
+        building.faction = GameManager.Instance.playerFaction;
+
+        Destroy(buildingCursorHolo.gameObject);
+        buildingPrefab = null;
+        buildingCursorHolo = null;
+        buildingCollider = null;
+        placeable = false;
     }
 
     private void CreateHolo()
@@ -57,7 +69,7 @@ public class BuildingPlacement : MonoBehaviour
         MeshRenderer[] renderers = buildingHoloHolder.GetComponentsInChildren<MeshRenderer>(false);
         foreach (var render in renderers)
         {
-            render.material = holoMaterial;
+            render.sharedMaterial = holoMaterial;
             render.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             render.receiveShadows = false;
         }
