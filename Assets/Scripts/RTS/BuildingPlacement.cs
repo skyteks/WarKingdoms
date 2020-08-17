@@ -4,6 +4,7 @@ public class BuildingPlacement : MonoBehaviour
 {
     public Material holoMaterial;
     public LayerMask placementLayerMask;
+    public float buildingStartLifePercentage = 0.2f;
 
     private GameObject buildingPrefab;
     private Transform buildingCursorHolo;
@@ -17,7 +18,7 @@ public class BuildingPlacement : MonoBehaviour
 
     void Update()
     {
-        if (buildingPrefab != null)
+        if (InputManager.Instance.buildingPlacementInitiated && buildingPrefab != null)
         {
             if (buildingCursorHolo == null)
             {
@@ -43,6 +44,7 @@ public class BuildingPlacement : MonoBehaviour
     public void SetBuildingToPlace(GameObject buildingToPlacePrefab)
     {
         buildingPrefab = buildingToPlacePrefab;
+        InputManager.Instance.buildingPlacementInitiated = true;
     }
 
     private void PlaceBuilding()
@@ -50,12 +52,15 @@ public class BuildingPlacement : MonoBehaviour
         GameObject buildingInstance = GameObject.Instantiate(buildingPrefab, buildingCursorHolo.position, buildingCursorHolo.rotation);
         Building building = buildingInstance.GetComponent<Building>();
         building.faction = GameManager.Instance.playerFaction;
+        building.template.health = Mathf.RoundToInt(building.template.original.health * buildingStartLifePercentage);
 
         Destroy(buildingCursorHolo.gameObject);
         buildingPrefab = null;
         buildingCursorHolo = null;
         buildingCollider = null;
         placeable = false;
+
+        InputManager.Instance.buildingPlacementInitiated = false;
     }
 
     private void CreateHolo()

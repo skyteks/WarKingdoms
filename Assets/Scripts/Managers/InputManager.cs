@@ -30,13 +30,15 @@ public class InputManager : Singleton<InputManager>
 
     private Vector2 LMBDownMousePos, currentMousePos; //screen coordinates
     private Rect selectionRect; //screen coordinates
-    private bool LMBClickedDown = false, boxSelectionInitiated = false;
+    private bool LMBClickedDown, boxSelectionInitiated;
     private float timeOfClick, scrollDelta;
 
     private Vector3 dragStartPosition;
     private Vector3 dragCurrentPosition;
 
     private const float CLICK_TOLERANCE = .5f; //the player has this time to release the mouse button for it to be registered as a click
+
+    public bool buildingPlacementInitiated { get; set;}
 
     void Awake()
     {
@@ -76,7 +78,8 @@ public class InputManager : Singleton<InputManager>
 
                 //-------------- LEFT MOUSE BUTTON HELD DOWN --------------
                 if (LMBClickedDown
-                   && Vector2.Distance(LMBDownMousePos, currentMousePos) > .1f)
+                    && !buildingPlacementInitiated
+                    && Vector2.Distance(LMBDownMousePos, currentMousePos) > .1f)
                 {
                     uiManager.ToggleSelectionRectangle(true);
                     boxSelectionInitiated = true;
@@ -125,6 +128,9 @@ public class InputManager : Singleton<InputManager>
                         //hide the box
                         uiManager.ToggleSelectionRectangle(false);
                     }
+                    else if (buildingPlacementInitiated)
+                    {
+                    }
                     else
                     {
                         if (!EventSystem.current.IsPointerOverGameObject())
@@ -161,7 +167,7 @@ public class InputManager : Singleton<InputManager>
                 if (Input.GetMouseButtonDown(1)
                     && gameManager.GetSelectionLength() > 0
                     && !(gameManager.GetSelectionLength() == 1 && gameManager.selectionOnType == GameManager.SelectionOnType.Units && gameManager.GetPlattoonUnits()[0].faction != gameManager.playerFaction)
-                    && !EventSystem.current.IsPointerOverGameObject())
+                    && !EventSystem.current.IsPointerOverGameObject() && !boxSelectionInitiated && !buildingPlacementInitiated)
                 {
                     RaycastHit hit;
                     Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
