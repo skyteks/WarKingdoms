@@ -4953,10 +4953,10 @@ MonoBehaviour:
   cameraZoomSpeed: 0.4
   unitsLayerMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 32768
   enemiesLayerMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 32768
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 256
@@ -5028,6 +5028,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   holoMaterial: {fileID: 2100000, guid: e435037457a23e6468c7ed17531e0897, type: 2}
+  placementLayerMask:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &7719181420154837255
 GameObject:
   m_ObjectHideFlags: 0

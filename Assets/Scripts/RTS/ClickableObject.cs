@@ -6,8 +6,8 @@ using UnityEngine.Events;
 
 public abstract class ClickableObject : MonoBehaviour
 {
-    protected static int layerDefaultVisible;
-    protected static int layerDefaultHidden;
+    protected static int layerObjectsVisible;
+    protected static int layerObjectsHidden;
     protected static int layerMiniMapVisible;
     protected static int layerMiniMapHidden;
 
@@ -138,8 +138,8 @@ public abstract class ClickableObject : MonoBehaviour
 
     protected static void SetLayers()
     {
-        layerDefaultVisible = LayerMask.NameToLayer("Default");
-        layerDefaultHidden = LayerMask.NameToLayer("Default Hidden");
+        layerObjectsVisible = LayerMask.NameToLayer("Unit");
+        layerObjectsHidden = LayerMask.NameToLayer("Unit Hidden");
         layerMiniMapVisible = LayerMask.NameToLayer("MiniMap Only");
         layerMiniMapHidden = LayerMask.NameToLayer("MiniMap Hidden");
     }
@@ -200,23 +200,23 @@ public abstract class ClickableObject : MonoBehaviour
         visible = visibility;
 
         IEnumerable<GameObject> parts = GetComponentsInChildren<Transform>().Where(form =>
-            form.gameObject.layer == layerDefaultVisible ||
-            form.gameObject.layer == layerDefaultHidden ||
+            form.gameObject.layer == layerObjectsVisible ||
+            form.gameObject.layer == layerObjectsHidden ||
             form.gameObject.layer == layerMiniMapVisible ||
             form.gameObject.layer == layerMiniMapHidden
         ).Select(form => form.gameObject);
 
         foreach (GameObject part in parts)
         {
-            if (part.layer == layerDefaultVisible || part.layer == layerDefaultHidden)
+            if (part.layer == layerObjectsVisible || part.layer == layerObjectsHidden)
             {
                 if (visibility)
                 {
-                    part.layer = layerDefaultVisible;
+                    part.layer = layerObjectsVisible;
                 }
                 else
                 {
-                    part.layer = layerDefaultHidden;
+                    part.layer = layerObjectsHidden;
                 }
             }
             else

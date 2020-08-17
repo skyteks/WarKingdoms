@@ -3,6 +3,7 @@
 public class BuildingPlacement : MonoBehaviour
 {
     public Material holoMaterial;
+    public LayerMask placementLayerMask;
 
     private GameObject buildingPrefab;
     private Transform buildingCursorHolo;
@@ -24,7 +25,7 @@ public class BuildingPlacement : MonoBehaviour
             }
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hitInfo;
-            if (Physics.Raycast(ray, out hitInfo, 100f))
+            if (Physics.Raycast(ray, out hitInfo, 100f, placementLayerMask))
             {
                 buildingCursorHolo.position = hitInfo.point;
             }
