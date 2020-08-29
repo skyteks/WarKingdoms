@@ -19,43 +19,43 @@ public class EventManager : Singleton<EventManager>
 
     public void AddListener<T>(EventDelegate<T> del) where T : GameEvent
     {
-        if (this.delegateLookup.ContainsKey(del)) return;
+        if (delegateLookup.ContainsKey(del)) return;
 
         EventDelegate internalDelegate = (e) => del((T)e);
-        this.delegateLookup[del] = internalDelegate;
+        delegateLookup[del] = internalDelegate;
 
         EventDelegate tempDel;
-        if (this.delegates.TryGetValue(typeof(T), out tempDel))
+        if (delegates.TryGetValue(typeof(T), out tempDel))
         {
-            this.delegates[typeof(T)] = tempDel += internalDelegate;
+            delegates[typeof(T)] = tempDel += internalDelegate;
         }
         else
         {
-            this.delegates[typeof(T)] = internalDelegate;
+            delegates[typeof(T)] = internalDelegate;
         }
     }
 
     public void RemoveListener<T>(EventDelegate<T> del) where T : GameEvent
     {
         EventDelegate internalDelegate;
-        if (this.delegateLookup.TryGetValue(del, out internalDelegate))
+        if (delegateLookup.TryGetValue(del, out internalDelegate))
         {
             EventDelegate tempDel;
-            if (this.delegates.TryGetValue(typeof(T), out tempDel))
+            if (delegates.TryGetValue(typeof(T), out tempDel))
             {
                 tempDel -= internalDelegate;
-                if (tempDel == null) this.delegates.Remove(typeof(T));
-                else this.delegates[typeof(T)] = tempDel;
+                if (tempDel == null) delegates.Remove(typeof(T));
+                else delegates[typeof(T)] = tempDel;
             }
 
-            this.delegateLookup.Remove(del);
+            delegateLookup.Remove(del);
         }
     }
 
     public void Trigger(GameEvent e)
     {
         EventDelegate del;
-        if (this.delegates.TryGetValue(e.GetType(), out del))
+        if (delegates.TryGetValue(e.GetType(), out del))
         {
             del.Invoke(e);
         }

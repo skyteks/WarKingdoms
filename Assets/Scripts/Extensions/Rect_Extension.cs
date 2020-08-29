@@ -49,4 +49,44 @@ public static class Rect_Extension
         float height = rect.height * scale.y;
         return new Rect(rect.x - (width - rect.width) / 2f, rect.y - (height - rect.height) / 2f, width, height);
     }
+
+    public static Vector2 GetTopLeft(this Rect rect)
+    {
+        return new Vector2(rect.xMin, rect.yMax);
+    }
+
+    public static Vector2 GetTopRight(this Rect rect)
+    {
+        return new Vector2(rect.xMax, rect.yMax);
+    }
+
+    public static Vector2 GetBottomLeft(this Rect rect)
+    {
+        return new Vector2(rect.xMin, rect.yMin);
+    }
+
+    public static Vector2 GetBottomRight(this Rect rect)
+    {
+        return new Vector2(rect.xMax, rect.yMin);
+    }
+
+    public static Vector2 GetTopLeft2D(this Bounds bounds)
+    {
+        return new Vector2(bounds.min.x, bounds.max.z);
+    }
+
+    public static Vector2 GetTopRight2D(this Bounds bounds)
+    {
+        return new Vector2(bounds.max.x, bounds.max.z);
+    }
+
+    public static Vector2 GetBottomLeft2D(this Bounds bounds)
+    {
+        return new Vector2(bounds.min.x, bounds.min.z);
+    }
+
+    public static Vector2 GetBottomRight2D(this Bounds bounds)
+    {
+        return new Vector2(bounds.max.x, bounds.min.z);
+    }
 }

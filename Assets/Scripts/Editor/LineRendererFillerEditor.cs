@@ -19,29 +19,29 @@ public class LineRendererFillerEditor : Editor
     {
         property = serializedObject.FindProperty("Transforms");
 
-        this.reorderableList = new ReorderableList(serializedObject, property, true, true, true, true);
-        this.reorderableList.drawElementCallback += this.DrawElementCallback;
-        this.reorderableList.drawHeaderCallback += this.DrawHeaderCallback;
-        this.reorderableList.onAddCallback += this.OnAddCallback;
-        this.reorderableList.onRemoveCallback += this.OnRemoveCallback;
-        this.reorderableList.onChangedCallback += this.OnChangedCallback;
+        reorderableList = new ReorderableList(serializedObject, property, true, true, true, true);
+        reorderableList.drawElementCallback += DrawElementCallback;
+        reorderableList.drawHeaderCallback += DrawHeaderCallback;
+        reorderableList.onAddCallback += OnAddCallback;
+        reorderableList.onRemoveCallback += OnRemoveCallback;
+        reorderableList.onChangedCallback += OnChangedCallback;
     }
 
     private void OnChangedCallback(ReorderableList list)
     {
-        this.serializedObject.ApplyModifiedProperties();
+        serializedObject.ApplyModifiedProperties();
     }
 
     private void OnRemoveCallback(ReorderableList list)
     {
         property.DeleteArrayElementAtIndex(list.index);
-        this.serializedObject.ApplyModifiedProperties();
+        serializedObject.ApplyModifiedProperties();
     }
 
     private void OnAddCallback(ReorderableList list)
     {
         property.InsertArrayElementAtIndex(list.count);
-        this.serializedObject.ApplyModifiedProperties();
+        serializedObject.ApplyModifiedProperties();
     }
 
     public override void OnInspectorGUI()
@@ -49,12 +49,12 @@ public class LineRendererFillerEditor : Editor
         DrawDefaultInspector();
         EditorGUILayout.Space();
 
-        this.reorderableList.DoLayoutList();
+        reorderableList.DoLayoutList();
     }
 
     private void DrawHeaderCallback(Rect rect)
     {
-        EditorGUI.LabelField(rect, "Transforms (" + this.property.arraySize + ")");
+        EditorGUI.LabelField(rect, "Transforms (" + property.arraySize + ")");
     }
 
     private void DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
@@ -65,7 +65,7 @@ public class LineRendererFillerEditor : Editor
         EditorGUI.PropertyField(rect, property.GetArrayElementAtIndex(index));
         if (EditorGUI.EndChangeCheck())
         {
-            this.serializedObject.ApplyModifiedProperties();
+            serializedObject.ApplyModifiedProperties();
         }
     }
 }

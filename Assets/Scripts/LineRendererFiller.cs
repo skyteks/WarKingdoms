@@ -15,7 +15,7 @@ public class LineRendererFiller : MonoBehaviour
 
     void Awake()
     {
-        this.line = GetComponent<LineRenderer>();
+        line = GetComponent<LineRenderer>();
     }
 
     void LateUpdate()
@@ -34,15 +34,15 @@ public class LineRendererFiller : MonoBehaviour
     [ContextMenu("Set Line Positions in LineRenderer")]
     public void SetLinePositions()
     {
-        if (this.Transforms == null || this.Transforms.Count == 0 || this.Transforms.Any(trans => trans == null)) return;
-        if (this.line.positionCount != this.Transforms.Count)
+        if (Transforms == null || Transforms.Count == 0 || Transforms.Any(trans => trans == null)) return;
+        if (line.positionCount != Transforms.Count)
         {
-            this.line.positionCount = this.Transforms.Count;
+            line.positionCount = Transforms.Count;
         }
-        this.line.useWorldSpace = true;
-        for (int i = 0; i < this.Transforms.Count; i++)
+        line.useWorldSpace = true;
+        for (int i = 0; i < Transforms.Count; i++)
         {
-            this.line.SetPosition(i, this.Transforms[i].position);
+            line.SetPosition(i, Transforms[i].position);
         }
     }
 }

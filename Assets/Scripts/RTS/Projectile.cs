@@ -81,7 +81,7 @@ public class Projectile : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        Debug.LogError("A projectile did not have an action", this.gameObject);
+        Debug.LogError("A projectile did not have an action", gameObject);
     }
 
     void OnDestroy()

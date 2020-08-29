@@ -36,8 +36,8 @@ public struct Range : IEquatable<Range>
     public override int GetHashCode()
     {
         var hashCode = -897720056;
-        hashCode = hashCode * -1521134295 + this.min.GetHashCode();
-        hashCode = hashCode * -1521134295 + this.max.GetHashCode();
+        hashCode = hashCode * -1521134295 + min.GetHashCode();
+        hashCode = hashCode * -1521134295 + max.GetHashCode();
         return hashCode;
     }
 

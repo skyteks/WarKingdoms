@@ -8,8 +8,8 @@ public class MinMaxSliderAttribute : PropertyAttribute
 
     public MinMaxSliderAttribute(float min, float max, float step = 0.01f)
     {
-        this.Min = min;
-        this.Max = max;
-        this.Step = step;
+        Min = min;
+        Max = max;
+        Step = step;
     }
 }
