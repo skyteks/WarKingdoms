@@ -45,7 +45,7 @@ public class FieldOfView : MonoBehaviour
     {
         get
         {
-            return unit.template.guardDistance;
+            return unit != null && unit.template != null ? unit.template.guardDistance : 0f;
         }
     }
 

@@ -498,6 +498,12 @@ public class Unit : ClickableObject
     //called in SufferAttack, but can also be from a Timeline clip
     protected override void Die()
     {
+        if (state == UnitStates.Dead)
+        {
+            return;
+        }
+        state = UnitStates.Dead; //still makes sense to set it, because somebody might be interacting with this script before it is destroyed
+
         base.Die();
 
         commandExecuted = true;
@@ -506,7 +512,6 @@ public class Unit : ClickableObject
 
         commandList.Clear();
 
-        state = UnitStates.Dead; //still makes sense to set it, because somebody might be interacting with this script before it is destroyed
         if (animator != null)
         {
             animator.SetTrigger("DoDeath");

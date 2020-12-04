@@ -103,7 +103,7 @@ public abstract class ClickableObject : MonoBehaviour
             fieldOfView = transform.Find("FieldOfView").GetComponent<FieldOfView>();
         }
 
-        if (!IsDeadOrNull(this))
+        if (!IsDeadOrNull(this) && template != null)
         {
             UnityEditor.Handles.color = Color.cyan;
             UnityEditor.Handles.DrawWireDisc(fieldOfView.transform.position, Vector3.up, template.engageDistance);
@@ -288,6 +288,11 @@ public abstract class ClickableObject : MonoBehaviour
 
     public virtual void SufferAttack(int damage)
     {
+        if (template.health <= 0)
+        {
+            return;
+        }
+
         damage = Mathf.RoundToInt(damage * damageReductionMuliplier);
         template.health -= damage;
 
@@ -314,7 +319,8 @@ public abstract class ClickableObject : MonoBehaviour
         }
         if (fadeOut)
         {
-            Destroy(visionCircle);
+            //Destroy(visionCircle);
+            visionCircle.enabled = false;
         }
     }
 
