@@ -37,7 +37,6 @@ public class FieldOfView : MonoBehaviour
         }
     }
 
-    public ClickableObject unit;
 
     [Range(0f, 360f)]
     public float viewAngle = 360f;
@@ -60,6 +59,7 @@ public class FieldOfView : MonoBehaviour
     public bool maskCutawayHorizontalyOnly;
     public List<Transform> lastVisibleTargets = new List<Transform>(0);
     private List<Transform> lastObstacles = new List<Transform>(0);
+    private ClickableObject unit;
     private MeshFilter viewMeshFilter;
     private Mesh viewMesh;
     private Vector3 lastPosition;
@@ -68,6 +68,7 @@ public class FieldOfView : MonoBehaviour
     void Awake()
     {
         viewMeshFilter = GetComponent<MeshFilter>();
+        unit = GetComponentInParent<Unit>();
     }
 
     private void OnEnable()

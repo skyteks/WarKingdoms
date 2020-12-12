@@ -12,8 +12,6 @@ public class FieldOfViewEditor : Editor
     }
     public void OnSceneGUI()
     {
-        if (fow.unit == null) return;
-
         Handles.color = Color.white;
         Handles.DrawWireArc(fow.transform.position, Vector3.up, Vector3.forward, 360f, fow.viewRadius);
         Vector3 viewAngleA = fow.DirFromAngle(-fow.viewAngle / 2f, false);

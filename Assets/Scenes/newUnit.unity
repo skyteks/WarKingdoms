@@ -123,32 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 23800000, guid: 1bb286209d82f0d46bc9300c8744a7a9, type: 2}
---- !u!1 &162215322 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6143523602997217605, guid: 30d3bd3b11ff24547a282c53692f9b08,
-    type: 3}
-  m_PrefabInstance: {fileID: 1317914982}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &162215323
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 162215322}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51b675da541ce744cb46c26e90631721, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  faction: {fileID: 11400000, guid: f65903dd142ac654f977be2b18e25904, type: 2}
-  visible: 0
-  template: {fileID: 11400000, guid: 7eaf13cc549d085438c8b48343ae395c, type: 2}
-  visionFadeTime: 1
-  fieldOfView: {fileID: 323385922}
-  state: 0
-  combatReadySwitchTime: 7
-  projectileFirePoint: {fileID: 0}
 --- !u!43 &306770136
 Mesh:
   m_ObjectHideFlags: 0
@@ -166,8 +140,8 @@ Mesh:
     firstVertex: 0
     vertexCount: 8
     localAABB:
-      m_Center: {x: 0, y: 2.3263063, z: 37.657963}
-      m_Extent: {x: 29.756292, y: 14.580634, z: 6.799061}
+      m_Center: {x: 0, y: 2.3263092, z: 37.657967}
+      m_Extent: {x: 29.758617, y: 14.580631, z: 6.799059}
   m_Shapes:
     vertices: []
     shapes: []
@@ -246,7 +220,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 192
-    _typelessdata: 43afa7c1ba1144c108dff641000000000000803f0000000043afa741ba1144c108dff641000000000000803f00000000e30ceec16a418741fed33142000000000000803f00000000e30cee416a418741fed33142000000000000803f000000004ccba1c1de1436c1ec21fa41000000000000803f000000004ccba141de1436c1ec21fa41000000000000803f00000000daf0e3c1fe4280418c323042000000000000803f00000000daf0e341fe4280418c323042000000000000803f00000000
+    _typelessdata: 93b2a7c1b41144c10adff641000000000000803f0000000093b2a741b41144c10adff641000000000000803f00000000a611eec16a418741fed33142000000000000803f00000000a611ee416a418741fed33142000000000000803f00000000a6cea1c1de1436c1ec21fa41000000000000803f00000000a6cea141de1436c1ec21fa41000000000000803f0000000093f5e3c1fe4280418c323042000000000000803f0000000093f5e341fe4280418c323042000000000000803f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -300,8 +274,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: 0, y: 2.3263063, z: 37.657963}
-    m_Extent: {x: 29.756292, y: 14.580634, z: 6.799061}
+    m_Center: {x: 0, y: 2.3263092, z: 37.657967}
+    m_Extent: {x: 29.758617, y: 14.580631, z: 6.799059}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -313,18 +287,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!114 &323385922 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6113161126101863393, guid: 30d3bd3b11ff24547a282c53692f9b08,
-    type: 3}
-  m_PrefabInstance: {fileID: 1317914982}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2833f0e61db00ff46bcf49f457099882, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1045000808
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -437,7 +399,7 @@ PrefabInstance:
         type: 3}
       propertyPath: unit
       value: 
-      objectReference: {fileID: 162215323}
+      objectReference: {fileID: 0}
     - target: {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08,
         type: 3}
       propertyPath: faction
@@ -504,8 +466,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 6113541555682152409, guid: 30d3bd3b11ff24547a282c53692f9b08, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30d3bd3b11ff24547a282c53692f9b08, type: 3}
 --- !u!1 &1333418281
 GameObject:
@@ -583,18 +544,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1573417028 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6113161126101863393, guid: 9a6476a774e7514469db4f7665d98ac2,
-    type: 3}
-  m_PrefabInstance: {fileID: 2050233466}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2833f0e61db00ff46bcf49f457099882, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1673417265
 GameObject:
   m_ObjectHideFlags: 0
@@ -760,32 +709,5 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 6113541555682152409, guid: 9a6476a774e7514469db4f7665d98ac2, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a6476a774e7514469db4f7665d98ac2, type: 3}
---- !u!1 &2144528983 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6143523602997217605, guid: 9a6476a774e7514469db4f7665d98ac2,
-    type: 3}
-  m_PrefabInstance: {fileID: 2050233466}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2144528984
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2144528983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51b675da541ce744cb46c26e90631721, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  faction: {fileID: 11400000, guid: 12e6ffecf876f624dacb14c580a201eb, type: 2}
-  visible: 0
-  template: {fileID: 11400000, guid: 11bbfe619e84ca648b2407a3d3419c2b, type: 2}
-  visionFadeTime: 1
-  fieldOfView: {fileID: 1573417028}
-  state: 0
-  combatReadySwitchTime: 7
-  projectileFirePoint: {fileID: 0}
