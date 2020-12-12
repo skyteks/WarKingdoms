@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditorInternal;
@@ -11,6 +10,9 @@ public class UnitEditor : Editor
     private Unit unit;
 
     private ReorderableList reorderableList;
+
+    Editor templateEditor;
+    bool templateFoldout;
 
     void OnEnable()
     {
@@ -24,7 +26,11 @@ public class UnitEditor : Editor
     {
         AICommand command = unit.GetCommandList()[index];
         Rect[] rects = rect.SplitOnXAxis(0.5f);
-        for (int i = 0; i < rects.Length; i++) rects[i].height = EditorGUIUtility.singleLineHeight;
+        for (int i = 0; i < rects.Length; i++)
+        {
+            rects[i].height = EditorGUIUtility.singleLineHeight;
+        }
+
         rects[0].xMax -= 15f / 2f;
         rects[1].xMin += 15f / 2f;
         //EditorGUI.BeginDisabledGroup(true);
@@ -52,8 +58,33 @@ public class UnitEditor : Editor
 
     public override void OnInspectorGUI()
     {
+        /*
+        using (var check = new EditorGUI.ChangeCheckScope())
+        {
+            if (check.changed)
+            {
+                EditorApplication.QueuePlayerLoopUpdate();
+            }
+        }
+        */
         DrawDefaultInspector();
         EditorGUILayout.Space();
         reorderableList.DoLayoutList();
+        DrawTemplateEditor(unit.template, ref templateFoldout, ref templateEditor);
+        EditorPrefs.SetBool(nameof(templateFoldout), templateFoldout);
+
+    }
+
+    void DrawTemplateEditor(Object obj, ref bool foldout, ref Editor editor)
+    {
+        if (obj != null)
+        {
+            foldout = EditorGUILayout.InspectorTitlebar(foldout, obj);
+            if (foldout)
+            {
+                CreateCachedEditor(obj, null, ref editor);
+                editor.OnInspectorGUI();
+            }
+        }
     }
 }
