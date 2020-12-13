@@ -16,6 +16,7 @@ public class Unit : ClickableObject
 
     public UnitStates state = UnitStates.Idleing;
     public Transform projectileFirePoint;
+    public bool alignToGround;
 
     //references
     protected Animator animator;
@@ -225,7 +226,10 @@ public class Unit : ClickableObject
     {
         //always run these
         SetWalkingSpeed();
-        AdjustModelAngleToGround();
+        if (alignToGround)
+        {
+            AdjustModelAngleToGround();
+        }
 
         switch (currentState)
         {
