@@ -25,7 +25,9 @@ https://assetstore.unity.com/packages/3d/characters/humanoids/toon-rts-units-orc
 
 * **Lutz Kadoch** - https://github.com/hadea
 * **Pascal Jacob**
+
 * **Sebastian Lague** - https://youtu.be/rQG9aUWarwE
+* **Andrew Hung** - https://andrewhungblog.wordpress.com/2018/06/23/implementing-fog-of-war-in-unity/
 * **Game Dev Guide** - https://youtu.be/rnqF6S7PfFA
 * **UnityTechnologies** - https://github.com/UnityTechnologies/ATerribleKingdom
 
