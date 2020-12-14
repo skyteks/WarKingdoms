@@ -68,7 +68,7 @@ public class FieldOfView : MonoBehaviour
     void Awake()
     {
         viewMeshFilter = GetComponent<MeshFilter>();
-        unit = GetComponentInParent<Unit>();
+        unit = GetComponentInParent<ClickableObject>();
     }
 
     private void OnEnable()

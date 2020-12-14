@@ -234,63 +234,74 @@ public class Unit : ClickableObject
         switch (currentState)
         {
             case UnitStates.Idleing:
-                navMeshAgent.isStopped = true;
+                {
+                    navMeshAgent.isStopped = true;
 
-                break;
+                    break;
+                }
             case UnitStates.Attacking:
-                navMeshAgent.isStopped = true;
+                {
+                    navMeshAgent.isStopped = true;
 
-                if (IsDeadOrNull(targetOfAttack))
-                {
-                    commandExecuted = true;
+                    if (IsDeadOrNull(targetOfAttack))
+                    {
+                        commandExecuted = true;
+                    }
+                    float remainingDistance = Vector3.Distance(transform.position, targetOfMovement.Value);
+                    //recalculate path
+                    if (Vector3.Distance(targetOfAttack.transform.position, targetOfMovement.Value) > 0.05f)
+                    {
+                        targetOfMovement = targetOfAttack.transform.position;
+                        navMeshAgent.SetDestination(targetOfMovement.Value);
+                    }
+                    //check if in attack range
+                    if ((template.engageDistance + targetOfAttack.sizeRadius) < remainingDistance)
+                    {
+                        switchState = UnitStates.MovingToTarget;
+                    }
+                    else
+                    {
+                        animator?.SetBool("DoAttack", true);
+                    }
+                    break;
                 }
-                //recalculate path
-                if (Vector3.Distance(targetOfAttack.transform.position, targetOfMovement.Value) > 0.05f)
-                {
-                    targetOfMovement = targetOfAttack.transform.position;
-                    navMeshAgent.SetDestination(targetOfMovement.Value);
-                }
-                //check if in attack range
-                if ((template.engageDistance + targetOfAttack.sizeRadius) < navMeshAgent.remainingDistance)
-                {
-                    switchState = UnitStates.MovingToTarget;
-                }
-                else
-                {
-                    animator?.SetBool("DoAttack", true);
-                }
-                break;
             case UnitStates.MovingToTarget:
-                if (!agentReady)
                 {
+                    if (!agentReady || navMeshAgent.pathPending)
+                    {
+                        break;
+                    }
+                    if (IsDeadOrNull(targetOfAttack))
+                    {
+                        commandExecuted = true;
+                    }
+                    float remainingDistance = Vector3.Distance(transform.position, targetOfMovement.Value);
+                    //recalculate path
+                    if (Vector3.Distance(targetOfAttack.transform.position, targetOfMovement.Value) > 0.05f)
+                    {
+                        targetOfMovement = targetOfAttack.transform.position;
+                        navMeshAgent.SetDestination(targetOfMovement.Value);
+                    }
+                    //check if in attack range
+                    if ((template.engageDistance + targetOfAttack.sizeRadius) >= remainingDistance)
+                    {
+                        switchState = UnitStates.Attacking;
+                    }
                     break;
                 }
-                if (IsDeadOrNull(targetOfAttack))
-                {
-                    commandExecuted = true;
-                }
-                //recalculate path
-                if (Vector3.Distance(targetOfAttack.transform.position, targetOfMovement.Value) > 0.05f)
-                {
-                    targetOfMovement = targetOfAttack.transform.position;
-                    navMeshAgent.SetDestination(targetOfMovement.Value);
-                }
-                //check if in attack range
-                if ((template.engageDistance + targetOfAttack.sizeRadius) >= navMeshAgent.remainingDistance)
-                {
-                    switchState = UnitStates.Attacking;
-                }
-                break;
             case UnitStates.MovingToSpot:
-                if (!agentReady)
                 {
+                    if (!agentReady || navMeshAgent.pathPending)
+                    {
+                        break;
+                    }
+                    float remainingDistance = Vector3.Distance(transform.position, targetOfMovement.Value);
+                    if (remainingDistance < 0.3f)
+                    {
+                        commandExecuted = true;
+                    }
                     break;
                 }
-                if (navMeshAgent.remainingDistance < 0.1f)
-                {
-                    commandExecuted = true;
-                }
-                break;
             case UnitStates.Dead:
                 break;
         }
@@ -490,9 +501,9 @@ public class Unit : ClickableObject
     }
 
 #if UNITY_EDITOR
-    public List<AICommand> GetCommandList()
+    public AICommand[] GetCommandList()
     {
-        return commandList;
+        return commandList.ToArray();
     }
 #endif
 }
