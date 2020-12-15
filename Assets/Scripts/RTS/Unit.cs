@@ -226,10 +226,7 @@ public class Unit : ClickableObject
     {
         //always run these
         SetWalkingSpeed();
-        if (alignToGround)
-        {
-            AdjustModelAngleToGround();
-        }
+        AdjustModelAngleToGround();
 
         switch (currentState)
         {
@@ -397,20 +394,24 @@ public class Unit : ClickableObject
 
     public void AdjustModelAngleToGround()
     {
-        Ray ray = new Ray(modelHolder.position + Vector3.up * 0.1f, Vector3.down);
+        Ray ray = new Ray(selectionCircle.transform.position + Vector3.up * 0.1f, Vector3.down);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, 1f, InputManager.Instance.groundLayerMask))
         {
-            Quaternion newRotation = Quaternion.FromToRotation(Vector3.up, hit.normal) * modelHolder.parent.rotation;
-            modelHolder.rotation = Quaternion.Lerp(modelHolder.rotation, newRotation, Time.deltaTime * 8f);
-            selectionCircle.transform.rotation = modelHolder.rotation;
+            Quaternion newRotation = Quaternion.FromToRotation(Vector3.up, hit.normal) * selectionCircle.transform.parent.rotation;
+            newRotation = Quaternion.Lerp(selectionCircle.transform.rotation, newRotation, Time.deltaTime * 8f);
+            if (alignToGround)
+            {
+                modelHolder.rotation = newRotation;
+            }
+            selectionCircle.transform.rotation = newRotation;
         }
     }
 
     public bool SetCombatReady(bool state)
     {
         const string name = "DoCombatReady";
-        foreach (var parameter in animator.parameters)
+        foreach (AnimatorControllerParameter parameter in animator.parameters)
         {
             if (parameter.name == name)
             {
