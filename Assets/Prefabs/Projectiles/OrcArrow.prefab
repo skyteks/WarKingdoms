@@ -51,6 +51,7 @@ MonoBehaviour:
   trackSpeed: 20
   projectileRotationMode: 0
   useFactionMaterial: 1
+  terrainImpactEffect: {fileID: 0}
 --- !u!54 &7307690093435274700
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -90,6 +91,10 @@ PrefabInstance:
     - target: {fileID: 100000, guid: f2492904e2e22a44296278c2ef856c46, type: 3}
       propertyPath: m_Name
       value: Orc_Arrow
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: f2492904e2e22a44296278c2ef856c46, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: f2492904e2e22a44296278c2ef856c46, type: 3}
       propertyPath: m_LocalPosition.x

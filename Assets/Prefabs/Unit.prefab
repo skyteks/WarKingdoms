@@ -79,8 +79,8 @@ MonoBehaviour:
   visionFadeTime: 1
   fieldOfView: {fileID: 114716483690880562}
   state: 0
-  combatReadySwitchTime: 7
   projectileFirePoint: {fileID: 0}
+  alignToGround: 0
 --- !u!95 &95138031281430410
 Animator:
   serializedVersion: 3
@@ -436,11 +436,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2833f0e61db00ff46bcf49f457099882, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unit: {fileID: 114393224487344650}
   viewAngle: 360
   targetMask:
     serializedVersion: 2
-    m_Bits: 2049
+    m_Bits: 98304
   obstacleMask:
     serializedVersion: 2
     m_Bits: 256

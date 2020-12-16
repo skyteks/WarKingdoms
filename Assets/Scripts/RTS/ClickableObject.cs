@@ -6,10 +6,10 @@ using UnityEngine.Events;
 
 public abstract class ClickableObject : MonoBehaviour
 {
-    protected static int layerObjectsVisible;
-    protected static int layerObjectsHidden;
-    protected static int layerMiniMapVisible;
-    protected static int layerMiniMapHidden;
+    protected static int layerObjectsVisible = -1;
+    protected static int layerObjectsHidden = -1;
+    protected static int layerMiniMapVisible = -1;
+    protected static int layerMiniMapHidden = -1;
 
     public static List<ClickableObject> globalObjectsList;
 
@@ -138,10 +138,13 @@ public abstract class ClickableObject : MonoBehaviour
 
     protected static void SetLayers()
     {
-        layerObjectsVisible = LayerMask.NameToLayer("Unit");
-        layerObjectsHidden = LayerMask.NameToLayer("Unit Hidden");
-        layerMiniMapVisible = LayerMask.NameToLayer("MiniMap Only");
-        layerMiniMapHidden = LayerMask.NameToLayer("MiniMap Hidden");
+        if (layerObjectsVisible == -1)
+        {
+            layerObjectsVisible = LayerMask.NameToLayer("Units");
+            layerObjectsHidden = LayerMask.NameToLayer("Units Hidden");
+            layerMiniMapVisible = LayerMask.NameToLayer("MiniMap Only");
+            layerMiniMapHidden = LayerMask.NameToLayer("MiniMap Hidden");
+        }
     }
 
     protected void SetColorMaterial()
@@ -199,12 +202,12 @@ public abstract class ClickableObject : MonoBehaviour
 
         visible = visibility;
 
-        IEnumerable<GameObject> parts = GetComponentsInChildren<Transform>().Where(form =>
+        GameObject[] parts = GetComponentsInChildren<Transform>().Where(form =>
             form.gameObject.layer == layerObjectsVisible ||
             form.gameObject.layer == layerObjectsHidden ||
             form.gameObject.layer == layerMiniMapVisible ||
             form.gameObject.layer == layerMiniMapHidden
-        ).Select(form => form.gameObject);
+        ).Select(form => form.gameObject).ToArray();
 
         foreach (GameObject part in parts)
         {
