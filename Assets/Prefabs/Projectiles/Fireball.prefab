@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5047124200015331554}
   - component: {fileID: 2432045517047614057}
   - component: {fileID: 3479767158104501552}
+  - component: {fileID: 3795460632079513696}
   m_Layer: 14
   m_Name: Fireball
   m_TagString: Untagged
@@ -50,7 +51,7 @@ MonoBehaviour:
   maxCurveHeight: 0
   trackSpeed: 6
   projectileRotationMode: 0
-  useFactionMaterial: 1
+  useFactionMaterial: 0
   terrainImpactEffect: {fileID: 0}
 --- !u!54 &2432045517047614057
 Rigidbody:
@@ -79,8 +80,29 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.06
+  m_Radius: 0.05
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3795460632079513696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7116211088636421781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8917927eb4523a47bbe857c4b9156e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitOffset: 0.1
+  useFirePointRotation: 0
+  rotationOffset: {x: 0, y: 0, z: 0}
+  hitEffectPrefab: {fileID: 1845764070681338, guid: ac2312a3e32471549882f1a6da5568e6,
+    type: 3}
+  spawnEffectPrefab: {fileID: 1023540632372170, guid: 12c5a36b60a39734f80150bc3e23e850,
+    type: 3}
+  detachedPrefabs:
+  - {fileID: 7837155442016204390}
 --- !u!1001 &7837880405010830472
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -158,12 +180,35 @@ PrefabInstance:
       propertyPath: speed
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 199042042599827284, guid: ead2eb1ec6d8ee54fa5d36c7f5e30eef,
+        type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 199381448505880882, guid: ead2eb1ec6d8ee54fa5d36c7f5e30eef,
+        type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 199476382804827976, guid: ead2eb1ec6d8ee54fa5d36c7f5e30eef,
+        type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 54488790111006576, guid: ead2eb1ec6d8ee54fa5d36c7f5e30eef, type: 3}
+    - {fileID: 114981672378350052, guid: ead2eb1ec6d8ee54fa5d36c7f5e30eef, type: 3}
+    - {fileID: 135219337407746228, guid: ead2eb1ec6d8ee54fa5d36c7f5e30eef, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: ead2eb1ec6d8ee54fa5d36c7f5e30eef, type: 3}
 --- !u!4 &7839111436741037242 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4399021083629618, guid: ead2eb1ec6d8ee54fa5d36c7f5e30eef,
+    type: 3}
+  m_PrefabInstance: {fileID: 7837880405010830472}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7837155442016204390 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1853683965846254, guid: ead2eb1ec6d8ee54fa5d36c7f5e30eef,
     type: 3}
   m_PrefabInstance: {fileID: 7837880405010830472}
   m_PrefabAsset: {fileID: 0}

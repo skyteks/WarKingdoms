@@ -44,6 +44,8 @@ public class Projectile : MonoBehaviour
     private Renderer render;
     private float launchTime;
 
+    private SubParticleSpawner subParticleSpawner;
+
     void Awake()
     {
         rigid = GetComponent<Rigidbody>();
@@ -53,6 +55,7 @@ public class Projectile : MonoBehaviour
             rigid = gameObject.AddComponent<Rigidbody>();
         }
         render = GetComponentInChildren<Renderer>();
+        subParticleSpawner = GetComponent<SubParticleSpawner>();
     }
 
     void Update()
@@ -72,12 +75,14 @@ public class Projectile : MonoBehaviour
         }
         if (projectileFlyMode == ProjectileFlyModes.PhysicalArc && other.gameObject.layer == LayerMask.NameToLayer("Terrain"))
         {
+            subParticleSpawner?.TriggerEnter();
             Destroy(gameObject);
             return;
         }
         hitSuccess = TryHitUnit(other.transform);
         if (hitSuccess)
         {
+            subParticleSpawner?.TriggerEnter();
             Destroy(gameObject);
             return;
         }
@@ -229,6 +234,7 @@ public class Projectile : MonoBehaviour
         transform.position = Vector3.MoveTowards(transform.position, targetObject.position, Time.deltaTime * trackSpeed);
         if (Vector3.Distance(transform.position, targetObject.position) < 0.001f)
         {
+            subParticleSpawner?.TriggerEnter();
             hitSuccess = TryHitUnit(targetObject);
             Destroy(gameObject);
         }
