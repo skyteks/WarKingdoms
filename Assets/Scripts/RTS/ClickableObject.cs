@@ -13,10 +13,15 @@ public abstract class ClickableObject : MonoBehaviour
 
     public static List<ClickableObject> globalObjectsList;
 
-    [Preview]
+#if UNITY_EDITOR
+    [SerializeField]
+    private bool drawViewDistance = false;
+    [SerializeField]
+    private bool drawEngageDistance = false;
+#endif
+
     public FactionTemplate faction;
     public bool visible;
-    [Preview]
     public UnitTemplate template;
     public float visionFadeTime = 1f;
 
@@ -105,10 +110,16 @@ public abstract class ClickableObject : MonoBehaviour
 
         if (!IsDeadOrNull(this) && template != null)
         {
-            UnityEditor.Handles.color = Color.cyan;
-            UnityEditor.Handles.DrawWireDisc(fieldOfView.transform.position, Vector3.up, template.engageDistance);
-            UnityEditor.Handles.color = Color.gray;
-            UnityEditor.Handles.DrawWireDisc(fieldOfView.transform.position, Vector3.up, template.guardDistance);
+            if (drawViewDistance)
+            {
+                UnityEditor.Handles.color = Color.gray;
+                UnityEditor.Handles.DrawWireDisc(fieldOfView.transform.position, Vector3.up, template.guardDistance);
+            }
+            if (drawEngageDistance)
+            {
+                UnityEditor.Handles.color = Color.cyan;
+                UnityEditor.Handles.DrawWireDisc(fieldOfView.transform.position, Vector3.up, template.engageDistance);
+            }
 
             UnityEditor.Handles.color = Color.blue;
         }

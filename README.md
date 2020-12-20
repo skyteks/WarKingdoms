@@ -2,7 +2,7 @@
 
 A Warcraft-3-like Realtime Strategie Game
 
-* [Youtube log PlaylistPlaylist](https://www.youtube.com/playlist?list=PLL6EQjZiYj7Kilumpq9UtLevmKPRU_OL6)
+* [Youtube log Playlist](https://www.youtube.com/playlist?list=PLL6EQjZiYj7Kilumpq9UtLevmKPRU_OL6)
 
 ## Getting Started
 

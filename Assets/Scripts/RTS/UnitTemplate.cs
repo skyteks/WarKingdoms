@@ -10,7 +10,6 @@ public class UnitTemplate : ScriptableObject
 {
     public UnitTemplate original { get; private set; }
 
-    [Preview]
     public Sprite icon;
 
     public FactionTemplate.Race race;

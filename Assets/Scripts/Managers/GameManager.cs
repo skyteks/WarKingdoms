@@ -26,7 +26,6 @@ public class GameManager : Singleton<GameManager>
     public GameMode gameMode = GameMode.Gameplay;
     public SelectionOnType selectionOnType = SelectionOnType.Units;
 
-    [Preview]
     public FactionTemplate playerFaction;
     public List<FactionTemplate> factions;
 
