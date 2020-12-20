@@ -4,8 +4,15 @@ using UnityEngine;
 
 public class SubParticleSpawner : MonoBehaviour
 {
+    public enum SubParticleSpawnRotation
+    {
+        PrefabAsIs,
+        FirePoint,
+        RotationOffset,
+    }
+
     public float hitOffset = 0f;
-    public bool useFirePointRotation;
+    public SubParticleSpawnRotation useFirePointRotation;
     public Vector3 rotationOffset = new Vector3(0, 0, 0);
     public GameObject hitEffectPrefab;
     public GameObject spawnEffectPrefab;
@@ -41,13 +48,16 @@ public class SubParticleSpawner : MonoBehaviour
         if (hitEffectPrefab != null)
         {
             var hitInstance = Instantiate(hitEffectPrefab, transform.position, transform.rotation);
-            if (useFirePointRotation)
+            switch (useFirePointRotation)
             {
+                case SubParticleSpawnRotation.PrefabAsIs:
+                    break;
+                case SubParticleSpawnRotation.FirePoint:
                 hitInstance.transform.rotation = gameObject.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
-            }
-            else if (rotationOffset != Vector3.zero)
-            {
+                    break;
+                case SubParticleSpawnRotation.RotationOffset:
                 hitInstance.transform.rotation = Quaternion.Euler(rotationOffset);
+                    break;
             }
 
             var hitPs = hitInstance.GetComponent<ParticleSystem>();
