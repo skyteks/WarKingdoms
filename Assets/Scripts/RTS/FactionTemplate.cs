@@ -20,8 +20,10 @@ public class FactionTemplate : ScriptableObject
         orange,
         white,
     }
+
     public enum Race
     {
+        Neutral,
         Human,
         Orc,
     }

@@ -53,10 +53,10 @@ public class SubParticleSpawner : MonoBehaviour
                 case SubParticleSpawnRotation.PrefabAsIs:
                     break;
                 case SubParticleSpawnRotation.FirePoint:
-                hitInstance.transform.rotation = gameObject.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
+                    hitInstance.transform.rotation = gameObject.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
                     break;
                 case SubParticleSpawnRotation.RotationOffset:
-                hitInstance.transform.rotation = Quaternion.Euler(rotationOffset);
+                    hitInstance.transform.rotation = Quaternion.Euler(rotationOffset);
                     break;
             }
 
