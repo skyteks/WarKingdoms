@@ -26,6 +26,7 @@ public class FactionTemplate : ScriptableObject
         Neutral,
         Human,
         Orc,
+        WoodElf,
     }
 
     public FactionColor factionColorName = FactionColor.black;

@@ -32,7 +32,6 @@ public class Projectile : MonoBehaviour
     public float trackSpeed = 10;
     public ProjectileRotationModes projectileRotationMode;
     public bool useFactionMaterial;
-    public ParticleSystem terrainImpactEffect;
 
     private Transform targetObject;
     private Vector3 targetPosition;
@@ -89,6 +88,7 @@ public class Projectile : MonoBehaviour
         Debug.LogError("A projectile did not have an action", gameObject);
     }
 
+    /*
     void OnDestroy()
     {
         if (terrainImpactEffect != null && !hitSuccess)
@@ -99,6 +99,7 @@ public class Projectile : MonoBehaviour
             Destroy(terrainImpactEffect.gameObject, terrainImpactEffect.main.duration);
         }
     }
+    */
 
     void OnDrawGizmos()//Selected()
     {
