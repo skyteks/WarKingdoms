@@ -1181,6 +1181,81 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1210025822}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1301982935
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6113541555682152409, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: 12e6ffecf876f624dacb14c580a201eb,
+        type: 2}
+    - target: {fileID: 6143523602997217605, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: m_Name
+      value: Orc Grunt (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6147639645433565755, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -11.97
+      objectReference: {fileID: 0}
+    - target: {fileID: 6147639645433565755, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6147639645433565755, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 8.91
+      objectReference: {fileID: 0}
+    - target: {fileID: 6147639645433565755, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6147639645433565755, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6147639645433565755, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6147639645433565755, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6147639645433565755, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6147639645433565755, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6147639645433565755, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6147639645433565755, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9a6476a774e7514469db4f7665d98ac2, type: 3}
 --- !u!1001 &1327074477
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1446,8 +1521,8 @@ Mesh:
     firstVertex: 0
     vertexCount: 8
     localAABB:
-      m_Center: {x: 0, y: 2.3263083, z: 37.657963}
-      m_Extent: {x: 29.721478, y: 14.5807085, z: 6.799095}
+      m_Center: {x: 0, y: 2.3263073, z: 37.657963}
+      m_Extent: {x: 29.789188, y: 14.5805645, z: 6.7990294}
   m_Shapes:
     vertices: []
     shapes: []
@@ -1526,7 +1601,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 192
-    _typelessdata: b07da7c1061244c1f6def641000000000000803f00000000b07da741061244c1f6def641000000000000803f0000000096c5edc19241874107d43142000000000000803f0000000096c5ed419241874107d43142000000000000803f000000001d99a1c1de1436c1ec21fa41000000000000803f000000001d99a141de1436c1ec21fa41000000000000803f0000000029aae3c1fe4280418c323042000000000000803f0000000029aae341fe4280418c323042000000000000803f00000000
+    _typelessdata: 19dea7c1701144c119dff641000000000000803f0000000019dea741701144c119dff641000000000000803f000000004250eec146418741f6d33142000000000000803f000000004250ee4146418741f6d33142000000000000803f00000000b5faa1c1de1436c1ec21fa41000000000000803f00000000b5faa141de1436c1ec21fa41000000000000803f00000000a633e4c1fe4280418c323042000000000000803f00000000a633e441fe4280418c323042000000000000803f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -1580,8 +1655,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: 0, y: 2.3263083, z: 37.657963}
-    m_Extent: {x: 29.721478, y: 14.5807085, z: 6.799095}
+    m_Center: {x: 0, y: 2.3263073, z: 37.657963}
+    m_Extent: {x: 29.789188, y: 14.5805645, z: 6.7990294}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 

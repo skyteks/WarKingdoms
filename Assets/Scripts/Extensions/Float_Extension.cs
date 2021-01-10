@@ -28,8 +28,8 @@ public static class Float_Extension
     /// <returns></returns>
     public static float Sin(this float deg)
     {
-        var rad = deg * Mathf.Deg2Rad;
-        var tmp = Mathf.Sin(rad);
+        float rad = deg * Mathf.Deg2Rad;
+        float tmp = Mathf.Sin(rad);
         return tmp;
     }
 
@@ -40,8 +40,8 @@ public static class Float_Extension
     /// <returns></returns>
     public static float Cos(this float deg)
     {
-        var rad = deg * Mathf.Deg2Rad;
-        var tmp = Mathf.Cos(rad);
+        float rad = deg * Mathf.Deg2Rad;
+        float tmp = Mathf.Cos(rad);
         return tmp;
     }
 
@@ -52,8 +52,8 @@ public static class Float_Extension
     /// <returns></returns>
     public static float Tan(this float deg)
     {
-        var rad = deg * Mathf.Deg2Rad;
-        var tmp = Mathf.Tan(rad);
+        float rad = deg * Mathf.Deg2Rad;
+        float tmp = Mathf.Tan(rad);
         return tmp;
     }
 
@@ -64,8 +64,8 @@ public static class Float_Extension
     /// <returns></returns>
     public static float ATan(this float tan)
     {
-        var tmp = Mathf.Atan(tan);
-        var deg = tmp * Mathf.Rad2Deg;
+        float tmp = Mathf.Atan(tan);
+        float deg = tmp * Mathf.Rad2Deg;
         return deg;
     }
 
@@ -77,14 +77,14 @@ public static class Float_Extension
     /// <returns></returns>
     public static float ATan2(this float y, float x)
     {
-        var tmp = Mathf.Atan2(y, x);
-        var deg = tmp * Mathf.Rad2Deg;
+        float tmp = Mathf.Atan2(y, x);
+        float deg = tmp * Mathf.Rad2Deg;
         return deg;
     }
 
     public static float Sign(this float value)
     {
-        return value < 0f ? -1f : 1f;
+        return (value == 0f) ? 0f : Mathf.Sign(value);
     }
 
     public static bool IsInRange(this float value, Range range)

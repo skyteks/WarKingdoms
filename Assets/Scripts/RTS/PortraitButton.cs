@@ -8,7 +8,6 @@ public class PortraitButton : UnitButton
 {
     public Text damageTitle;
     public Text armorTitle;
-    public Text attackSpeedTitle;
 
     public Text healthText;
     public Text manaText;
@@ -66,17 +65,6 @@ public class PortraitButton : UnitButton
         armorText.enabled = true;
         armorText.text = Unit.template.armor.ToString();
 
-        if (Unit.template.attackSpeed > 0)
-        {
-            attackSpeedTitle.enabled = true;
-            attackSpeedText.enabled = true;
-            attackSpeedText.text = Unit.template.attackSpeed.ToString();
-        }
-        else
-        {
-            attackSpeedTitle.enabled = false;
-            attackSpeedText.enabled = false;
-        }
         //movementSpeedText.text = Unit.template.movementSpeed.ToString();
     }
 

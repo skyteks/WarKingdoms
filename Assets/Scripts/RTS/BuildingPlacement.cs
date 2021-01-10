@@ -5,6 +5,7 @@ public class BuildingPlacement : MonoBehaviour
     public Material holoMaterial;
     public LayerMask placementLayerMask;
     public float buildingStartLifePercentage = 0.2f;
+    public Vector3 buildingPlacementRotation = Vector3.up * 180f;
 
     private GameObject buildingPrefab;
     private Transform buildingCursorHolo;
@@ -66,11 +67,12 @@ public class BuildingPlacement : MonoBehaviour
     private void CreateHolo()
     {
         buildingCursorHolo = new GameObject(string.Concat(buildingPrefab.name, " (Holo)")).transform;
-        buildingCursorHolo.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+
+        buildingCursorHolo.SetPositionAndRotation(Vector3.zero, Quaternion.Euler(buildingPlacementRotation));
         buildingCollider = buildingPrefab.GetComponent<BoxCollider>();
 
         Transform buildingModelHolder = buildingPrefab.transform.Find("Model");
-        Transform buildingHoloHolder = GameObject.Instantiate(buildingModelHolder.gameObject, buildingModelHolder.localPosition, buildingModelHolder.localRotation, buildingCursorHolo.transform).transform;
+        Transform buildingHoloHolder = GameObject.Instantiate(buildingModelHolder.gameObject, buildingModelHolder.localPosition, Quaternion.Euler(buildingPlacementRotation) * buildingModelHolder.localRotation, buildingCursorHolo.transform).transform;
 
         MeshRenderer[] renderers = buildingHoloHolder.GetComponentsInChildren<MeshRenderer>(false);
         foreach (var render in renderers)
