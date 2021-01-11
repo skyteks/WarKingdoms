@@ -18,6 +18,7 @@ public abstract class ClickableObject : MonoBehaviour
     private bool drawViewDistance = false;
     [SerializeField]
     private bool drawEngageDistance = false;
+    [Space]
 #endif
 
     public FactionTemplate faction;

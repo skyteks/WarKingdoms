@@ -167,6 +167,11 @@ public class UIManager : Singleton<UIManager>
         Transform[] children = healthbarsGroup.transform.GetChildren();
         foreach (var child in children)
         {
+            // scale bars according to camera zoom
+            RectTransform rectTransform = child.GetComponent<RectTransform>();
+            Rect tmp = rectTransform.rect;
+            rectTransform.sizeDelta = new Vector2(100f * (1f / CameraManager.Instance.GetDifferenceToOptimalZoom() * 1.5f), rectTransform.sizeDelta.y);
+
             ClickableObject unit = child.GetComponent<UIAnchor>().objectToFollow.GetComponent<ClickableObject>();
             Image healthbarSlice = child.FindDeepChild("HealthbarSlice").GetComponent<Image>();
             healthbarSlice.fillAmount = (float)unit.template.health / (float)unit.template.original.health;
@@ -176,7 +181,7 @@ public class UIManager : Singleton<UIManager>
                     GameManager gameManager = GameManager.Instance;
                     if (unit.faction == gameManager.playerFaction)
                     {
-                        healthbarSlice.color = Color.green;
+                        healthbarSlice.color = healthColorGreen;
                     }
                     else if (FactionTemplate.IsAlliedWith(unit.faction, gameManager.playerFaction))
                     {
@@ -184,7 +189,7 @@ public class UIManager : Singleton<UIManager>
                     }
                     else
                     {
-                        healthbarSlice.color = Color.red;
+                        healthbarSlice.color = healthColorRed;
                     }
                     break;
                 case HealthbarColoringModes.HealthPercentage:

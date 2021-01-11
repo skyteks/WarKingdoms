@@ -9,6 +9,7 @@ public class CameraManager : Singleton<CameraManager>
     public Camera miniMapCamera;
     public Rect panLimitBorder = new Rect(-100f, -100f, 200f, 200f);
     public Range scrollLimitBorder = new Range(5f, 100f);
+    public float optimalScrollAmount = 16f;
 
     public static Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
     private static Vector3 screenMiddlePos = new Vector3(0.5f, 0.5f, 0f);
@@ -89,6 +90,11 @@ public class CameraManager : Singleton<CameraManager>
     public void ZoomGameplayCamera(float zoomAmount)
     {
         newZoom = scrollLimitBorder.Clamp(newZoom + zoomAmount);
+    }
+
+    public float GetDifferenceToOptimalZoom()
+    {
+        return (1f / optimalScrollAmount) * newZoom;
     }
 
     public void MoveGameplayCameraTo(Vector3 point)
