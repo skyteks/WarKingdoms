@@ -8,7 +8,7 @@ public class UIZoomResizer : MonoBehaviour
     private UIAnchor anchor;
     private RectTransform rectTransform;
 
-    private Vector2 size;
+    private float size;
 
     void Start()
     {
@@ -17,7 +17,7 @@ public class UIZoomResizer : MonoBehaviour
 
         Transform circle = anchor.objectToFollow.Find("SelectionCircle");
         float radius = circle != null ? circle.localScale.x : 1f;
-        size = rectTransform.sizeDelta * radius * 0.8f;
+        size = rectTransform.sizeDelta.x * (1f + (Mathf.Log(radius) / Mathf.Log(3f)));
     }
 
     void LateUpdate()
@@ -35,7 +35,7 @@ public class UIZoomResizer : MonoBehaviour
         Vector3 viewportPoint = Camera.main.WorldToViewportPoint(worldPoint);
         Vector3 viewportSizePoint = Camera.main.WorldToViewportPoint(worldPoint + sizeVector);
 
-        float diff = (viewportSizePoint - viewportPoint).magnitude * 20f * size.x;
+        float diff = (viewportSizePoint - viewportPoint).magnitude * 50f * size;
 
         rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, diff);
     }

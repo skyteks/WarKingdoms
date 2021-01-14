@@ -337,6 +337,8 @@ public class Unit : ClickableObject
 
         commandList.Clear();
 
+        navMeshAgent.isStopped = true;
+
         animator?.SetTrigger("DoDeath");
 
         //Remove itself from the selection Platoon
