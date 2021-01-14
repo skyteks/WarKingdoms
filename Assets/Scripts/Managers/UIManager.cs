@@ -168,9 +168,8 @@ public class UIManager : Singleton<UIManager>
         foreach (var child in children)
         {
             // scale bars according to camera zoom
-            RectTransform rectTransform = child.GetComponent<RectTransform>();
-            Rect tmp = rectTransform.rect;
-            rectTransform.sizeDelta = new Vector2(100f * (1f / CameraManager.Instance.GetDifferenceToOptimalZoom() * 1.5f), rectTransform.sizeDelta.y);
+            //RectTransform rectTransform = child.GetComponent<RectTransform>();
+            //rectTransform.sizeDelta = new Vector2(100f * (1f / CameraManager.Instance.GetDifferenceToOptimalZoom() * 1.5f), rectTransform.sizeDelta.y);
 
             ClickableObject unit = child.GetComponent<UIAnchor>().objectToFollow.GetComponent<ClickableObject>();
             Image healthbarSlice = child.FindDeepChild("HealthbarSlice").GetComponent<Image>();

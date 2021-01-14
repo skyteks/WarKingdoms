@@ -70,6 +70,7 @@ public static class Rect_Extension
         return new Vector2(rect.xMax, rect.yMin);
     }
 
+    // 2D bounds points
     public static Vector2 GetTopLeft2D(this Bounds bounds)
     {
         return new Vector2(bounds.min.x, bounds.max.z);
@@ -88,5 +89,46 @@ public static class Rect_Extension
     public static Vector2 GetBottomRight2D(this Bounds bounds)
     {
         return new Vector2(bounds.max.x, bounds.min.z);
+    }
+
+    // 3D bounds points
+    public static Vector3 GetTopLeftFront(this Bounds bounds)
+    {
+        return new Vector3(bounds.min.x, bounds.max.y, bounds.min.z);
+    }
+
+    public static Vector3 GetTopLeftBack(this Bounds bounds)
+    {
+        return new Vector3(bounds.min.x, bounds.max.y, bounds.max.z);
+    }
+
+    public static Vector3 GetTopRightBack(this Bounds bounds)
+    {
+        return new Vector3(bounds.max.x, bounds.max.y, bounds.max.z);
+    }
+
+    public static Vector3 GetTopRightFront(this Bounds bounds)
+    {
+        return new Vector3(bounds.max.x, bounds.max.y, bounds.min.z);
+    }
+
+    public static Vector3 GetBottomLeftFront(this Bounds bounds)
+    {
+        return new Vector3(bounds.min.x, bounds.min.y, bounds.min.z);
+    }
+
+    public static Vector3 GetBottomLeftBack(this Bounds bounds)
+    {
+        return new Vector3(bounds.min.x, bounds.min.y, bounds.max.z);
+    }
+
+    public static Vector3 GetBottomRightBack(this Bounds bounds)
+    {
+        return new Vector3(bounds.max.x, bounds.min.y, bounds.max.z);
+    }
+
+    public static Vector3 GetBottomRightFront(this Bounds bounds)
+    {
+        return new Vector3(bounds.max.x, bounds.min.y, bounds.min.z);
     }
 }
