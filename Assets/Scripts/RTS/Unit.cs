@@ -258,6 +258,7 @@ public class Unit : ClickableObject
                     }
                     else
                     {
+                        FaceTarget();
                         animator?.SetBool("DoAttack", true);
                     }
                     break;
@@ -358,6 +359,13 @@ public class Unit : ClickableObject
     {
         float navMeshAgentSpeed = navMeshAgent.velocity.magnitude;
         animator?.SetFloat("Speed", navMeshAgentSpeed * 0.05f);
+    }
+
+    private void FaceTarget()
+    {
+        Vector3 dir = (targetOfMovement.Value - transform.position).normalized;
+        Quaternion lookRot = Quaternion.LookRotation(dir.ToWithY(0f));
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * 5f);
     }
 
     public override void SetVisibility(bool visibility, bool force = false)

@@ -1,125 +1,325 @@
 fileFormatVersion: 2
 guid: 908ab5e4207288843bed6c9191cd2955
-timeCreated: 1468010320
-licenseType: Store
 ModelImporter:
-  serializedVersion: 19
-  fileIDToRecycleName:
-    100000: //RootNode
-    100002: Bone_Arm
-    100004: Bone_body_A
-    100006: Bone_body_B
-    100008: Bone_front
-    100010: Bone_Platform
-    100012: Bone_Root
-    100014: Bone_stone
-    100016: Bone_wheel_A
-    100018: Bone_wheel_B
-    100020: Bone_wheel_C
-    100022: Bone_wheel_C001D
-    100024: Catapult_Arm
-    100026: Catapult_body_A
-    100028: Catapult_body_B
-    100030: Catapult_front
-    100032: Catapult_stone
-    100034: Catapult_wheel_A
-    100036: Catapult_wheel_B
-    100038: Catapult_wheel_C
-    100040: Catapult_wheel_D
-    100042: Catapult_wheel_A001
-    100044: Catapult_wheel_B001
-    100046: Bone_wheel_D
-    100048: WK_Catapult
-    100050: WK_Catapult_rock
-    400000: //RootNode
-    400002: Bone_Arm
-    400004: Bone_body_A
-    400006: Bone_body_B
-    400008: Bone_front
-    400010: Bone_Platform
-    400012: Bone_Root
-    400014: Bone_stone
-    400016: Bone_wheel_A
-    400018: Bone_wheel_B
-    400020: Bone_wheel_C
-    400022: Bone_wheel_C001D
-    400024: Catapult_Arm
-    400026: Catapult_body_A
-    400028: Catapult_body_B
-    400030: Catapult_front
-    400032: Catapult_stone
-    400034: Catapult_wheel_A
-    400036: Catapult_wheel_B
-    400038: Catapult_wheel_C
-    400040: Catapult_wheel_D
-    400042: Catapult_wheel_A001
-    400044: Catapult_wheel_B001
-    400046: Bone_wheel_D
-    400048: WK_Catapult
-    400050: WK_Catapult_rock
-    2300000: //RootNode
-    2300002: Catapult_Arm
-    2300004: Catapult_body_A
-    2300006: Catapult_body_B
-    2300008: Catapult_front
-    2300010: Catapult_stone
-    2300012: Catapult_wheel_A
-    2300014: Catapult_wheel_B
-    2300016: Catapult_wheel_C
-    2300018: Catapult_wheel_D
-    2300020: Catapult_wheel_A001
-    2300022: Catapult_wheel_B001
-    2300024: WK_Catapult_rock
-    3300000: //RootNode
-    3300002: Catapult_Arm
-    3300004: Catapult_body_A
-    3300006: Catapult_body_B
-    3300008: Catapult_front
-    3300010: Catapult_stone
-    3300012: Catapult_wheel_A
-    3300014: Catapult_wheel_B
-    3300016: Catapult_wheel_C
-    3300018: Catapult_wheel_D
-    3300020: Catapult_wheel_A001
-    3300022: Catapult_wheel_B001
-    3300024: WK_Catapult_rock
-    4300000: Box001
-    4300002: Box002
-    4300004: Catapult_stone
-    4300006: Catapult_Arm
-    4300008: Catapult_body_A
-    4300010: Catapult_body_B
-    4300012: Catapult_front
-    4300014: Catapult_wheel_A
-    4300016: Catapult_wheel_B
-    4300018: Catapult_wheel_C
-    4300020: Catapult_wheel_D
-    4300022: Catapult_wheel_B001
-    4300024: Catapult_wheel_A001
-    4300026: WK_Catapult
-    4300028: WK_Catapult_rock
-    9500000: //RootNode
-    13700000: WK_Catapult
+  serializedVersion: 20101
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: //RootNode
+  - first:
+      1: 100002
+    second: Bone_Arm
+  - first:
+      1: 100004
+    second: Bone_body_A
+  - first:
+      1: 100006
+    second: Bone_body_B
+  - first:
+      1: 100008
+    second: Bone_front
+  - first:
+      1: 100010
+    second: Bone_Platform
+  - first:
+      1: 100012
+    second: Bone_Root
+  - first:
+      1: 100014
+    second: Bone_stone
+  - first:
+      1: 100016
+    second: Bone_wheel_A
+  - first:
+      1: 100018
+    second: Bone_wheel_B
+  - first:
+      1: 100020
+    second: Bone_wheel_C
+  - first:
+      1: 100022
+    second: Bone_wheel_C001D
+  - first:
+      1: 100024
+    second: Catapult_Arm
+  - first:
+      1: 100026
+    second: Catapult_body_A
+  - first:
+      1: 100028
+    second: Catapult_body_B
+  - first:
+      1: 100030
+    second: Catapult_front
+  - first:
+      1: 100032
+    second: Catapult_stone
+  - first:
+      1: 100034
+    second: Catapult_wheel_A
+  - first:
+      1: 100036
+    second: Catapult_wheel_B
+  - first:
+      1: 100038
+    second: Catapult_wheel_C
+  - first:
+      1: 100040
+    second: Catapult_wheel_D
+  - first:
+      1: 100042
+    second: Catapult_wheel_A001
+  - first:
+      1: 100044
+    second: Catapult_wheel_B001
+  - first:
+      1: 100046
+    second: Bone_wheel_D
+  - first:
+      1: 100048
+    second: WK_Catapult
+  - first:
+      1: 100050
+    second: WK_Catapult_rock
+  - first:
+      4: 400000
+    second: //RootNode
+  - first:
+      4: 400002
+    second: Bone_Arm
+  - first:
+      4: 400004
+    second: Bone_body_A
+  - first:
+      4: 400006
+    second: Bone_body_B
+  - first:
+      4: 400008
+    second: Bone_front
+  - first:
+      4: 400010
+    second: Bone_Platform
+  - first:
+      4: 400012
+    second: Bone_Root
+  - first:
+      4: 400014
+    second: Bone_stone
+  - first:
+      4: 400016
+    second: Bone_wheel_A
+  - first:
+      4: 400018
+    second: Bone_wheel_B
+  - first:
+      4: 400020
+    second: Bone_wheel_C
+  - first:
+      4: 400022
+    second: Bone_wheel_C001D
+  - first:
+      4: 400024
+    second: Catapult_Arm
+  - first:
+      4: 400026
+    second: Catapult_body_A
+  - first:
+      4: 400028
+    second: Catapult_body_B
+  - first:
+      4: 400030
+    second: Catapult_front
+  - first:
+      4: 400032
+    second: Catapult_stone
+  - first:
+      4: 400034
+    second: Catapult_wheel_A
+  - first:
+      4: 400036
+    second: Catapult_wheel_B
+  - first:
+      4: 400038
+    second: Catapult_wheel_C
+  - first:
+      4: 400040
+    second: Catapult_wheel_D
+  - first:
+      4: 400042
+    second: Catapult_wheel_A001
+  - first:
+      4: 400044
+    second: Catapult_wheel_B001
+  - first:
+      4: 400046
+    second: Bone_wheel_D
+  - first:
+      4: 400048
+    second: WK_Catapult
+  - first:
+      4: 400050
+    second: WK_Catapult_rock
+  - first:
+      23: 2300000
+    second: //RootNode
+  - first:
+      23: 2300002
+    second: Catapult_Arm
+  - first:
+      23: 2300004
+    second: Catapult_body_A
+  - first:
+      23: 2300006
+    second: Catapult_body_B
+  - first:
+      23: 2300008
+    second: Catapult_front
+  - first:
+      23: 2300010
+    second: Catapult_stone
+  - first:
+      23: 2300012
+    second: Catapult_wheel_A
+  - first:
+      23: 2300014
+    second: Catapult_wheel_B
+  - first:
+      23: 2300016
+    second: Catapult_wheel_C
+  - first:
+      23: 2300018
+    second: Catapult_wheel_D
+  - first:
+      23: 2300020
+    second: Catapult_wheel_A001
+  - first:
+      23: 2300022
+    second: Catapult_wheel_B001
+  - first:
+      23: 2300024
+    second: WK_Catapult_rock
+  - first:
+      33: 3300000
+    second: //RootNode
+  - first:
+      33: 3300002
+    second: Catapult_Arm
+  - first:
+      33: 3300004
+    second: Catapult_body_A
+  - first:
+      33: 3300006
+    second: Catapult_body_B
+  - first:
+      33: 3300008
+    second: Catapult_front
+  - first:
+      33: 3300010
+    second: Catapult_stone
+  - first:
+      33: 3300012
+    second: Catapult_wheel_A
+  - first:
+      33: 3300014
+    second: Catapult_wheel_B
+  - first:
+      33: 3300016
+    second: Catapult_wheel_C
+  - first:
+      33: 3300018
+    second: Catapult_wheel_D
+  - first:
+      33: 3300020
+    second: Catapult_wheel_A001
+  - first:
+      33: 3300022
+    second: Catapult_wheel_B001
+  - first:
+      33: 3300024
+    second: WK_Catapult_rock
+  - first:
+      43: 4300000
+    second: Box001
+  - first:
+      43: 4300002
+    second: Box002
+  - first:
+      43: 4300004
+    second: Catapult_stone
+  - first:
+      43: 4300006
+    second: Catapult_Arm
+  - first:
+      43: 4300008
+    second: Catapult_body_A
+  - first:
+      43: 4300010
+    second: Catapult_body_B
+  - first:
+      43: 4300012
+    second: Catapult_front
+  - first:
+      43: 4300014
+    second: Catapult_wheel_A
+  - first:
+      43: 4300016
+    second: Catapult_wheel_B
+  - first:
+      43: 4300018
+    second: Catapult_wheel_C
+  - first:
+      43: 4300020
+    second: Catapult_wheel_D
+  - first:
+      43: 4300022
+    second: Catapult_wheel_B001
+  - first:
+      43: 4300024
+    second: Catapult_wheel_A001
+  - first:
+      43: 4300026
+    second: WK_Catapult
+  - first:
+      43: 4300028
+    second: WK_Catapult_rock
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: WK_Catapult
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: WK_Standard_Units
+    second: {fileID: 2100000, guid: dd5ed305967903f48a06e521dd84c1ca, type: 2}
   materials:
-    importMaterials: 1
+    materialImportMode: 1
     materialName: 1
     materialSearch: 1
+    materialLocation: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
-    resampleRotations: 1
+    resampleCurves: 1
     optimizeGameObjects: 0
     motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
     animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations: []
     isReadable: 1
   meshes:
@@ -127,25 +327,45 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 0
     importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 0
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
+    normalCalculationMode: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 0
-  copyAvatar: 0
   humanDescription:
+    serializedVersion: 3
     human: []
     skeleton: []
     armTwist: 0.5
@@ -155,11 +375,16 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
+  avatarSetup: 1
   additionalBone: 0
   userData: 
   assetBundleName: 

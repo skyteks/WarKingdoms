@@ -258,12 +258,17 @@ ModelImporter:
   - first:
       137: 13700004
     second: WK_singlemesh_archer
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: WK_Standard_Units
+    second: {fileID: 2100000, guid: dd5ed305967903f48a06e521dd84c1ca, type: 2}
   materials:
     materialImportMode: 1
     materialName: 1
     materialSearch: 1
-    materialLocation: 0
+    materialLocation: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0

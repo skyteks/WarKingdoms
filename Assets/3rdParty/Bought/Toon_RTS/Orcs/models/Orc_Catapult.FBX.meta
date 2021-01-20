@@ -1,64 +1,142 @@
 fileFormatVersion: 2
 guid: 12478272612479b49a67011040825455
-timeCreated: 1506373917
-licenseType: Store
 ModelImporter:
-  serializedVersion: 19
-  fileIDToRecycleName:
-    100000: Bone_Arm
-    100002: Bone_body_A
-    100004: Bone_body_B
-    100006: Bone_front
-    100008: Bone_Platform
-    100010: Bone_Root
-    100012: Bone_stone
-    100014: Bone_wheel_A
-    100016: Bone_wheel_B
-    100018: Bone_wheel_C
-    100020: Bone_wheel_C001D
-    100022: //RootNode
-    100024: Orc_Catapult
-    100026: Orc_Catapult_stone
-    400000: Bone_Arm
-    400002: Bone_body_A
-    400004: Bone_body_B
-    400006: Bone_front
-    400008: Bone_Platform
-    400010: Bone_Root
-    400012: Bone_stone
-    400014: Bone_wheel_A
-    400016: Bone_wheel_B
-    400018: Bone_wheel_C
-    400020: Bone_wheel_C001D
-    400022: //RootNode
-    400024: Orc_Catapult
-    400026: Orc_Catapult_stone
-    2300000: Orc_Catapult_stone
-    3300000: Orc_Catapult_stone
-    4300000: Orc_Catapult_stone
-    4300002: Orc_Catapult
-    9500000: //RootNode
-    13700000: Orc_Catapult
+  serializedVersion: 20101
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: Bone_Arm
+  - first:
+      1: 100002
+    second: Bone_body_A
+  - first:
+      1: 100004
+    second: Bone_body_B
+  - first:
+      1: 100006
+    second: Bone_front
+  - first:
+      1: 100008
+    second: Bone_Platform
+  - first:
+      1: 100010
+    second: Bone_Root
+  - first:
+      1: 100012
+    second: Bone_stone
+  - first:
+      1: 100014
+    second: Bone_wheel_A
+  - first:
+      1: 100016
+    second: Bone_wheel_B
+  - first:
+      1: 100018
+    second: Bone_wheel_C
+  - first:
+      1: 100020
+    second: Bone_wheel_C001D
+  - first:
+      1: 100022
+    second: //RootNode
+  - first:
+      1: 100024
+    second: Orc_Catapult
+  - first:
+      1: 100026
+    second: Orc_Catapult_stone
+  - first:
+      4: 400000
+    second: Bone_Arm
+  - first:
+      4: 400002
+    second: Bone_body_A
+  - first:
+      4: 400004
+    second: Bone_body_B
+  - first:
+      4: 400006
+    second: Bone_front
+  - first:
+      4: 400008
+    second: Bone_Platform
+  - first:
+      4: 400010
+    second: Bone_Root
+  - first:
+      4: 400012
+    second: Bone_stone
+  - first:
+      4: 400014
+    second: Bone_wheel_A
+  - first:
+      4: 400016
+    second: Bone_wheel_B
+  - first:
+      4: 400018
+    second: Bone_wheel_C
+  - first:
+      4: 400020
+    second: Bone_wheel_C001D
+  - first:
+      4: 400022
+    second: //RootNode
+  - first:
+      4: 400024
+    second: Orc_Catapult
+  - first:
+      4: 400026
+    second: Orc_Catapult_stone
+  - first:
+      23: 2300000
+    second: Orc_Catapult_stone
+  - first:
+      33: 3300000
+    second: Orc_Catapult_stone
+  - first:
+      43: 4300000
+    second: Orc_Catapult_stone
+  - first:
+      43: 4300002
+    second: Orc_Catapult
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: Orc_Catapult
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Orc_Standard_Units
+    second: {fileID: 2100000, guid: 85c407ce764279e44a7e5b7cb7ef65aa, type: 2}
   materials:
-    importMaterials: 1
-    materialName: 1
+    materialImportMode: 1
+    materialName: 2
     materialSearch: 1
+    materialLocation: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
-    resampleRotations: 1
+    resampleCurves: 1
     optimizeGameObjects: 0
     motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
     animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations: []
     isReadable: 1
   meshes:
@@ -66,25 +144,45 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 0
     importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 0
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
+    normalCalculationMode: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 0
-  copyAvatar: 0
   humanDescription:
+    serializedVersion: 3
     human: []
     skeleton: []
     armTwist: 0.5
@@ -94,11 +192,16 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
+  avatarSetup: 1
   additionalBone: 0
   userData: 
   assetBundleName: 
