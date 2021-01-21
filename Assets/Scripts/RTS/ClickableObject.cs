@@ -102,14 +102,14 @@ public abstract class ClickableObject : MonoBehaviour
     {
         if (selectionCircle == null)
         {
-            selectionCircle = transform.Find("SelectionCircle").GetComponent<MeshRenderer>();
+            selectionCircle = transform.Find("SelectionCircle")?.GetComponent<MeshRenderer>();
         }
         if (fieldOfView == null)
         {
-            fieldOfView = transform.Find("FieldOfView").GetComponent<FieldOfView>();
+            fieldOfView = transform.Find("FieldOfView")?.GetComponent<FieldOfView>();
         }
 
-        if (!IsDeadOrNull(this) && template != null)
+        if (!IsDeadOrNull(this) && template != null && fieldOfView != null)
         {
             if (drawViewDistance)
             {
@@ -128,7 +128,10 @@ public abstract class ClickableObject : MonoBehaviour
         {
             UnityEditor.Handles.color = Color.red;
         }
-        UnityEditor.Handles.DrawWireDisc(transform.position, Vector3.up, sizeRadius);
+        if (selectionCircle != null)
+        {
+            UnityEditor.Handles.DrawWireDisc(transform.position, Vector3.up, sizeRadius);
+        }
     }
 #endif
 
