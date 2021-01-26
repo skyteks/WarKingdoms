@@ -9,6 +9,8 @@
         _Metallic("Metallic", Range(0,1)) = 0.0
         _TeamColorMap("TeamColorMap (B/W)", 2D) = "black" {}
         _TeamColor("TeamColor", Color) = (1,1,1,1)
+        _Mode("Shader Mode", Range(0,2.99)) = 1
+
     }
     SubShader
     {
@@ -26,6 +28,7 @@
         float _Metallic;
         fixed4 _Color;
         fixed4 _TeamColor;
+        uint _Mode;
 
         struct Input
         {
@@ -41,15 +44,34 @@
         // put more per-instance properties here
         UNITY_INSTANCING_BUFFER_END(Props)
 
+        float3 BlendOverlay( float3 a, float3 b )
+        {
+            return a < 0.5 ? 2 *a * b : 1-2 *(1-a) * (1-b);
+        }
+
         void surf(Input IN, inout SurfaceOutputStandard o)
         {
-            // Albedo comes from a texture tinted by color
-            fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
+            fixed4 c = tex2D(_MainTex, IN.uv_MainTex);
             fixed4 m = tex2D(_TeamColorMap, IN.uv_TeamColorMap);
 
-            if (m.r > 0.5)
+            float3 teamColor = _TeamColor.rgb;
+            if (_Mode == 0)// multiply
             {
-                c.rgb = c.rgb * _TeamColor;
+                if (m.r > 0.5)
+                {
+                    c.rgb = c.rgb * teamColor;
+                }
+            }
+            else if (_Mode == 1) // 2x multiply
+            {
+                if (m.r > 0.5)
+                {
+                    c.rgb = 2 * c.rgb * lerp( 1, teamColor, m.r );
+                }
+            }
+            else if (_Mode == 2) // 0.75 blend
+            {
+                c.rgb = lerp( c.rgb, BlendOverlay(c.rgb * 0.75, teamColor), m.r );
             }
 
             if (c.a > _Cutoff)
@@ -62,10 +84,6 @@
             else
             {
                 discard;
-                //o.Albedo = fixed3(0,0,0);
-                //o.Metallic = 0;
-                //o.Smoothness = 0;
-                //o.Alpha = 0;
             }
         }
         ENDCG

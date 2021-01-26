@@ -25,7 +25,7 @@ public class Building : ClickableObject
         base.Awake();
         navMeshObstacle = GetComponent<NavMeshObstacle>();
         fieldOfView = GetComponentInChildren<FieldOfView>();
-        burnEffects = transform.Find("BurnPoints").GetChildren().Select(child => child.GetComponent<ParticleSystem>()).ToArray();
+        burnEffects = transform.Find("BurnPoints")?.GetChildren().Select(child => child.GetComponent<ParticleSystem>()).ToArray();
     }
 
     protected override void Start()
@@ -94,6 +94,10 @@ public class Building : ClickableObject
 
     protected void TriggerBurnEffects()
     {
+        if (burnEffects == null || burnEffects.Length == 0)
+        {
+            return;
+        }
         float healthPerc = template.health / (float)template.original.health;
 
         if (healthPerc <= 0f || state == BuildingStates.Dead)
@@ -103,15 +107,33 @@ public class Building : ClickableObject
                 effect.Stop(true, ParticleSystemStopBehavior.StopEmitting);
             }
         }
-        else if (burnEffects.Length == 4)
+        else
         {
-            bool[] shouldBurn = new bool[4];
-            shouldBurn[0] = healthPerc < 0.75f;
-            shouldBurn[1] = healthPerc < 0.5f;
-            shouldBurn[2] = healthPerc < 0.25f;
-            shouldBurn[3] = healthPerc < 0.25f;
+            bool[] shouldBurn = new bool[burnEffects.Length];
+            switch (burnEffects.Length)
+            {
+                case 4:
+                case 3:
+                default:
+                    shouldBurn[0] = healthPerc < 0.75f;
+                    shouldBurn[1] = healthPerc < 0.5f;
+                    for (int i = 2; i < burnEffects.Length; i++)
+                    {
+                        shouldBurn[i] = healthPerc < 0.25f;
+                    }
+                    break;
+                case 2:
+                    shouldBurn[0] = healthPerc < 0.66f;
+                    shouldBurn[1] = healthPerc < 0.33f;
+                    break;
+                case 1:
+                    shouldBurn[0] = healthPerc < 0.5f;
+                    break;
+                case 0:
+                    return;
+            }
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < burnEffects.Length; i++)
             {
                 if (shouldBurn[i] != burnEffects[i].isPlaying)
                 {
