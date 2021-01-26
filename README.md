@@ -10,8 +10,11 @@ A Warcraft-3-like Realtime Strategie Game
 
 Assets not included
 
-https://assetstore.unity.com/packages/3d/characters/humanoids/toon-rts-units-67948
-https://assetstore.unity.com/packages/3d/characters/humanoids/toon-rts-units-orcs-78906
+[Human units](https://assetstore.unity.com/packages/3d/characters/toon-rts-units-67948), 
+[Orc units](https://assetstore.unity.com/packages/3d/characters/toon-rts-units-orcs-78906), 
+[Elven units](https://assetstore.unity.com/packages/3d/characters/toon-rts-units-elves-132685), 
+[Human buildings](https://assetstore.unity.com/packages/3d/environments/fantasy/human-rts-buildings-hand-painted-7669), 
+[Orc buildings](https://assetstore.unity.com/packages/3d/environments/fantasy/orc-rts-buildings-hand-painted-7671)
 
 ## Built With
 
@@ -25,7 +28,7 @@ https://assetstore.unity.com/packages/3d/characters/humanoids/toon-rts-units-orc
 
 * **Lutz Kadoch** - https://github.com/hadea
 * **Pascal Jacob**
-
+* **Lehis Luguer**
 * **Polygon Blacksmith** - https://assetstore.unity.com/publishers/17894
 * **Sebastian Lague** - https://youtu.be/rQG9aUWarwE
 * **Andrew Hung** - https://andrewhungblog.wordpress.com/2018/06/23/implementing-fog-of-war-in-unity/
