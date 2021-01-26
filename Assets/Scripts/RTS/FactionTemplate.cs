@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -36,6 +35,9 @@ public class FactionTemplate : ScriptableObject
 
     public List<Unit> units { get; private set; }
     public List<Building> buildings { get; private set; }
+#if UNITY_EDITOR
+    public List<Renderer> renderers { get; private set; }
+#endif
 
     public int resourceGold = 0;
     public int resourceWood = 0;
@@ -44,12 +46,14 @@ public class FactionTemplate : ScriptableObject
     {
         units = new List<Unit>();
         buildings = new List<Building>();
+        renderers = new List<Renderer>();
     }
 
     void OnDisable()
     {
         units = new List<Unit>();
         buildings = new List<Building>();
+        renderers = new List<Renderer>();
     }
 
     public static bool IsAlliedWith(FactionTemplate faction1, FactionTemplate faction2)
@@ -60,4 +64,37 @@ public class FactionTemplate : ScriptableObject
         }
         return faction1.allianceId == faction2.allianceId;
     }
+
+#if UNITY_EDITOR
+    [ContextMenu("Start Teamcolor Updating Coroutine")]
+    private void StartUpdatingCoroutine()
+    {
+        if (Application.isPlaying)
+        {
+            GameManager.Instance.StartCoroutine(UpdatingCoroutine());
+        }
+    }
+
+    private IEnumerator UpdatingCoroutine()
+    {
+        for (; ; )
+        {
+            yield return null;
+            UpdateTeamcolorMaterials();
+        }
+    }
+
+    [ContextMenu("Update Teamcolor Materials")]
+    private void UpdateTeamcolorMaterials()
+    {
+        foreach (Renderer render in renderers)
+        {
+            MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
+            render.GetPropertyBlock(materialPropertyBlock, render.materials.Length - 1);
+            materialPropertyBlock.SetColor("_TeamColor", color);
+            render.SetPropertyBlock(materialPropertyBlock);
+        }
+    }
+#endif
+
 }

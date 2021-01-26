@@ -68,7 +68,7 @@ public abstract class ClickableObject : MonoBehaviour
         miniMapCircle = transform.Find("MiniMapCircle").GetComponent<MeshRenderer>();
         visionCircle = transform.Find("FieldOfView").GetComponent<MeshRenderer>();
         modelHolder = transform.Find("Model");
-        modelRenderers = modelHolder.GetComponentsInChildren<Renderer>(true);
+        modelRenderers = modelHolder.GetComponentsInChildren<Renderer>();
         fieldOfView = transform.Find("FieldOfView").GetComponent<FieldOfView>();
 
         SetLayers();
@@ -167,6 +167,13 @@ public abstract class ClickableObject : MonoBehaviour
         foreach (Renderer render in modelRenderers)
         {
             //render.materials[render.materials.Length - 1].SetColor("_TeamColor", faction.color);
+
+#if UNITY_EDITOR
+            if (!faction.renderers.Contains(render))
+            {
+                faction.renderers.Add(render);
+            }
+#endif
 
             MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
             render.GetPropertyBlock(materialPropertyBlock, render.materials.Length - 1);
