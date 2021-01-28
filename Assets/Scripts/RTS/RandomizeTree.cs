@@ -10,13 +10,14 @@ public class RandomizeTree : MonoBehaviour
     public float scale = 1f;
     public GameObject tree;
     public GameObject trunk;
-    public float trunkHeight = 0.3f;
 
     private Transform modelHolder;
+    private Transform treeHolder;
 
     void Awake()
     {
         modelHolder = transform.Find("Model");
+        treeHolder = modelHolder.Find("TreeHolder");
     }
 
     void Start()
@@ -72,7 +73,7 @@ public class RandomizeTree : MonoBehaviour
         trunk.layer = modelHolder.gameObject.layer;
 
         GameObject treePrefab = SelectRandomElement(treePrefabs);
-        tree = Instantiate(treePrefab, modelHolder.position + modelHolder.up * trunkHeight, GetRandomYAxisRotation(), modelHolder);
+        tree = Instantiate(treePrefab, treeHolder.position, GetRandomYAxisRotation(), treeHolder);
         tree.transform.localScale = Vector3.one * scale;
         tree.layer = modelHolder.gameObject.layer;
     }

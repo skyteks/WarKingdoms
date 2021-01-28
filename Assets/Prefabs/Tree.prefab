@@ -1,5 +1,56 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &916854487629027555
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4778418745334985620}
+  - component: {fileID: 963229455}
+  m_Layer: 15
+  m_Name: TreeHolder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4778418745334985620
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 916854487629027555}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 750137255003798551}
+  m_Father: {fileID: 7627239252029561161}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &963229455
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 916854487629027555}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6e0d39e888f1fac458ea98272d13884b, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &986510410430028477
 GameObject:
   m_ObjectHideFlags: 0
@@ -27,7 +78,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 750137255003798551}
+  - {fileID: 4778418745334985620}
   - {fileID: 8388703758810578256}
   m_Father: {fileID: 7566848637080726325}
   m_RootOrder: 0
@@ -94,7 +145,6 @@ MonoBehaviour:
   scale: 1
   tree: {fileID: 755903062396466143}
   trunk: {fileID: 8386554681157938650}
-  trunkHeight: 0.3
 --- !u!136 &4618663024515716956
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -130,7 +180,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 7627239252029561161}
+    m_TransformParent: {fileID: 4778418745334985620}
     m_Modifications:
     - target: {fileID: 1204425539486282, guid: 4c2d06bc77c400249b350379cb2e1902, type: 3}
       propertyPath: m_Layer
@@ -166,7 +216,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4618395436443616, guid: 4c2d06bc77c400249b350379cb2e1902, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4618395436443616, guid: 4c2d06bc77c400249b350379cb2e1902, type: 3}
       propertyPath: m_LocalPosition.z
