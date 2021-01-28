@@ -1,0 +1,1 @@
+Separated model - you can adjust leafs ( conifers ) as you need.
