@@ -17,7 +17,6 @@ public class UIZoomResizer : MonoBehaviour
 
         Transform circle = anchor.objectToFollow.Find("SelectionCircle");
         float radius = circle != null ? circle.localScale.x : 1f;
-        print(Screen.width);
         size = rectTransform.sizeDelta.x * (1f + (Mathf.Log(radius) / Mathf.Log(3f)) * (Screen.width / 2560f));
     }
 
