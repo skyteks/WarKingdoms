@@ -499,9 +499,9 @@ public class Unit : ClickableObject
     }
 
 #if UNITY_EDITOR
-    public AICommand[] GetCommandList()
+    public List<AICommand> GetCommandList()
     {
-        return commandList.ToArray();
+        return commandList;
     }
 #endif
 }
