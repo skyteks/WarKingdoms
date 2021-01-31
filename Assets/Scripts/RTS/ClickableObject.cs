@@ -1,16 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
-public abstract class ClickableObject : MonoBehaviour
+public abstract class ClickableObject : InteractableObject
 {
-    protected static int layerObjectsVisible = -1;
-    protected static int layerObjectsHidden = -1;
-    protected static int layerMiniMapVisible = -1;
-    protected static int layerMiniMapHidden = -1;
-
     public static List<ClickableObject> globalObjectsList;
 
 #if UNITY_EDITOR
@@ -22,38 +16,20 @@ public abstract class ClickableObject : MonoBehaviour
 #endif
 
     public FactionTemplate faction;
-    public bool visible;
     public UnitTemplate template;
-    public float visionFadeTime = 1f;
 
-    protected Transform modelHolder;
-    protected MeshRenderer selectionCircle, miniMapCircle, visionCircle;
+    protected MeshRenderer miniMapCircle, visionCircle;
     protected Renderer[] modelRenderers;
     public FieldOfView fieldOfView;
 
     public UnityAction<ClickableObject> OnDeath;
     public UnityAction<ClickableObject> OnDisapearInFOW;
 
-    public float sizeRadius
-    {
-        get
-        {
-            return selectionCircle.transform.localScale.x * 0.5f;
-        }
-    }
-
     public float damageReductionMuliplier
     {
         get
         {
-            if (template.armor >= 0)
-            {
-                return 100f / (100f + template.armor);
-            }
-            else
-            {
-                return 2f - (100f / (100f - template.armor));
-            }
+            return template.armor >= 0 ? 100f / (100f + template.armor) : 2f - (100f / (100f - template.armor));
         }
     }
 
@@ -62,16 +38,13 @@ public abstract class ClickableObject : MonoBehaviour
         globalObjectsList = new List<ClickableObject>();
     }
 
-    protected virtual void Awake()
+    protected override void Awake()
     {
-        selectionCircle = transform.Find("SelectionCircle").GetComponent<MeshRenderer>();
+        base.Awake();
         miniMapCircle = transform.Find("MiniMapCircle").GetComponent<MeshRenderer>();
         visionCircle = transform.Find("FieldOfView").GetComponent<MeshRenderer>();
-        modelHolder = transform.Find("Model");
         modelRenderers = modelHolder.GetComponentsInChildren<Renderer>();
         fieldOfView = transform.Find("FieldOfView").GetComponent<FieldOfView>();
-
-        SetLayers();
 
         template = template.Clone(); //we copy the template otherwise it's going to overwrite the original asset!
 
@@ -98,15 +71,15 @@ public abstract class ClickableObject : MonoBehaviour
     }
 
 #if UNITY_EDITOR
-    protected virtual void OnDrawGizmos()
+    protected override void OnDrawGizmos()
     {
-        if (selectionCircle == null)
-        {
-            selectionCircle = transform.Find("SelectionCircle")?.GetComponent<MeshRenderer>();
-        }
         if (fieldOfView == null)
         {
             fieldOfView = transform.Find("FieldOfView")?.GetComponent<FieldOfView>();
+        }
+        if (selectionCircle == null)
+        {
+            selectionCircle = transform.Find("SelectionCircle")?.GetComponent<MeshRenderer>();
         }
 
         if (!IsDeadOrNull(this) && template != null && fieldOfView != null)
@@ -135,30 +108,23 @@ public abstract class ClickableObject : MonoBehaviour
     }
 #endif
 
-    public static bool IsDeadOrNull(ClickableObject unit)
+    public new static bool IsDeadOrNull(InteractableObject unit)
     {
         if (unit is Unit)
         {
-            return Unit.IsDeadOrNull(unit);
+            return Unit.IsDeadOrNull(unit as Unit);
         }
         else if (unit is Building)
         {
-            return Building.IsDeadOrNull(unit);
+            return Building.IsDeadOrNull(unit as Building);
         }
-        else
+        else if(unit is ClickableObject)
         {
             return unit == null;
         }
-    }
-
-    protected static void SetLayers()
-    {
-        if (layerObjectsVisible == -1)
+        else
         {
-            layerObjectsVisible = LayerMask.NameToLayer("Units");
-            layerObjectsHidden = LayerMask.NameToLayer("Units Hidden");
-            layerMiniMapVisible = LayerMask.NameToLayer("MiniMap Only");
-            layerMiniMapHidden = LayerMask.NameToLayer("MiniMap Hidden");
+            return InteractableObject.IsDeadOrNull(unit as InteractableObject);
         }
     }
 
@@ -215,48 +181,7 @@ public abstract class ClickableObject : MonoBehaviour
         miniMapCircle.SetPropertyBlock(materialPropertyBlock);
     }
 
-    public virtual void SetVisibility(bool visibility, bool force = false)
-    {
-        if (!force && visibility == visible)
-        {
-            return;
-        }
-
-        visible = visibility;
-
-        GameObject[] parts = GetComponentsInChildren<Transform>().Where(form =>
-            form.gameObject.layer == layerObjectsVisible ||
-            form.gameObject.layer == layerObjectsHidden ||
-            form.gameObject.layer == layerMiniMapVisible ||
-            form.gameObject.layer == layerMiniMapHidden
-        ).Select(form => form.gameObject).ToArray();
-
-        foreach (GameObject part in parts)
-        {
-            if (part.layer == layerObjectsVisible || part.layer == layerObjectsHidden)
-            {
-                if (visibility)
-                {
-                    part.layer = layerObjectsVisible;
-                }
-                else
-                {
-                    part.layer = layerObjectsHidden;
-                }
-            }
-            else
-            {
-                if (visibility)
-                {
-                    part.layer = layerMiniMapVisible;
-                }
-                else
-                {
-                    part.layer = layerMiniMapHidden;
-                }
-            }
-        }
-    }
+    
 
     public float GetSelectionCircleSize()
     {
@@ -288,8 +213,24 @@ public abstract class ClickableObject : MonoBehaviour
         selectionCircle.SetPropertyBlock(materialPropertyBlock);
     }
 
+    public override void SufferAttack(int damage)
+    {
+        if (template.health <= 0)
+        {
+            return;
+        }
+
+        damage = Mathf.RoundToInt(damage * damageReductionMuliplier);
+        template.health -= damage;
+
+        if (template.health <= 0)
+        {
+            Die();
+        }
+    }
+
     //called in SufferAttack, but can also be from a Timeline clip
-    protected virtual void Die()
+    protected override void Die()
     {
         template.health = 0;
 
@@ -309,22 +250,6 @@ public abstract class ClickableObject : MonoBehaviour
         selectionCircle.enabled = false;
         miniMapCircle.enabled = false;
         GetComponent<Collider>().enabled = false; //will make it unselectable on click
-    }
-
-    public virtual void SufferAttack(int damage)
-    {
-        if (template.health <= 0)
-        {
-            return;
-        }
-
-        damage = Mathf.RoundToInt(damage * damageReductionMuliplier);
-        template.health -= damage;
-
-        if (template.health <= 0)
-        {
-            Die();
-        }
     }
 
     protected IEnumerator VisionFade(float fadeTime, bool fadeOut)

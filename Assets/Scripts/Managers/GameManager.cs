@@ -247,7 +247,7 @@ public class GameManager : Singleton<GameManager>
         IssueCommand(newCommand, followUpCommand);
     }
 
-    public void AttackTarget(ClickableObject targetUnit, bool followUpCommand)
+    public void AttackTarget(InteractableObject targetUnit, bool followUpCommand)
     {
         AICommand newCommand = new AICommand(AICommand.CommandType.AttackTarget, targetUnit);
         IssueCommand(newCommand, followUpCommand);

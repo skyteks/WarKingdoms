@@ -38,7 +38,7 @@ public class InputManager : Singleton<InputManager>
 
     private const float CLICK_TOLERANCE = .5f; //the player has this time to release the mouse button for it to be registered as a click
 
-    public bool buildingPlacementInitiated { get; set;}
+    public bool buildingPlacementInitiated { get; set; }
 
     void Awake()
     {
@@ -175,13 +175,13 @@ public class InputManager : Singleton<InputManager>
                     bool moveCommand = false;
                     if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitsLayerMask))
                     {
-                        ClickableObject targetUnit = hit.collider.GetComponent<ClickableObject>();
+                        InteractableObject targetUnit = hit.collider.GetComponent<InteractableObject>();
                         if (targetUnit != null)
                         {
                             bool followUpCommand = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
                             bool forceCommand = Input.GetKey(KeyCode.LeftControl);
                             bool attackCommand = Input.GetButton("Attack");
-                            if (!FactionTemplate.IsAlliedWith(targetUnit.faction, gameManager.playerFaction))
+                            if (targetUnit.GetType() == typeof(InteractableObject) || !FactionTemplate.IsAlliedWith((targetUnit as ClickableObject).faction, gameManager.playerFaction))
                             {
                                 gameManager.AttackTarget(targetUnit, followUpCommand);
                                 Debug.DrawLine(ray.origin, hit.point, Color.red, 1f);

@@ -12,12 +12,12 @@ public class RandomizeTree : MonoBehaviour
     public GameObject trunk;
 
     private Transform modelHolder;
-    private Transform treeHolder;
+    private Transform modelHolder2;
 
     void Awake()
     {
         modelHolder = transform.Find("Model");
-        treeHolder = modelHolder.Find("TreeHolder");
+        modelHolder2 = transform.Find("Model2");
     }
 
     void Start()
@@ -68,12 +68,12 @@ public class RandomizeTree : MonoBehaviour
         }
 
         GameObject trunkPrefab = SelectRandomElement(trunkPrefabs);
-        trunk = Instantiate(trunkPrefab, modelHolder.position, GetRandomYAxisRotation(), modelHolder);
+        trunk = Instantiate(trunkPrefab, modelHolder2.position, GetRandomYAxisRotation(), modelHolder2);
         trunk.transform.localScale = Vector3.one * scale;
-        trunk.layer = modelHolder.gameObject.layer;
+        trunk.layer = modelHolder2.gameObject.layer;
 
         GameObject treePrefab = SelectRandomElement(treePrefabs);
-        tree = Instantiate(treePrefab, treeHolder.position, GetRandomYAxisRotation(), treeHolder);
+        tree = Instantiate(treePrefab, modelHolder.position, GetRandomYAxisRotation(), modelHolder);
         tree.transform.localScale = Vector3.one * scale;
         tree.layer = modelHolder.gameObject.layer;
     }

@@ -27,11 +27,10 @@ public class Unit : ClickableObject
     protected bool commandRecieved, commandExecuted;
     protected UnitStates? switchState;
 
-    protected ClickableObject targetOfAttack;
+    protected InteractableObject targetOfAttack;
     protected Vector3? targetOfMovement;
 
     private readonly float combatReadySwitchTime = 7f;
-    private readonly float decayIntoGroundDistance = 2f;
 
     private Coroutine lerpingCombatReady;
 
@@ -82,7 +81,7 @@ public class Unit : ClickableObject
     }
 #endif
 
-    public new static bool IsDeadOrNull(ClickableObject unit)
+    public static new bool IsDeadOrNull(InteractableObject unit)
     {
         return unit == null || ((unit is Unit) ? (unit as Unit).state == UnitStates.Dead : ClickableObject.IsDeadOrNull(unit));
     }
@@ -390,18 +389,6 @@ public class Unit : ClickableObject
         }
     }
 
-    private IEnumerator DecayIntoGround()
-    {
-        yield return Yielders.Get(5f);
-        float startY = transform.position.y;
-        while (modelHolder.position.y > startY - decayIntoGroundDistance)
-        {
-            modelHolder.position += Vector3.down * Time.deltaTime * 0.1f;
-            yield return null;
-        }
-        Destroy(gameObject);
-    }
-
     public void AdjustModelAngleToGround()
     {
         Ray ray = new Ray(selectionCircle.transform.position + Vector3.up * 0.1f, Vector3.down);
@@ -497,7 +484,7 @@ public class Unit : ClickableObject
         }
 
         Projectile projectileInstance = Instantiate(template.projectile, projectileFirePoint.position, projectileFirePoint.rotation).GetComponent<Projectile>();
-        projectileInstance.LaunchAt(targetOfAttack.fieldOfView.transform, damage, this);
+        projectileInstance.LaunchAt(targetOfAttack.transform, damage, this);
     }
 
     //called by an attacker

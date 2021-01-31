@@ -6,7 +6,6 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshObstacle))]
 public class Building : ClickableObject
 {
-
     public enum BuildingStates
     {
         Idleing,
@@ -40,21 +39,9 @@ public class Building : ClickableObject
         base.Start();
     }
 
-    public new static bool IsDeadOrNull(ClickableObject unit)
+    public static new bool IsDeadOrNull(InteractableObject unit)
     {
         return unit == null || ((unit is Building) ? (unit as Building).state == BuildingStates.Dead : ClickableObject.IsDeadOrNull(unit));
-    }
-
-    protected IEnumerator DecayIntoGround()
-    {
-        float startY = transform.position.y;
-        float depth = 5f;
-        while (transform.position.y > startY - depth)
-        {
-            transform.position += Vector3.down * Time.deltaTime * 0.1f;
-            yield return null;
-        }
-        Destroy(gameObject);
     }
 
     public override void SetVisibility(bool visibility, bool force = false)
@@ -162,10 +149,11 @@ public class Building : ClickableObject
 
         faction.buildings.Remove(this);
 
+        navMeshObstacle.enabled = false;
+
         //Remove unneeded Components
         StartCoroutine(HideSeenThings(visionFadeTime));
         StartCoroutine(VisionFade(visionFadeTime, true));
-        navMeshObstacle.enabled = false;
         StartCoroutine(DecayIntoGround());
     }
 }
