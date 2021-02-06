@@ -11,12 +11,12 @@ public class RandomizeTree : MonoBehaviour
     public GameObject tree;
     public GameObject trunk;
 
-    private Transform modelHolder;
-    private Transform modelHolder2;
+    private Transform modelHolder, modelHolder2, treeHolder;
 
     void Awake()
     {
         modelHolder = transform.Find("Model");
+        treeHolder = modelHolder.GetChild(0);
         modelHolder2 = transform.Find("Model2");
     }
 
@@ -50,7 +50,7 @@ public class RandomizeTree : MonoBehaviour
             Debug.LogWarning("Cannot randomize Prefab during edit mode");
             return;
         }
-        if (modelHolder == null)
+        if (modelHolder == null || treeHolder == null)
         {
             throw new System.NullReferenceException();
         }
@@ -67,13 +67,16 @@ public class RandomizeTree : MonoBehaviour
             Destroy(tree);
         }
 
-        GameObject trunkPrefab = SelectRandomElement(trunkPrefabs);
-        trunk = Instantiate(trunkPrefab, modelHolder2.position, GetRandomYAxisRotation(), modelHolder2);
-        trunk.transform.localScale = Vector3.one * scale;
-        trunk.layer = modelHolder2.gameObject.layer;
+        if (modelHolder2 != null)
+        {
+            GameObject trunkPrefab = SelectRandomElement(trunkPrefabs);
+            trunk = Instantiate(trunkPrefab, modelHolder2.position, GetRandomYAxisRotation(), modelHolder2);
+            trunk.transform.localScale = Vector3.one * scale;
+            trunk.layer = modelHolder2.gameObject.layer;
+        }
 
         GameObject treePrefab = SelectRandomElement(treePrefabs);
-        tree = Instantiate(treePrefab, modelHolder.position, GetRandomYAxisRotation(), modelHolder);
+        tree = Instantiate(treePrefab, modelHolder.position, GetRandomYAxisRotation(), treeHolder);
         tree.transform.localScale = Vector3.one * scale;
         tree.layer = modelHolder.gameObject.layer;
     }

@@ -21,7 +21,7 @@ public class InteractableObject : MonoBehaviour
     private NavMeshObstacle navObstacle;
     public int health;
 
-    protected readonly float decayIntoGroundDistance = 7f;
+    protected readonly float decayIntoGroundDistance = -7f;
 
 
     public float sizeRadius
@@ -169,11 +169,10 @@ public class InteractableObject : MonoBehaviour
     protected IEnumerator DecayIntoGround()
     {
         yield return Yielders.Get(5f);
-        float startY = transform.position.y;
-        float depth = decayIntoGroundDistance;
-        while (modelHolder.position.y > startY - depth)
+        while (modelHolder.localPosition.y > decayIntoGroundDistance)
         {
-            modelHolder.position += Vector3.down * Time.deltaTime * 0.1f;
+            modelHolder.Translate(Vector3.down * Time.deltaTime * 0.1f, Space.World);
+            print(modelHolder.localPosition);
             yield return null;
         }
         Destroy(gameObject);
