@@ -172,7 +172,6 @@ public class InteractableObject : MonoBehaviour
         while (modelHolder.localPosition.y > decayIntoGroundDistance)
         {
             modelHolder.Translate(Vector3.down * Time.deltaTime * 0.1f, Space.World);
-            print(modelHolder.localPosition);
             yield return null;
         }
         Destroy(gameObject);

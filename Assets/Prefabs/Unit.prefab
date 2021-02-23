@@ -73,12 +73,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c750a88ea93938444a4639fd2d42858a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visible: 0
+  visionFadeTime: 1
+  health: 0
   drawViewDistance: 0
   drawEngageDistance: 0
   faction: {fileID: 0}
-  visible: 0
   template: {fileID: 11400000, guid: 7eaf13cc549d085438c8b48343ae395c, type: 2}
-  visionFadeTime: 1
   fieldOfView: {fileID: 114716483690880562}
   state: 0
   projectileFirePoint: {fileID: 0}
@@ -444,7 +445,7 @@ MonoBehaviour:
     m_Bits: 98304
   obstacleMask:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 2304
   meshResolution: 0.05
   edgeResolveIterations: 4
   edgeDistanceTreshholdDegrees: 80

@@ -111,7 +111,7 @@ public class InputManager : Singleton<InputManager>
                         }
 
                         //consider the mouse release as the end of a box selection
-                        List<Unit> allSelectables = new List<Unit>(gameManager.playerFaction.units);
+                        List<Unit> allSelectables = new List<Unit>(gameManager.playerFaction.data.units);
                         for (int i = allSelectables.Count - 1; i >= 0; i--)
                         {
                             Vector2 screenPos = mainCamera.WorldToScreenPoint(allSelectables[i].transform.position);
@@ -253,7 +253,7 @@ public class InputManager : Singleton<InputManager>
                     if (mouseMovesCamera)
                     {
                         //This check doesn't allow the camera to move with the mouse if we're currently framing a platoon
-                        if (!cameraManager.isFramingPlatoon)
+                        if (Application.isFocused && !cameraManager.isFramingPlatoon)
                         {
                             if (Input.mousePosition.x >= Screen.width - panBorderThickness)
                             {

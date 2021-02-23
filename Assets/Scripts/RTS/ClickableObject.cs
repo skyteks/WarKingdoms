@@ -54,6 +54,7 @@ public abstract class ClickableObject : InteractableObject
     protected virtual void Start()
     {
         visionCircle.material.color = visionCircle.material.color.ToWithA(0f);
+
         if (FactionTemplate.IsAlliedWith(faction, GameManager.Instance.playerFaction))
         {
             StartCoroutine(VisionFade(visionFadeTime, false));
@@ -68,6 +69,7 @@ public abstract class ClickableObject : InteractableObject
     protected virtual void Update()
     {
         UpdateMinimapUI();
+        UpdateMaterialTeamColor();
     }
 
 #if UNITY_EDITOR
@@ -118,7 +120,7 @@ public abstract class ClickableObject : InteractableObject
         {
             return Building.IsDeadOrNull(unit as Building);
         }
-        else if(unit is ClickableObject)
+        else if (unit is ClickableObject)
         {
             return unit == null;
         }
@@ -128,23 +130,23 @@ public abstract class ClickableObject : InteractableObject
         }
     }
 
-    protected void SetColorMaterial()
+    protected void UpdateMaterialTeamColor()
     {
+        Shader teamcolorShader = GameManager.Instance.teamcolorShader;
+
         foreach (Renderer render in modelRenderers)
         {
-            //render.materials[render.materials.Length - 1].SetColor("_TeamColor", faction.color);
-
-#if UNITY_EDITOR
-            if (!faction.renderers.Contains(render))
+            for (int i = 0; i < render.sharedMaterials.Length; i++)
             {
-                faction.renderers.Add(render);
-            }
-#endif
+                if (render.sharedMaterials[i].shader == teamcolorShader)
+                {
+                    //faction.AddRendererForTeamColorChange(render);
 
-            MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
-            render.GetPropertyBlock(materialPropertyBlock, render.materials.Length - 1);
-            materialPropertyBlock.SetColor("_TeamColor", faction.color);
-            render.SetPropertyBlock(materialPropertyBlock);
+                    Color tmpColor = faction.GetColorForColorMode();
+                    FactionTemplate.ChangeTeamcolorOnRenderer(render, tmpColor, teamcolorShader);
+                    break;
+                }
+            }
         }
     }
 
@@ -180,8 +182,6 @@ public abstract class ClickableObject : InteractableObject
         materialPropertyBlock.SetColor("_Color", newColor);
         miniMapCircle.SetPropertyBlock(materialPropertyBlock);
     }
-
-    
 
     public float GetSelectionCircleSize()
     {

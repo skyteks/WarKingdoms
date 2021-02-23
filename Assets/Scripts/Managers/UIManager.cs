@@ -55,8 +55,8 @@ public class UIManager : Singleton<UIManager>
 
         if (resourceGoldText != null && resourceWoodText != null)
         {
-            resourceGoldText.text = gameManager.playerFaction.resourceGold.ToString();
-            resourceWoodText.text = gameManager.playerFaction.resourceWood.ToString();
+            resourceGoldText.text = gameManager.playerFaction.data.resourceGold.ToString();
+            resourceWoodText.text = gameManager.playerFaction.data.resourceWood.ToString();
         }
     }
 

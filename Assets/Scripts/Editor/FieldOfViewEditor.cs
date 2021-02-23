@@ -10,6 +10,7 @@ public class FieldOfViewEditor : Editor
     {
         fow = (target as FieldOfView);
     }
+
     public void OnSceneGUI()
     {
         Handles.color = Color.white;

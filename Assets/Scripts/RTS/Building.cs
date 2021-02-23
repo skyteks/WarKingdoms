@@ -29,9 +29,9 @@ public class Building : ClickableObject
 
     protected override void Start()
     {
-        faction.buildings.Add(this);
+        faction.data.buildings.Add(this);
 
-        SetColorMaterial();
+        UpdateMaterialTeamColor();
 
         //Set some defaults, including the default state
         SetSelected(false);
@@ -147,7 +147,7 @@ public class Building : ClickableObject
 
         TriggerBurnEffects();
 
-        faction.buildings.Remove(this);
+        faction.data.buildings.Remove(this);
 
         navMeshObstacle.enabled = false;
 

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7627239252029561161}
   - component: {fileID: 3132742349593503001}
-  m_Layer: 15
+  m_Layer: 11
   m_Name: TreeHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60,7 +60,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3456780954476299781}
-  m_Layer: 15
+  m_Layer: 11
   m_Name: Model2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 4618663024515716956}
   - component: {fileID: 927028363412737946}
   - component: {fileID: 9010686643518827369}
-  m_Layer: 15
+  m_Layer: 11
   m_Name: Tree
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -157,10 +157,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 3
+  m_Radius: 0.9
+  m_Height: 4
   m_Direction: 1
-  m_Center: {x: 0, y: 1.5, z: 0}
+  m_Center: {x: 0, y: 1.25, z: 0}
 --- !u!208 &927028363412737946
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -171,7 +171,7 @@ NavMeshObstacle:
   m_Enabled: 1
   serializedVersion: 3
   m_Shape: 0
-  m_Extents: {x: 0.5, y: 1.5, z: 0.5}
+  m_Extents: {x: 0.6, y: 1.5, z: 0.6}
   m_MoveThreshold: 0.1
   m_Carve: 1
   m_CarveOnlyStationary: 1
@@ -191,7 +191,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   visible: 0
   visionFadeTime: 1
-  health: 100
+  health: 20
 --- !u!1 &5515676909922485871
 GameObject:
   m_ObjectHideFlags: 0
@@ -201,7 +201,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6285566200773828899}
-  m_Layer: 15
+  m_Layer: 11
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -234,7 +234,7 @@ GameObject:
   - component: {fileID: 7611854563502026128}
   - component: {fileID: 1745881859431555308}
   - component: {fileID: 8035194117706701815}
-  m_Layer: 15
+  m_Layer: 11
   m_Name: SelectionCircle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -317,7 +317,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1714578993842934, guid: 043ee1a309ef85e40a8f52258abc3fe1, type: 3}
       propertyPath: m_Layer
-      value: 15
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 4426588212140668, guid: 043ee1a309ef85e40a8f52258abc3fe1, type: 3}
       propertyPath: m_RootOrder
@@ -358,15 +358,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1204425539486282, guid: 4c2d06bc77c400249b350379cb2e1902, type: 3}
       propertyPath: m_Layer
-      value: 15
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 1275475996420540, guid: 4c2d06bc77c400249b350379cb2e1902, type: 3}
       propertyPath: m_Layer
-      value: 15
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 1282016192898524, guid: 4c2d06bc77c400249b350379cb2e1902, type: 3}
       propertyPath: m_Layer
-      value: 15
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 1385833959991336, guid: 4c2d06bc77c400249b350379cb2e1902, type: 3}
       propertyPath: m_Name
@@ -378,11 +378,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1385833959991336, guid: 4c2d06bc77c400249b350379cb2e1902, type: 3}
       propertyPath: m_Layer
-      value: 15
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 1819531382579176, guid: 4c2d06bc77c400249b350379cb2e1902, type: 3}
       propertyPath: m_Layer
-      value: 15
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 4618395436443616, guid: 4c2d06bc77c400249b350379cb2e1902, type: 3}
       propertyPath: m_RootOrder

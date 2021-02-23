@@ -43,9 +43,9 @@ public class Unit : ClickableObject
 
     protected override void Start()
     {
-        faction.units.Add(this);
+        faction.data.units.Add(this);
 
-        SetColorMaterial();
+        UpdateMaterialTeamColor();
 
         //Set some defaults, including the default state
         SetSelected(false);
@@ -345,7 +345,7 @@ public class Unit : ClickableObject
         GameManager.Instance.RemoveFromSelection(this);
         SetSelected(false);
 
-        faction.units.Remove(this);
+        faction.data.units.Remove(this);
 
         //Remove unneeded Components
         StartCoroutine(HideSeenThings(visionFadeTime));

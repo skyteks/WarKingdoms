@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -28,73 +27,110 @@ public class FactionTemplate : ScriptableObject
         WoodElf,
     }
 
+    [System.Serializable]
+    public class FactionInfo
+    {
+        public byte allianceId = 0;
+
+        public List<Unit> units { get; private set; }
+        public List<Building> buildings { get; private set; }
+
+        public List<Renderer> renderersTeamcolor;
+
+        public int resourceGold { get; set; }
+        public int resourceWood { get; set; }
+
+        public FactionInfo()
+        {
+            units = new List<Unit>();
+            buildings = new List<Building>();
+
+            renderersTeamcolor = new List<Renderer>();
+        }
+    }
+
     public FactionColor factionColorName = FactionColor.black;
     public Color color = Color.black;
 
-    public byte allianceId;
-
-    public List<Unit> units { get; private set; }
-    public List<Building> buildings { get; private set; }
-#if UNITY_EDITOR
-    public List<Renderer> renderers { get; private set; }
-#endif
-
-    public int resourceGold = 0;
-    public int resourceWood = 0;
+    public FactionInfo data;
 
     void OnEnable()
     {
-        units = new List<Unit>();
-        buildings = new List<Building>();
-        renderers = new List<Renderer>();
+        data = new FactionInfo();
     }
 
     void OnDisable()
     {
-        units = new List<Unit>();
-        buildings = new List<Building>();
-        renderers = new List<Renderer>();
+        data = null;
+    }
+
+    public Color GetColorForColorMode()
+    {
+        GameManager gameManager = GameManager.Instance;
+        UIManager uiManager = UIManager.Instance;
+
+
+        Color newColor = Color.clear;
+        switch (uiManager.minimapColoringMode)
+        {
+            case UIManager.MinimapColoringModes.FriendFoe:
+                if (this == gameManager.playerFaction)
+                {
+                    newColor = Color.green;
+                }
+                else if (IsAlliedWith(this, gameManager.playerFaction))
+                {
+                    newColor = Color.yellow;
+                }
+                else
+                {
+                    newColor = Color.red;
+                }
+                break;
+            case UIManager.MinimapColoringModes.Teamcolor:
+                newColor = color;
+                break;
+        }
+        return newColor;
+    }
+
+    public void SetTeamColorToRenderers()
+    {
+        Shader teamcolorShader = GameManager.Instance.teamcolorShader;
+        Color tmpColor = GetColorForColorMode();
+
+        foreach (var render in data.renderersTeamcolor)
+        {
+            ChangeTeamcolorOnRenderer(render, tmpColor, teamcolorShader);
+        }
+    }
+
+    public void AddRendererForTeamColorChange(Renderer render)
+    {
+        data.renderersTeamcolor.Add(render);
+
+        Shader teamcolorShader = GameManager.Instance.teamcolorShader;
+        Color tmpColor = GetColorForColorMode();
+
+        ChangeTeamcolorOnRenderer(render, tmpColor, teamcolorShader);
+    }
+
+    public static void ChangeTeamcolorOnRenderer(Renderer render, Color color, Shader teamcolorShader)
+    {
+        for (int i = 0; i < render.sharedMaterials.Length; i++)
+        {
+            if (render.sharedMaterials[i].shader == teamcolorShader)
+            {
+                MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
+                render.GetPropertyBlock(materialPropertyBlock, i);
+                materialPropertyBlock.SetColor("_TeamColor", color);
+                render.SetPropertyBlock(materialPropertyBlock);
+            }
+        }
     }
 
     public static bool IsAlliedWith(FactionTemplate faction1, FactionTemplate faction2)
     {
-        if (faction1 != faction2 && (faction1 == null || faction2 == null || faction1.allianceId == 0 || faction2.allianceId == 0))
-        {
-            return false;
-        }
-        return faction1.allianceId == faction2.allianceId;
+        return faction1 != faction2 && (faction1 == null || faction2 == null || faction1.data.allianceId == 0 || faction2.data.allianceId == 0) ? false : faction1.data.allianceId == faction2.data.allianceId;
     }
-
-#if UNITY_EDITOR
-    [ContextMenu("Start Teamcolor Updating Coroutine")]
-    private void StartUpdatingCoroutine()
-    {
-        if (Application.isPlaying)
-        {
-            GameManager.Instance.StartCoroutine(UpdatingCoroutine());
-        }
-    }
-
-    private IEnumerator UpdatingCoroutine()
-    {
-        for (; ; )
-        {
-            yield return null;
-            UpdateTeamcolorMaterials();
-        }
-    }
-
-    [ContextMenu("Update Teamcolor Materials")]
-    private void UpdateTeamcolorMaterials()
-    {
-        foreach (Renderer render in renderers)
-        {
-            MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
-            render.GetPropertyBlock(materialPropertyBlock, render.materials.Length - 1);
-            materialPropertyBlock.SetColor("_TeamColor", color);
-            render.SetPropertyBlock(materialPropertyBlock);
-        }
-    }
-#endif
-
 }

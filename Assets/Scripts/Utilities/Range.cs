@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-[System.Serializable]
+[Serializable]
 public struct Range : IEquatable<Range>
 {
     public float min;

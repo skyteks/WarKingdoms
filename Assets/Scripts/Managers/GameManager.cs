@@ -26,8 +26,11 @@ public class GameManager : Singleton<GameManager>
     public GameMode gameMode = GameMode.Gameplay;
     public SelectionOnType selectionOnType = SelectionOnType.Units;
 
-    public FactionTemplate playerFaction;
+    public int playerFactionIndex;
     public List<FactionTemplate> factions;
+    public FactionTemplate playerFaction { get { return factions[playerFactionIndex]; } }
+
+    public Shader teamcolorShader;
 
     public int startResourceGold = 300;
     public int startResourceWood = 0;
@@ -46,15 +49,17 @@ public class GameManager : Singleton<GameManager>
             Application.targetFrameRate = 30;//just to keep things "smooth" during presentations
         }
 #endif
-        if (playerFaction == null)
-        {
-            Debug.LogError("No player faction set", this);
-        }
 
-        foreach (FactionTemplate faction in factions)
+    }
+
+    void Start()
+    {
+        foreach (var faction in factions)
         {
-            faction.resourceGold = startResourceGold;
-            faction.resourceWood = startResourceWood;
+            //faction.SetTeamColorToRenderers();
+
+            faction.data.resourceGold = startResourceGold;
+            faction.data.resourceWood = startResourceWood;
         }
     }
 
@@ -63,7 +68,15 @@ public class GameManager : Singleton<GameManager>
         base.OnDestroy();
         foreach (FactionTemplate faction in factions)
         {
-            faction.units.Clear();
+            faction.data.units.Clear();
+        }
+    }
+
+    public void UpdateTeamColorMaterials()
+    {
+        foreach (var faction in factions)
+        {
+            faction.SetTeamColorToRenderers();
         }
     }
 
