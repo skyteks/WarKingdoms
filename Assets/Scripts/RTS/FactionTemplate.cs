@@ -35,16 +35,20 @@ public class FactionTemplate : ScriptableObject
         public List<Unit> units { get; private set; }
         public List<Building> buildings { get; private set; }
 
-        public List<Renderer> renderersTeamcolor;
+        public List<Renderer> renderersTeamcolor { get; private set; }
 
         public int resourceGold { get; set; }
         public int resourceWood { get; set; }
 
         public FactionInfo()
         {
+            ResetLists();
+        }
+
+        public void ResetLists()
+        {
             units = new List<Unit>();
             buildings = new List<Building>();
-
             renderersTeamcolor = new List<Renderer>();
         }
     }
@@ -56,48 +60,22 @@ public class FactionTemplate : ScriptableObject
 
     void OnEnable()
     {
-        data = new FactionInfo();
+        //data = new FactionInfo();
+        data.ResetLists();
     }
 
     void OnDisable()
     {
-        data = null;
+        //data = null;
     }
 
-    public Color GetColorForColorMode()
-    {
-        GameManager gameManager = GameManager.Instance;
-        UIManager uiManager = UIManager.Instance;
-
-
-        Color newColor = Color.clear;
-        switch (uiManager.minimapColoringMode)
-        {
-            case UIManager.MinimapColoringModes.FriendFoe:
-                if (this == gameManager.playerFaction)
-                {
-                    newColor = Color.green;
-                }
-                else if (IsAlliedWith(this, gameManager.playerFaction))
-                {
-                    newColor = Color.yellow;
-                }
-                else
-                {
-                    newColor = Color.red;
-                }
-                break;
-            case UIManager.MinimapColoringModes.Teamcolor:
-                newColor = color;
-                break;
-        }
-        return newColor;
-    }
+    
 
     public void SetTeamColorToRenderers()
     {
         Shader teamcolorShader = GameManager.Instance.teamcolorShader;
-        Color tmpColor = GetColorForColorMode();
+        UIManager uiManager = UIManager.Instance;
+        Color tmpColor = uiManager.GetFactionColorForColorMode(this);
 
         foreach (var render in data.renderersTeamcolor)
         {
@@ -110,7 +88,8 @@ public class FactionTemplate : ScriptableObject
         data.renderersTeamcolor.Add(render);
 
         Shader teamcolorShader = GameManager.Instance.teamcolorShader;
-        Color tmpColor = GetColorForColorMode();
+        UIManager uiManager = UIManager.Instance;
+        Color tmpColor = uiManager.GetFactionColorForColorMode(this);
 
         ChangeTeamcolorOnRenderer(render, tmpColor, teamcolorShader);
     }

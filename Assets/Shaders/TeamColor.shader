@@ -64,11 +64,11 @@
                     c.rgb = c.rgb * teamColor;
                 }
             }
-            else if (_Mode == 1) // 2x multiply
+            else if (_Mode == 1) // overtune lerp multiply
             {
                 if (m.r > _TeamColorCutoff)
                 {
-                    c.rgb = 2 * c.rgb * lerp( 1, teamColor, m.r );
+                    c.rgb = 1.5 * c.rgb * lerp( 1, teamColor, m.r );
                 }
             }
             else if (_Mode == 2) // 0.75 blend

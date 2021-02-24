@@ -133,6 +133,7 @@ public abstract class ClickableObject : InteractableObject
     protected void UpdateMaterialTeamColor()
     {
         Shader teamcolorShader = GameManager.Instance.teamcolorShader;
+        UIManager uiManager = UIManager.Instance;
 
         foreach (Renderer render in modelRenderers)
         {
@@ -142,7 +143,7 @@ public abstract class ClickableObject : InteractableObject
                 {
                     //faction.AddRendererForTeamColorChange(render);
 
-                    Color tmpColor = faction.GetColorForColorMode();
+                    Color tmpColor = uiManager.GetFactionColorForColorMode(faction);
                     FactionTemplate.ChangeTeamcolorOnRenderer(render, tmpColor, teamcolorShader);
                     break;
                 }
@@ -152,30 +153,8 @@ public abstract class ClickableObject : InteractableObject
 
     protected void UpdateMinimapUI()
     {
-        GameManager gameManager = GameManager.Instance;
         UIManager uiManager = UIManager.Instance;
-
-        Color newColor = Color.clear;
-        switch (uiManager.minimapColoringMode)
-        {
-            case UIManager.MinimapColoringModes.FriendFoe:
-                if (faction == gameManager.playerFaction)
-                {
-                    newColor = Color.green;
-                }
-                else if (FactionTemplate.IsAlliedWith(faction, gameManager.playerFaction))
-                {
-                    newColor = Color.yellow;
-                }
-                else
-                {
-                    newColor = Color.red;
-                }
-                break;
-            case UIManager.MinimapColoringModes.Teamcolor:
-                newColor = faction.color;
-                break;
-        }
+        Color newColor = uiManager.GetFactionColorForColorMode(faction);
 
         MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
         miniMapCircle.GetPropertyBlock(materialPropertyBlock, 0);
@@ -190,26 +169,13 @@ public abstract class ClickableObject : InteractableObject
 
     public void SetSelected(bool selected)
     {
-        //Set transparency dependent on selection
-        GameManager gameManager = GameManager.Instance;
-        Color newColor = Color.clear;
-        if (faction == gameManager.playerFaction)
-        {
-            newColor = Color.green;
-        }
-        else if (FactionTemplate.IsAlliedWith(faction, gameManager.playerFaction))
-        {
-            newColor = Color.yellow;
-        }
-        else
-        {
-            newColor = Color.red;
-        }
-        newColor.a = selected ? 1f : 0.3f;
+        UIManager uiManager = UIManager.Instance;
+
+        Color tmpColor = uiManager.GetUIColorForColorMode(faction, selected);
 
         MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
         selectionCircle.GetPropertyBlock(materialPropertyBlock, 0);
-        materialPropertyBlock.SetColor("_Color", newColor);
+        materialPropertyBlock.SetColor("_Color", tmpColor);
         selectionCircle.SetPropertyBlock(materialPropertyBlock);
     }
 

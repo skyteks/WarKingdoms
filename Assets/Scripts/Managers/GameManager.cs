@@ -49,7 +49,6 @@ public class GameManager : Singleton<GameManager>
             Application.targetFrameRate = 30;//just to keep things "smooth" during presentations
         }
 #endif
-
     }
 
     void Start()

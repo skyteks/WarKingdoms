@@ -9,14 +9,13 @@ public class UIManager : Singleton<UIManager>
 {
     public enum HealthbarColoringModes : int
     {
-        FriendFoe,
+        UnitColor,
         HealthPercentage,
-        Teamcolor,
     }
-    public enum MinimapColoringModes : int
+    public enum FactionColoringModes : int
     {
+        TeamColor,
         FriendFoe,
-        Teamcolor,
     }
 
     public Color healthColorGreen = Color.green;
@@ -26,9 +25,21 @@ public class UIManager : Singleton<UIManager>
 
     [Space]
 
+    public Color factionPlayerColor = Color.blue;
+    public Color factionAlliesColor = Color.cyan;
+    public Color factionEnemiesColor = Color.red;
+
+    [Space]
+
+    public Color uiPlayerColor = Color.green;
+    public Color uiAlliesColor = Color.yellow;
+    public Color uiEnemiesColor = Color.red;
+
+    [Space]
+
+    public FactionColoringModes factionColoringMode;
     public HealthbarColoringModes healthbarColoringMode;
     public bool showHealthbars;
-    public MinimapColoringModes minimapColoringMode;
 
     [Space]
 
@@ -64,6 +75,62 @@ public class UIManager : Singleton<UIManager>
     {
         UpdateSelection();
         UpdateHealthbars();
+    }
+
+    public Color GetFactionColorForColorMode(FactionTemplate faction, bool shiftUpOnLowGreyscale = false)
+    {
+        GameManager gameManager = GameManager.Instance;
+
+
+        Color tmpColor = Color.clear;
+        switch (factionColoringMode)
+        {
+            case UIManager.FactionColoringModes.FriendFoe:
+                if (faction == gameManager.playerFaction)
+                {
+                    tmpColor = factionPlayerColor;
+                }
+                else if (FactionTemplate.IsAlliedWith(faction, gameManager.playerFaction))
+                {
+                    tmpColor = factionAlliesColor;
+                }
+                else
+                {
+                    tmpColor = factionEnemiesColor;
+                }
+                break;
+            case UIManager.FactionColoringModes.TeamColor:
+                tmpColor = faction.color;
+                if (shiftUpOnLowGreyscale && tmpColor.grayscale < 0.2f)
+                {
+                    tmpColor = tmpColor.ToSumWithoutAlpha(Vector3.one * 0.28f);
+                }
+                break;
+        }
+        return tmpColor;
+    }
+
+    public Color GetUIColorForColorMode(FactionTemplate faction, bool selected)
+    {
+        GameManager gameManager = GameManager.Instance;
+
+
+        Color tmpColor = Color.clear;
+        if (faction == gameManager.playerFaction)
+        {
+            tmpColor = uiPlayerColor;
+        }
+        else if (FactionTemplate.IsAlliedWith(faction, gameManager.playerFaction))
+        {
+            tmpColor = uiAlliesColor;
+        }
+        else
+        {
+            tmpColor = uiEnemiesColor;
+        }
+        tmpColor.a = selected ? 1f : 0.3f;
+
+        return tmpColor;
     }
 
     public void ToggleSelectionRectangle(bool active)
@@ -167,29 +234,13 @@ public class UIManager : Singleton<UIManager>
         Transform[] children = healthbarsGroup.transform.GetChildren();
         foreach (var child in children)
         {
-            // scale bars according to camera zoom
-            //RectTransform rectTransform = child.GetComponent<RectTransform>();
-            //rectTransform.sizeDelta = new Vector2(100f * (1f / CameraManager.Instance.GetDifferenceToOptimalZoom() * 1.5f), rectTransform.sizeDelta.y);
-
             ClickableObject unit = child.GetComponent<UIAnchor>().objectToFollow.GetComponent<ClickableObject>();
             Image healthbarSlice = child.FindDeepChild("HealthbarSlice").GetComponent<Image>();
             healthbarSlice.fillAmount = (float)unit.template.health / (float)unit.template.original.health;
             switch (healthbarColoringMode)
             {
-                case HealthbarColoringModes.FriendFoe:
-                    GameManager gameManager = GameManager.Instance;
-                    if (unit.faction == gameManager.playerFaction)
-                    {
-                        healthbarSlice.color = healthColorGreen;
-                    }
-                    else if (FactionTemplate.IsAlliedWith(unit.faction, gameManager.playerFaction))
-                    {
-                        healthbarSlice.color = Color.yellow;
-                    }
-                    else
-                    {
-                        healthbarSlice.color = healthColorRed;
-                    }
+                case HealthbarColoringModes.UnitColor:
+                    healthbarSlice.color = GetFactionColorForColorMode(unit.faction, true);
                     break;
                 case HealthbarColoringModes.HealthPercentage:
                     if (healthbarSlice.fillAmount > 0.5f)
@@ -200,9 +251,6 @@ public class UIManager : Singleton<UIManager>
                     {
                         healthbarSlice.color = Color.Lerp(healthColorRed, healthColorOrange, healthbarSlice.fillAmount.LinearRemap(0f, 0.5f));
                     }
-                    break;
-                case HealthbarColoringModes.Teamcolor:
-                    healthbarSlice.color = unit.faction.color;
                     break;
             }
 

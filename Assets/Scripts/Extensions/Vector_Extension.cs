@@ -208,6 +208,22 @@ public static class Vector_Extension
         return color;
     }
 
+    public static Color ToSumWithoutAlpha(this Color color, Vector3 addition)
+    {
+        color.r += addition.x;
+        color.g += addition.y;
+        color.b += addition.z;
+        return color;
+    }
+
+    public static Color ToSumWithoutAlpha(this Color color, Color addition)
+    {
+        color.r += addition.r;
+        color.g += addition.g;
+        color.b += addition.b;
+        return color;
+    }
+
     public static bool IsNaN(this Vector2 vector)
     {
         return float.IsNaN(vector.x) || float.IsNaN(vector.y);

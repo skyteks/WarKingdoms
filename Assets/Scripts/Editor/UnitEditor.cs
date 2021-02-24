@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
-[CustomEditor(typeof(Unit))]
+[CustomEditor(typeof(Unit)), CanEditMultipleObjects]
 public class UnitEditor : Editor
 {
     private Unit unit;
@@ -16,10 +16,13 @@ public class UnitEditor : Editor
 
     void OnEnable()
     {
-        unit = (target as Unit);
-        reorderableList = new ReorderableList(unit.GetCommandList(), typeof(AICommand), false, true, false, false);
-        reorderableList.drawHeaderCallback += DrawHeaderCallBack;
-        reorderableList.drawElementCallback += DrawElementCallback;
+        if (targets.Length == 1)
+        {
+            unit = (target as Unit);
+            reorderableList = new ReorderableList(unit.GetCommandList(), typeof(AICommand), false, true, false, false);
+            reorderableList.drawHeaderCallback += DrawHeaderCallBack;
+            reorderableList.drawElementCallback += DrawElementCallback;
+        }
     }
 
     private void DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
@@ -58,21 +61,18 @@ public class UnitEditor : Editor
 
     public override void OnInspectorGUI()
     {
-        /*
-        using (var check = new EditorGUI.ChangeCheckScope())
-        {
-            if (check.changed)
-            {
-                EditorApplication.QueuePlayerLoopUpdate();
-            }
-        }
-        */
         DrawDefaultInspector();
         EditorGUILayout.Space();
-        reorderableList.DoLayoutList();
-        DrawTemplateEditor(unit.template, ref templateFoldout, ref templateEditor);
-        EditorPrefs.SetBool(nameof(templateFoldout), templateFoldout);
-
+        if (targets.Length == 1)
+        {
+            reorderableList.DoLayoutList();
+            DrawTemplateEditor(unit.template, ref templateFoldout, ref templateEditor);
+            EditorPrefs.SetBool(nameof(templateFoldout), templateFoldout);
+        }
+        else
+        {
+            EditorGUILayout.HelpBox("multi-select Commands Queue not supported", MessageType.Info, true);
+        }
     }
 
     void DrawTemplateEditor(Object obj, ref bool foldout, ref Editor editor)
