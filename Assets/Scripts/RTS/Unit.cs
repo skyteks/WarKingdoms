@@ -21,6 +21,7 @@ public class Unit : ClickableObject
     //references
     protected Animator animator;
     protected NavMeshAgent navMeshAgent;
+    protected ResourceCollector resourceCollector;
 
     protected List<AICommand> commandList = new List<AICommand>();
     protected bool agentReady = false;
@@ -39,6 +40,7 @@ public class Unit : ClickableObject
         base.Awake();
         navMeshAgent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        resourceCollector = GetComponent<ResourceCollector>();
     }
 
     protected override void Start()
@@ -467,6 +469,15 @@ public class Unit : ClickableObject
         else
         {
             targetOfAttack.SufferAttack(damage);
+            if (resourceCollector != null)
+            {
+                ResourceSource resourceSource = targetOfAttack.GetComponent<ResourceSource>();
+                if (resourceSource != null)
+                {
+                    int earnings = resourceSource.GetAmount(resourceCollector.woodPerHitEarnings);
+                    resourceCollector.AddResource(earnings, resourceSource.resourceType);
+                }
+            }
         }
     }
 
