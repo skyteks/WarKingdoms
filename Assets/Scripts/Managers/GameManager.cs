@@ -55,8 +55,6 @@ public class GameManager : Singleton<GameManager>
     {
         foreach (var faction in factions)
         {
-            //faction.SetTeamColorToRenderers();
-
             faction.data.resourceGold = startResourceGold;
             faction.data.resourceWood = startResourceWood;
         }
@@ -249,19 +247,19 @@ public class GameManager : Singleton<GameManager>
 
     public void MoveSelectedUnitsTo(Vector3 pos, bool followUpCommand)
     {
-        AICommand newCommand = new AICommand(AICommand.CommandType.MoveTo, pos);
+        AICommand newCommand = new AICommand(AICommand.CommandTypes.MoveTo, pos);
         IssueCommand(newCommand, followUpCommand);
     }
 
     public void AttackMoveSelectedUnitsTo(Vector3 pos, bool followUpCommand)
     {
-        AICommand newCommand = new AICommand(AICommand.CommandType.AttackMoveTo, pos);
+        AICommand newCommand = new AICommand(AICommand.CommandTypes.AttackMoveTo, pos);
         IssueCommand(newCommand, followUpCommand);
     }
 
     public void AttackTarget(InteractableObject targetUnit, bool followUpCommand)
     {
-        AICommand newCommand = new AICommand(AICommand.CommandType.AttackTarget, targetUnit);
+        AICommand newCommand = new AICommand(AICommand.CommandTypes.AttackTarget, targetUnit);
         IssueCommand(newCommand, followUpCommand);
     }
 

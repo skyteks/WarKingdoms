@@ -40,12 +40,12 @@ public class UnitEditor : Editor
         EditorGUI.EnumFlagsField(rects[0], command.commandType);
         switch (command.commandType)
         {
-            case AICommand.CommandType.AttackTarget:
+            case AICommand.CommandTypes.AttackTarget:
                 EditorGUI.ObjectField(rects[1], command.target, command.target.GetType(), true);
                 break;
-            case AICommand.CommandType.MoveTo:
-            case AICommand.CommandType.AttackMoveTo:
-            case AICommand.CommandType.Guard:
+            case AICommand.CommandTypes.MoveTo:
+            case AICommand.CommandTypes.AttackMoveTo:
+            case AICommand.CommandTypes.Guard:
                 EditorGUI.Vector3Field(rects[1], "", command.destination);
                 break;
             default:

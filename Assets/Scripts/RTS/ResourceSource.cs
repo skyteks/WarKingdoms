@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(InteractableObject))]
 public class ResourceSource : MonoBehaviour
 {
     public enum ResourceType
@@ -17,11 +18,18 @@ public class ResourceSource : MonoBehaviour
     public int maxStorage { get; private set; }
     public bool storeEqualToHealth;
 
+    private InteractableObject interactableObject;
+
+    void Awake()
+    {
+        interactableObject = GetComponent<InteractableObject>();
+    }
+
     void Start()
     {
         if (storeEqualToHealth)
         {
-            stored = GetComponent<InteractableObject>().health;
+            stored = interactableObject.health;
         }
         maxStorage = stored;
     }

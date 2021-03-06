@@ -2,14 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Unit))]
 public class ResourceCollector : MonoBehaviour
 {
     public int woodPerHitEarnings = 1;
 
     public int maxWood = 10;
     public int maxOre = 20;
-    public int storage { get; private set; }
-    public ResourceSource.ResourceType storedType { get; private set; }
+    [SerializeField]
+    [ReadOnly]
+    private ResourceSource.ResourceType storedType;
+    [SerializeField]
+    [ReadOnly]
+    private int storage;
 
     public void AddResource(int amount, ResourceSource.ResourceType type)
     {

@@ -68,7 +68,7 @@ public class Rekruiting : MonoBehaviour
             Unit unitInstance = unitGameObject.GetComponent<Unit>();
             unitInstance.faction = building.faction;
 
-            AICommand moveToWaypoint = new AICommand(AICommand.CommandType.MoveTo, waypointPos);
+            AICommand moveToWaypoint = new AICommand(AICommand.CommandTypes.MoveTo, waypointPos);
             unitInstance.AddCommand(moveToWaypoint, true);
             return unitInstance;
         }

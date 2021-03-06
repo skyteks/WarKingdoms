@@ -64,7 +64,7 @@ public class Platoon : MonoBehaviour
 #if UNITY_EDITOR
         debugCommandLocations = new Location[0];
 #endif
-        if (command.commandType != AICommand.CommandType.MoveTo && command.commandType != AICommand.CommandType.AttackMoveTo)
+        if (command.commandType != AICommand.CommandTypes.MoveTo && command.commandType != AICommand.CommandTypes.AttackMoveTo)
         {
             for (int i = 0; i < units.Count; i++)
             {

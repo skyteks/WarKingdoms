@@ -103,7 +103,7 @@ public class WaveSpawnerBrain : MonoBehaviour
         Unit unitInstance = rekruiting.SpawnUnit(index);
         for (int i = 0; i < lanepoints.Length; i++)
         {
-            AICommand moveToWaypoint = new AICommand(AICommand.CommandType.AttackMoveTo, lanepoints[i]);
+            AICommand moveToWaypoint = new AICommand(AICommand.CommandTypes.AttackMoveTo, lanepoints[i]);
             unitInstance.AddCommand(moveToWaypoint, i == 0);
         }
 

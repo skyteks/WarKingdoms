@@ -18,8 +18,8 @@ public class MinMaxSliderDrawer : PropertyDrawer
             }
             else
             {
-                min = property.FindPropertyRelative("Min").floatValue;
-                max = property.FindPropertyRelative("Max").floatValue;
+                min = property.FindPropertyRelative("min").floatValue;
+                max = property.FindPropertyRelative("max").floatValue;
             }
             MinMaxSliderAttribute attr = attribute as MinMaxSliderAttribute;
             label.tooltip = string.Format("{0}, {1}", min, max);
@@ -57,8 +57,8 @@ public class MinMaxSliderDrawer : PropertyDrawer
                 }
                 else
                 {
-                    property.FindPropertyRelative("Min").floatValue = Mathf.RoundToInt(min);
-                    property.FindPropertyRelative("Max").floatValue = Mathf.RoundToInt(max);
+                    property.FindPropertyRelative("min").floatValue = Mathf.RoundToInt(min);
+                    property.FindPropertyRelative("max").floatValue = Mathf.RoundToInt(max);
                 }
             }
         }

@@ -12,6 +12,8 @@ public class Unit : ClickableObject
         MovingToTarget,
         MovingToSpot,
         Dead,
+        CustomActionAtPos,
+        CustomActionAtObj,
     }
 
     public UnitStates state = UnitStates.Idleing;
@@ -27,6 +29,7 @@ public class Unit : ClickableObject
     protected bool agentReady = false;
     protected bool commandRecieved, commandExecuted;
     protected UnitStates? switchState;
+    protected AICommand.CustomActions? customAction;
 
     protected InteractableObject targetOfAttack;
     protected Vector3? targetOfMovement;
@@ -94,13 +97,13 @@ public class Unit : ClickableObject
         {
             return;
         }
-        if (clear || command.commandType == AICommand.CommandType.Stop)
+        if (clear || command.commandType == AICommand.CommandTypes.Stop)
         {
             commandList.Clear();
             commandExecuted = false;
             commandRecieved = false;
         }
-        if (command.commandType != AICommand.CommandType.Stop)
+        if (command.commandType != AICommand.CommandTypes.Stop)
         {
             commandList.Add(command);
         }
@@ -111,15 +114,27 @@ public class Unit : ClickableObject
         //make units be able to denie command... oh what could possibly go wrong
         switch (command.commandType)
         {
-            case AICommand.CommandType.MoveTo:
+            case AICommand.CommandTypes.MoveTo:
                 //case AICommand.CommandType.AttackMoveTo:
                 //case AICommand.CommandType.Guard:
                 return !command.destination.IsNaN();
-            case AICommand.CommandType.AttackTarget:
+            case AICommand.CommandTypes.AttackTarget:
                 return !IsDeadOrNull(command.target) && command.target != this;
-            case AICommand.CommandType.Stop:
-            case AICommand.CommandType.Die:
+            case AICommand.CommandTypes.Stop:
+            case AICommand.CommandTypes.Die:
                 return true;
+            case AICommand.CommandTypes.CustomActionAtPos:
+                if (!command.customAction.HasValue)
+                {
+                    throw new System.ArgumentNullException();
+                }
+                return template.original.customActions.Contains(command.customAction.Value) && !command.destination.IsNaN();
+            case AICommand.CommandTypes.CustomActionAtObj:
+                if (!command.customAction.HasValue)
+                {
+                    throw new System.ArgumentNullException();
+                }
+                return template.original.customActions.Contains(command.customAction.Value) && !IsDeadOrNull(command.target);
         }
         throw new System.NotImplementedException(string.Concat("Command Type '", command.commandType.ToString(), "' not valid"));
     }
@@ -165,26 +180,37 @@ public class Unit : ClickableObject
         targetOfMovement = null;
         targetOfAttack = null;
         switchState = null;
+        customAction = null;
         commandRecieved = true;
         commandExecuted = false;
         switch (command.commandType)
         {
-            case AICommand.CommandType.MoveTo:
+            case AICommand.CommandTypes.MoveTo:
                 targetOfMovement = command.destination;
                 TransitIntoState(UnitStates.MovingToSpot);
                 break;
 
-            case AICommand.CommandType.Stop:
+            case AICommand.CommandTypes.Stop:
                 TransitIntoState(UnitStates.Idleing);
                 break;
 
-            case AICommand.CommandType.AttackTarget:
+            case AICommand.CommandTypes.AttackTarget:
                 targetOfAttack = command.target;
                 TransitIntoState(UnitStates.MovingToTarget);
                 break;
 
-            case AICommand.CommandType.Die:
+            case AICommand.CommandTypes.Die:
                 TransitIntoState(UnitStates.Dead);
+                break;
+            case AICommand.CommandTypes.CustomActionAtPos:
+                targetOfAttack = command.target;
+                customAction = command.customAction;
+                TransitIntoState(UnitStates.MovingToTarget);
+                break;
+            case AICommand.CommandTypes.CustomActionAtObj:
+                targetOfMovement = command.destination;
+                customAction = command.customAction;
+                TransitIntoState(UnitStates.MovingToSpot);
                 break;
         }
     }
@@ -219,6 +245,18 @@ public class Unit : ClickableObject
                 break;
             case UnitStates.Dead:
                 Die();
+                break;
+            case UnitStates.CustomActionAtPos:
+                navMeshAgent.stoppingDistance = 0.1f;
+                navMeshAgent.SetDestination(targetOfMovement.Value);
+                navMeshAgent.isStopped = false;
+                agentReady = false;
+                break;
+            case UnitStates.CustomActionAtObj:
+                navMeshAgent.stoppingDistance = template.engageDistance;
+                targetOfMovement = targetOfAttack.transform.position;
+                navMeshAgent.SetDestination(targetOfMovement.Value);
+                agentReady = false;
                 break;
         }
     }
@@ -284,7 +322,14 @@ public class Unit : ClickableObject
                     //check if in attack range
                     if ((template.engageDistance + targetOfAttack.sizeRadius) >= remainingDistance)
                     {
-                        switchState = UnitStates.Attacking;
+                        if (customAction == null)
+                        {
+                            switchState = UnitStates.Attacking;
+                        }
+                        else
+                        {
+                            switchState = UnitStates.CustomActionAtObj;
+                        }
                     }
                     break;
                 }
@@ -297,12 +342,81 @@ public class Unit : ClickableObject
                     float remainingDistance = Vector3.Distance(transform.position, targetOfMovement.Value);
                     if (remainingDistance < 0.3f)
                     {
-                        commandExecuted = true;
+                        if (customAction == null)
+                        {
+                            commandExecuted = true;
+                        }
+                        else
+                        {
+                            switchState = UnitStates.CustomActionAtPos;
+                        }
                     }
                     break;
                 }
             case UnitStates.Dead:
                 break;
+            case UnitStates.CustomActionAtPos:
+                {
+                    navMeshAgent.isStopped = true;
+
+                    float remainingDistance = Vector3.Distance(transform.position, targetOfMovement.Value);
+                    if (remainingDistance < 0.3f)
+                    {
+                        switch (customAction.Value)
+                        {
+                            default:
+                                //TODO: add something
+                                break;
+                        }
+                        commandExecuted = true;
+                    }
+                    else
+                    {
+                        switchState = UnitStates.MovingToSpot;
+                    }
+                    break;
+                }
+            case UnitStates.CustomActionAtObj:
+                {
+                    navMeshAgent.isStopped = true;
+
+                    if (IsDeadOrNull(targetOfAttack))
+                    {
+                        commandExecuted = true;
+                    }
+                    float remainingDistance = Vector3.Distance(transform.position, targetOfMovement.Value);
+                    //recalculate path
+                    if (Vector3.Distance(targetOfAttack.transform.position, targetOfMovement.Value) > 0.05f)
+                    {
+                        targetOfMovement = targetOfAttack.transform.position;
+                        navMeshAgent.SetDestination(targetOfMovement.Value);
+                    }
+                    //check if in attack range
+                    if ((template.engageDistance + targetOfAttack.sizeRadius) < remainingDistance)
+                    {
+                        switchState = UnitStates.MovingToTarget;
+                    }
+                    else
+                    {
+                        switch (customAction.Value)
+                        {
+                            case AICommand.CustomActions.dropoffResources:
+                                ResourceDropoff resourceDropoff = targetOfAttack.GetComponent<ResourceDropoff>();
+                                if (resourceDropoff != null)
+                                {
+                                    KeyValuePair<ResourceSource.ResourceType, int> resourceBundle = resourceCollector.EmptyStorage();
+                                    resourceDropoff.DropResource(resourceBundle.Value, resourceBundle.Key);
+                                }
+                                else
+                                {
+                                    Debug.LogError("This is not a resource dropoff location");
+                                }
+                                break;
+                        }
+                        commandExecuted = true;
+                    }
+                    break;
+                }
         }
     }
 
@@ -321,6 +435,10 @@ public class Unit : ClickableObject
                 break;
             case UnitStates.Dead:
                 modelHolder.position += Vector3.up * decayIntoGroundDistance;
+                break;
+            case UnitStates.CustomActionAtPos:
+                break;
+            case UnitStates.CustomActionAtObj:
                 break;
         }
     }
@@ -498,7 +616,6 @@ public class Unit : ClickableObject
         projectileInstance.LaunchAt(targetOfAttack.transform, damage, this);
     }
 
-    //called by an attacker
     public override void SufferAttack(int damage)
     {
         if (state == UnitStates.Dead)

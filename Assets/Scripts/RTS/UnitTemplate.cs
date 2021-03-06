@@ -41,6 +41,8 @@ public class UnitTemplate : ScriptableObject
     public int costGold = 0;
     public int costWood = 0;
 
+    public List<AICommand.CustomActions> customActions = new List<AICommand.CustomActions>();
+
     public UnitTemplate Clone()
     {
         UnitTemplate clone = Instantiate<UnitTemplate>(this);

@@ -7,44 +7,54 @@ using UnityEngine;
 [Serializable]
 public struct AICommand
 {
-    public enum CommandType
+    public enum CommandTypes
     {
         MoveTo,
-        AttackMoveTo,
-        AttackTarget, //attacks a specific target, then becomes Guarding
+        AttackTarget,
         Stop,
         Guard,
         Die,
-        //Flee,
+        AttackMoveTo, //TODO: implement follow behavior
+        CustomActionAtPos,
+        CustomActionAtObj,
     }
 
-    public CommandType commandType;
+    public enum CustomActions
+    {
+        dropoffResources,
+    }
+
+    public CommandTypes commandType;
 
     public Vector3 destination;
     public InteractableObject target;
     public Vector3 origin;
+    public CustomActions? customAction;
 
-    public AICommand(CommandType ty, Vector3 v)
+    public AICommand(CommandTypes ty, Vector3 v, CustomActions? a = null)
     {
         commandType = ty;
         destination = v;
         target = null;
         origin = Vector3.one * float.NaN;
+        customAction = a;
     }
 
-    public AICommand(CommandType ty, InteractableObject ta)
+    public AICommand(CommandTypes ty, InteractableObject ta, CustomActions? a = null)
     {
         commandType = ty;
         destination = Vector3.one * float.NaN;
         target = ta;
         origin = Vector3.one * float.NaN;
+        customAction = a;
     }
 
-    public AICommand(CommandType ty)
+    public AICommand(CommandTypes ty)
     {
         commandType = ty;
         destination = Vector3.one * float.NaN;
         target = null;
         origin = Vector3.one * float.NaN;
+        customAction = null;
     }
 }
