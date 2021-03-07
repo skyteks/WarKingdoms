@@ -203,14 +203,14 @@ public class Unit : ClickableObject
                 TransitIntoState(UnitStates.Dead);
                 break;
             case AICommand.CommandTypes.CustomActionAtPos:
-                targetOfAttack = command.target;
-                customAction = command.customAction;
-                TransitIntoState(UnitStates.MovingToTarget);
-                break;
-            case AICommand.CommandTypes.CustomActionAtObj:
                 targetOfMovement = command.destination;
                 customAction = command.customAction;
                 TransitIntoState(UnitStates.MovingToSpot);
+                break;
+            case AICommand.CommandTypes.CustomActionAtObj:
+                targetOfAttack = command.target;
+                customAction = command.customAction;
+                TransitIntoState(UnitStates.MovingToTarget);
                 break;
         }
     }
@@ -384,6 +384,11 @@ public class Unit : ClickableObject
                     {
                         commandExecuted = true;
                     }
+                    ResourceSource resourceSource = targetOfAttack.GetComponent<ResourceSource>();
+                    if (customAction == AICommand.CustomActions.collectResources && (resourceCollector == null || resourceSource == null || resourceCollector.IsFull() || resourceSource.IsEmpty()))
+                    {
+                        commandExecuted = true;
+                    }
                     float remainingDistance = Vector3.Distance(transform.position, targetOfMovement.Value);
                     //recalculate path
                     if (Vector3.Distance(targetOfAttack.transform.position, targetOfMovement.Value) > 0.05f)
@@ -400,20 +405,17 @@ public class Unit : ClickableObject
                     {
                         switch (customAction.Value)
                         {
+                            case AICommand.CustomActions.collectResources:
+                                FaceTarget();
+                                animator?.SetBool("DoAttack", true);
+                                break;
                             case AICommand.CustomActions.dropoffResources:
                                 ResourceDropoff resourceDropoff = targetOfAttack.GetComponent<ResourceDropoff>();
-                                if (resourceDropoff != null)
-                                {
-                                    KeyValuePair<ResourceSource.ResourceType, int> resourceBundle = resourceCollector.EmptyStorage();
-                                    resourceDropoff.DropResource(resourceBundle.Value, resourceBundle.Key);
-                                }
-                                else
-                                {
-                                    Debug.LogError("This is not a resource dropoff location");
-                                }
+                                KeyValuePair<ResourceSource.ResourceType, int> resourceBundle = resourceCollector.EmptyStorage();
+                                resourceDropoff.DropResource(resourceBundle.Value, resourceBundle.Key);
+                                commandExecuted = true;
                                 break;
                         }
-                        commandExecuted = true;
                     }
                     break;
                 }
@@ -439,6 +441,10 @@ public class Unit : ClickableObject
             case UnitStates.CustomActionAtPos:
                 break;
             case UnitStates.CustomActionAtObj:
+                if (customAction == AICommand.CustomActions.collectResources)
+                {
+                    animator?.SetBool("DoAttack", false);
+                }
                 break;
         }
     }
@@ -574,7 +580,6 @@ public class Unit : ClickableObject
     {
         if (state == UnitStates.Dead || IsDeadOrNull(targetOfAttack))
         {
-            //already dead
             animator.SetBool("DoAttack", false);
             return;
         }
@@ -586,15 +591,11 @@ public class Unit : ClickableObject
         }
         else
         {
-            targetOfAttack.SufferAttack(damage);
-            if (resourceCollector != null)
+            bool success = targetOfAttack.SufferAttack(damage, resourceCollector);
+            if (!success)
             {
-                ResourceSource resourceSource = targetOfAttack.GetComponent<ResourceSource>();
-                if (resourceSource != null)
-                {
-                    int earnings = resourceSource.GetAmount(resourceCollector.woodPerHitEarnings);
-                    resourceCollector.AddResource(earnings, resourceSource.resourceType);
-                }
+                animator.SetBool("DoAttack", false);
+                return;
             }
         }
     }
@@ -616,14 +617,14 @@ public class Unit : ClickableObject
         projectileInstance.LaunchAt(targetOfAttack.transform, damage, this);
     }
 
-    public override void SufferAttack(int damage)
+    public override bool SufferAttack(int damage, ResourceCollector resourceCollector = null)
     {
         if (state == UnitStates.Dead)
         {
-            return;
+            return false;
         }
 
-        base.SufferAttack(damage);
+        return base.SufferAttack(damage);
     }
 
 #if UNITY_EDITOR

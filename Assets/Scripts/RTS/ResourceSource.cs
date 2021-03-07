@@ -14,9 +14,8 @@ public class ResourceSource : MonoBehaviour
     public ResourceType resourceType;
 
     [SerializeField]
-    private int stored;
+    private int stored = 20;
     public int maxStorage { get; private set; }
-    public bool storeEqualToHealth;
 
     private InteractableObject interactableObject;
 
@@ -27,10 +26,6 @@ public class ResourceSource : MonoBehaviour
 
     void Start()
     {
-        if (storeEqualToHealth)
-        {
-            stored = interactableObject.health;
-        }
         maxStorage = stored;
     }
 
@@ -52,5 +47,10 @@ public class ResourceSource : MonoBehaviour
             }
         }
         throw new System.ArgumentException("Source is empty");
+    }
+
+    public bool IsEmpty()
+    {
+        return stored == 0;
     }
 }

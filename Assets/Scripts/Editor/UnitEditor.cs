@@ -48,7 +48,13 @@ public class UnitEditor : Editor
             case AICommand.CommandTypes.Guard:
                 EditorGUI.Vector3Field(rects[1], "", command.destination);
                 break;
-            default:
+            case AICommand.CommandTypes.CustomActionAtPos:
+                EditorGUI.EnumFlagsField(rects[0], command.customAction);
+                EditorGUI.Vector3Field(rects[1], "", command.destination);
+                break;
+            case AICommand.CommandTypes.CustomActionAtObj:
+                EditorGUI.EnumFlagsField(rects[0], command.customAction);
+                EditorGUI.ObjectField(rects[1], command.target, command.target.GetType(), true);
                 break;
         }
         //EditorGUI.EndDisabledGroup();

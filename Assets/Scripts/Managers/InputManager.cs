@@ -181,12 +181,7 @@ public class InputManager : Singleton<InputManager>
                             bool followUpCommand = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
                             bool forceCommand = Input.GetKey(KeyCode.LeftControl);
                             bool attackCommand = Input.GetButton("Attack");
-                            if (targetUnit.GetType() == typeof(InteractableObject) || !FactionTemplate.IsAlliedWith((targetUnit as ClickableObject).faction, gameManager.playerFaction))
-                            {
-                                gameManager.AttackTarget(targetUnit, followUpCommand);
-                                Debug.DrawLine(ray.origin, hit.point, Color.red, 1f);
-                            }
-                            else
+                            if (targetUnit.GetType() == typeof(InteractableObject) || FactionTemplate.IsAlliedWith((targetUnit as ClickableObject).faction, gameManager.playerFaction))
                             {
                                 if (forceCommand && attackCommand)
                                 {
@@ -195,9 +190,14 @@ public class InputManager : Singleton<InputManager>
                                 }
                                 else
                                 {
-                                    //TODO: this should be a follow command
-                                    moveCommand = true;
+                                    gameManager.CustomActionOnTarget(targetUnit, followUpCommand);
+                                    Debug.DrawLine(ray.origin, hit.point, Color.yellow, 1f);
                                 }
+                            }
+                            else
+                            {
+                                gameManager.AttackTarget(targetUnit, followUpCommand);
+                                Debug.DrawLine(ray.origin, hit.point, Color.red, 1f);
                             }
                         }
                         else

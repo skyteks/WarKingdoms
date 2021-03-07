@@ -19,7 +19,7 @@ public class InteractableObject : MonoBehaviour
     protected MeshRenderer selectionCircle;
     private Animator anim;
     private NavMeshObstacle navObstacle;
-    public int health;
+    private ResourceSource resourceSource;
 
     protected readonly float decayIntoGroundDistance = -7f;
 
@@ -39,6 +39,7 @@ public class InteractableObject : MonoBehaviour
         selectionCircle = transform.Find("SelectionCircle").GetComponent<MeshRenderer>();
         anim = GetComponentInChildren<Animator>();
         navObstacle = GetComponent<NavMeshObstacle>();
+        resourceSource = GetComponent<ResourceSource>();
 
         SetLayers();
     }
@@ -59,20 +60,22 @@ public class InteractableObject : MonoBehaviour
         }
     }
 
-#if UNITY_EDITOR
-    protected virtual void OnDrawGizmos()
-    {
-        if (selectionCircle == null)
+    /*
+    #if UNITY_EDITOR
+        protected virtual void OnDrawGizmos()
         {
-            selectionCircle = transform.Find("SelectionCircle")?.GetComponent<MeshRenderer>();
+            if (selectionCircle == null)
+            {
+                selectionCircle = transform.Find("SelectionCircle")?.GetComponent<MeshRenderer>();
+            }
+            if (selectionCircle != null)
+            {
+                UnityEditor.Handles.color = !IsDeadOrNull(this) && health > 0 ? Color.blue : Color.red;
+                UnityEditor.Handles.DrawWireDisc(transform.position, Vector3.up, sizeRadius);
+            }
         }
-        if (selectionCircle != null)
-        {
-            UnityEditor.Handles.color = !IsDeadOrNull(this) && health > 0 ? Color.blue : Color.red;
-            UnityEditor.Handles.DrawWireDisc(transform.position, Vector3.up, sizeRadius);
-        }
-    }
-#endif
+    #endif
+    */
 
     public static bool IsDeadOrNull(InteractableObject unit)
     {
@@ -82,7 +85,7 @@ public class InteractableObject : MonoBehaviour
         }
         else
         {
-            return unit == null || unit.health == 0;
+            return unit == null;
         }
     }
 
@@ -129,29 +132,22 @@ public class InteractableObject : MonoBehaviour
         }
     }
 
-    public virtual void SufferAttack(int damage)
+    public virtual bool SufferAttack(int damage, ResourceCollector resourceCollector = null)
     {
-        if (health <= 0)
+        if (resourceCollector != null && resourceSource != null)
         {
-            return;
-        }
+            int earnings = resourceSource.GetAmount(resourceCollector.woodPerHitEarnings);
+            resourceCollector.AddResource(earnings, resourceSource.resourceType);
 
-        health -= damage;
+            anim?.SetTrigger("DoHit");
 
-        if (health <= 0)
-        {
-            Die();
+            return true;
         }
-        else
-        {
-            anim?.SetBool("DoHit", true);
-        }
+        return false;
     }
 
     protected virtual void Die()
     {
-        health = 0;
-
         anim?.SetBool("DoDeath", true);
 
         navObstacle.enabled = false;

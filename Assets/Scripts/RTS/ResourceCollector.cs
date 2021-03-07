@@ -18,8 +18,13 @@ public class ResourceCollector : MonoBehaviour
 
     public void AddResource(int amount, ResourceSource.ResourceType type)
     {
+        if (storedType != type)
+        {
+            storage = 0;
+            storedType = type;
+        }
         int max = 0;
-        switch (type)
+        switch (storedType)
         {
             case ResourceSource.ResourceType.Wood:
                 max = maxWood;
@@ -37,5 +42,20 @@ public class ResourceCollector : MonoBehaviour
         var tmp = new KeyValuePair<ResourceSource.ResourceType, int>(storedType, storage);
         storage = 0;
         return tmp;
+    }
+
+    public bool IsFull()
+    {
+        int max = 0;
+        switch (storedType)
+        {
+            case ResourceSource.ResourceType.Wood:
+                max = maxWood;
+                break;
+            case ResourceSource.ResourceType.Ore:
+                max = maxOre;
+                break;
+        }
+        return storage >= max;
     }
 }

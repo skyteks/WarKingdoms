@@ -66,17 +66,15 @@ public class Building : ClickableObject
         }
     }
 
-    //called by an attacker
-    public override void SufferAttack(int damage)
+    public override bool SufferAttack(int damage, ResourceCollector resourceCollector = null)
     {
         if (state == BuildingStates.Dead)
         {
-            return;
+            return false;
         }
 
-        base.SufferAttack(damage);
-
         TriggerBurnEffects();
+        return base.SufferAttack(damage);
     }
 
     protected void TriggerBurnEffects()

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -87,11 +86,6 @@ public class GameManager : Singleton<GameManager>
         {
             selectionOnType = SelectionOnType.Buildings;
         }
-    }
-
-    public void IssueCommand(AICommand cmd, bool followUpCommand)
-    {
-        selectedPlatoon.ExecuteCommand(cmd, followUpCommand);
     }
 
     public void SetWaypoint(Vector3 pos)
@@ -205,7 +199,7 @@ public class GameManager : Singleton<GameManager>
             }
             else
             {
-                throw new NullReferenceException();
+                throw new System.NullReferenceException();
             }
         }
         unitToRemove.SetSelected(false);
@@ -245,22 +239,60 @@ public class GameManager : Singleton<GameManager>
         UIManager.Instance.ClearSelection();
     }
 
-    public void MoveSelectedUnitsTo(Vector3 pos, bool followUpCommand)
+    public void MoveSelectedUnitsTo(Vector3 position, bool followUpCommand)
     {
-        AICommand newCommand = new AICommand(AICommand.CommandTypes.MoveTo, pos);
-        IssueCommand(newCommand, followUpCommand);
+        AICommand newCommand = new AICommand(AICommand.CommandTypes.MoveTo, position);
+        selectedPlatoon.ExecuteCommand(newCommand, followUpCommand);
     }
 
-    public void AttackMoveSelectedUnitsTo(Vector3 pos, bool followUpCommand)
+    public void AttackMoveSelectedUnitsTo(Vector3 position, bool followUpCommand)
     {
-        AICommand newCommand = new AICommand(AICommand.CommandTypes.AttackMoveTo, pos);
-        IssueCommand(newCommand, followUpCommand);
+        AICommand newCommand = new AICommand(AICommand.CommandTypes.AttackMoveTo, position);
+        selectedPlatoon.ExecuteCommand(newCommand, followUpCommand);
     }
 
     public void AttackTarget(InteractableObject targetUnit, bool followUpCommand)
     {
         AICommand newCommand = new AICommand(AICommand.CommandTypes.AttackTarget, targetUnit);
-        IssueCommand(newCommand, followUpCommand);
+        selectedPlatoon.ExecuteCommand(newCommand, followUpCommand);
+    }
+
+    public void CustomActionOnTarget(InteractableObject targetUnit, bool followUpCommand)
+    {
+        List<AICommand.CustomActions> sharedActions = new List<AICommand.CustomActions>(System.Enum.GetValues(typeof(AICommand.CustomActions)).Length);
+        foreach (AICommand.CustomActions action in System.Enum.GetValues(typeof(AICommand.CustomActions)))
+        {
+            if (selectedPlatoon.units.TrueForAll(unit => unit.template.customActions.Contains(action)))
+            {
+                sharedActions.Add(action);
+            }
+        }
+        AICommand.CustomActions? chosenAction = null;
+
+        foreach(AICommand.CustomActions action in sharedActions)
+        {
+            switch (action)
+            {
+                case AICommand.CustomActions.collectResources:
+                    if (targetUnit.GetComponent<ResourceDropoff>() != null)
+                    {
+                        chosenAction = AICommand.CustomActions.dropoffResources;
+                    }
+                    break;
+                case AICommand.CustomActions.dropoffResources:
+                    if (targetUnit.GetComponent<ResourceSource>() != null)
+                    {
+                        chosenAction = AICommand.CustomActions.collectResources;
+                    }
+                    break;
+            }
+            if (chosenAction.HasValue)
+            {
+                AICommand newCommand = new AICommand(AICommand.CommandTypes.CustomActionAtObj, targetUnit, chosenAction.Value);
+                selectedPlatoon.ExecuteCommand(newCommand, followUpCommand);
+                return;
+            }
+        }
     }
 
     public List<ClickableObject> GetAllUnits()

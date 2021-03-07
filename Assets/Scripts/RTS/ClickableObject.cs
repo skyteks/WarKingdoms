@@ -73,7 +73,7 @@ public abstract class ClickableObject : InteractableObject
     }
 
 #if UNITY_EDITOR
-    protected override void OnDrawGizmos()
+    protected virtual void OnDrawGizmos()
     {
         if (fieldOfView == null)
         {
@@ -179,11 +179,11 @@ public abstract class ClickableObject : InteractableObject
         selectionCircle.SetPropertyBlock(materialPropertyBlock);
     }
 
-    public override void SufferAttack(int damage)
+    public override bool SufferAttack(int damage, ResourceCollector resourceCollector = null)
     {
         if (template.health <= 0)
         {
-            return;
+            return false;
         }
 
         damage = Mathf.RoundToInt(damage * damageReductionMuliplier);
@@ -193,6 +193,7 @@ public abstract class ClickableObject : InteractableObject
         {
             Die();
         }
+        return true;
     }
 
     //called in SufferAttack, but can also be from a Timeline clip

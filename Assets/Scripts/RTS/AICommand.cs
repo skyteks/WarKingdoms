@@ -21,6 +21,7 @@ public struct AICommand
 
     public enum CustomActions
     {
+        collectResources,
         dropoffResources,
     }
 
@@ -31,27 +32,27 @@ public struct AICommand
     public Vector3 origin;
     public CustomActions? customAction;
 
-    public AICommand(CommandTypes ty, Vector3 v, CustomActions? a = null)
+    public AICommand(CommandTypes type, Vector3 position, CustomActions? action = null)
     {
-        commandType = ty;
-        destination = v;
+        commandType = type;
+        destination = position;
         target = null;
         origin = Vector3.one * float.NaN;
-        customAction = a;
+        customAction = action;
     }
 
-    public AICommand(CommandTypes ty, InteractableObject ta, CustomActions? a = null)
+    public AICommand(CommandTypes type, InteractableObject targetObject, CustomActions? action = null)
     {
-        commandType = ty;
+        commandType = type;
         destination = Vector3.one * float.NaN;
-        target = ta;
+        target = targetObject;
         origin = Vector3.one * float.NaN;
-        customAction = a;
+        customAction = action;
     }
 
-    public AICommand(CommandTypes ty)
+    public AICommand(CommandTypes type)
     {
-        commandType = ty;
+        commandType = type;
         destination = Vector3.one * float.NaN;
         target = null;
         origin = Vector3.one * float.NaN;
