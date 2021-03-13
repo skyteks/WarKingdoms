@@ -16,13 +16,25 @@ public class ResourceCollector : MonoBehaviour
     [ReadOnly]
     private int storage;
 
+    private Animator animator;
+
+    void Awake()
+    {
+        animator = GetComponent<Animator>();
+    }
+
     public void AddResource(int amount, ResourceSource.ResourceType type)
     {
+        if (amount == 0)
+        {
+            return;
+        }
         if (storedType != type)
         {
             storage = 0;
             storedType = type;
         }
+        animator?.SetFloat("DoCarry", (float)type);
         int max = 0;
         switch (storedType)
         {
@@ -41,6 +53,7 @@ public class ResourceCollector : MonoBehaviour
     {
         var tmp = new KeyValuePair<ResourceSource.ResourceType, int>(storedType, storage);
         storage = 0;
+        animator?.SetFloat("DoCarry", 0f);
         return tmp;
     }
 

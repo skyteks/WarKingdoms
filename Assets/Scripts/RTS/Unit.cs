@@ -224,6 +224,8 @@ public class Unit : ClickableObject
         switch (newState)
         {
             case UnitStates.Idleing:
+                animator?.SetBool("DoAttack", false);
+
                 navMeshAgent.isStopped = true;
                 break;
             case UnitStates.Attacking:
@@ -233,6 +235,8 @@ public class Unit : ClickableObject
                 agentReady = false;
                 break;
             case UnitStates.MovingToTarget:
+                animator?.SetBool("DoAttack", false);
+
                 navMeshAgent.stoppingDistance = template.engageDistance;
                 targetOfMovement = targetOfAttack.transform.position;
                 navMeshAgent.SetDestination(targetOfMovement.Value);
@@ -240,6 +244,8 @@ public class Unit : ClickableObject
                 agentReady = false;
                 break;
             case UnitStates.MovingToSpot:
+                animator?.SetBool("DoAttack", false);
+
                 navMeshAgent.stoppingDistance = 0.1f;
                 navMeshAgent.SetDestination(targetOfMovement.Value);
                 navMeshAgent.isStopped = false;
@@ -440,6 +446,12 @@ public class Unit : ClickableObject
                 modelHolder.position += Vector3.up * decayIntoGroundDistance;
                 break;
             case UnitStates.CustomActionAtPos:
+                switch (customAction.Value)
+                {
+                    case AICommand.CustomActions.collectResources:
+                        animator?.SetBool("DoAttack", false);
+                        break;
+                }
                 break;
             case UnitStates.CustomActionAtObj:
                 switch (customAction.Value)
@@ -468,7 +480,7 @@ public class Unit : ClickableObject
     {
         if (state == UnitStates.Dead || IsDeadOrNull(targetOfAttack))
         {
-            animator.SetBool("DoAttack", false);
+            animator?.SetBool("DoAttack", false);
             return;
         }
 
@@ -482,7 +494,8 @@ public class Unit : ClickableObject
             bool success = targetOfAttack.SufferAttack(damage, resourceCollector);
             if (!success)
             {
-                animator.SetBool("DoAttack", false);
+                animator?.SetBool("DoAttack", false);
+
                 if (state == UnitStates.CustomActionAtObj && customAction.Value == AICommand.CustomActions.collectResources)
                 {
                     AICommand getBackCollectingCommand = new AICommand(AICommand.CommandTypes.CustomActionAtPos, targetOfMovement.Value, AICommand.CustomActions.collectResources);
@@ -512,6 +525,12 @@ public class Unit : ClickableObject
 
         if (closest == null)
         {
+            if (resourceCollector.IsNotEmpty())
+            {
+                Building dropoffBuilding = faction.GetClosestBuildingWithResourceDropoff(transform.position, targetOfAttack.GetComponent<ResourceSource>().resourceType);
+                AICommand dropResourcesCommand = new AICommand(AICommand.CommandTypes.CustomActionAtObj, dropoffBuilding, AICommand.CustomActions.dropoffResources);
+                AddCommand(dropResourcesCommand);
+            }
             commandExecuted = true;
             return;
         }
@@ -563,6 +582,7 @@ public class Unit : ClickableObject
 
         navMeshAgent.isStopped = true;
 
+        animator?.SetBool("DoAttack", false);
         animator?.SetTrigger("DoDeath");
 
         //Remove itself from the selection Platoon

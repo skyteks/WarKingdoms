@@ -5,10 +5,10 @@ using UnityEngine;
 [RequireComponent(typeof(InteractableObject))]
 public class ResourceSource : MonoBehaviour
 {
-    public enum ResourceType
+    public enum ResourceType : int //Used for animation
     {
+        Ore = 1,
         Wood,
-        Ore,
     }
 
     public ResourceType resourceType;
