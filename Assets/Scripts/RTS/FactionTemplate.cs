@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -60,16 +61,8 @@ public class FactionTemplate : ScriptableObject
 
     void OnEnable()
     {
-        //data = new FactionInfo();
         data.ResetLists();
     }
-
-    void OnDisable()
-    {
-        //data = null;
-    }
-
-    
 
     public void SetTeamColorToRenderers()
     {
@@ -111,5 +104,22 @@ public class FactionTemplate : ScriptableObject
     public static bool IsAlliedWith(FactionTemplate faction1, FactionTemplate faction2)
     {
         return faction1 != faction2 && (faction1 == null || faction2 == null || faction1.data.allianceId == 0 || faction2.data.allianceId == 0) ? false : faction1.data.allianceId == faction2.data.allianceId;
+    }
+
+    public Building GetClosestBuildingWithResourceDropoff(Vector3 position, ResourceSource.ResourceType resourceType)
+    {
+        Building[] dropoffBuildings = data.buildings.Where(building => building.GetComponent<ResourceDropoff>() != null && building.GetComponent<ResourceDropoff>().dropoffTypes.Contains(resourceType)).ToArray();
+        Building closest = null;
+        float distanceToClosestSqr = float.PositiveInfinity;
+        foreach (var building in dropoffBuildings)
+        {
+            float distanceSqr = (building.transform.position - position).sqrMagnitude;
+            if (distanceSqr < distanceToClosestSqr)
+            {
+                distanceToClosestSqr = distanceSqr;
+                closest = building;
+            }
+        }
+        return closest;
     }
 }

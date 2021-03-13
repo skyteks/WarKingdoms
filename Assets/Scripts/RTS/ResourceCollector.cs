@@ -58,4 +58,9 @@ public class ResourceCollector : MonoBehaviour
         }
         return storage >= max;
     }
+
+    public bool IsNotEmpty()
+    {
+        return storage > 0;
+    }
 }

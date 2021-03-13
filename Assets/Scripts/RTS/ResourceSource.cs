@@ -31,22 +31,17 @@ public class ResourceSource : MonoBehaviour
 
     public int GetAmount(int amount)
     {
-        if (stored > 0)
+        if (stored > amount)
         {
-            if (stored > amount)
-            {
-                stored -= amount;
-                return amount;
-            }
-            else
-            {
-                amount = stored;
-                stored = 0;
-                Destroy(this);
-                return amount;
-            }
+            stored -= amount;
+            return amount;
         }
-        throw new System.ArgumentException("Source is empty");
+        else
+        {
+            amount = stored;
+            stored = 0;
+            return amount;
+        }
     }
 
     public bool IsEmpty()

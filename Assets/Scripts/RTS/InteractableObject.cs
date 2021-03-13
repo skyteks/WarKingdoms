@@ -23,7 +23,6 @@ public class InteractableObject : MonoBehaviour
 
     protected readonly float decayIntoGroundDistance = -7f;
 
-
     public float sizeRadius
     {
         get
@@ -138,9 +137,14 @@ public class InteractableObject : MonoBehaviour
         {
             int earnings = resourceSource.GetAmount(resourceCollector.woodPerHitEarnings);
             resourceCollector.AddResource(earnings, resourceSource.resourceType);
-
-            anim?.SetTrigger("DoHit");
-
+            if (resourceSource.IsEmpty())
+            {
+                Die();
+            }
+            else
+            {
+                anim?.SetTrigger("DoHit");
+            }
             return true;
         }
         return false;
