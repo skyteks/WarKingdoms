@@ -39,7 +39,7 @@ public class RandomizeTree : MonoBehaviour
 
     private static Quaternion GetRandomYAxisRotation()
     {
-        return Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
+        return Quaternion.Euler(0f, Random.Range(-180f, 180f), 0f);
     }
 
     [ContextMenu("Randomize")]
@@ -70,14 +70,16 @@ public class RandomizeTree : MonoBehaviour
         if (modelHolder2 != null)
         {
             GameObject trunkPrefab = SelectRandomElement(trunkPrefabs);
-            trunk = Instantiate(trunkPrefab, modelHolder2.position, GetRandomYAxisRotation(), modelHolder2);
+            trunk = Instantiate(trunkPrefab, modelHolder2.position, Quaternion.identity, modelHolder2);
             trunk.transform.localScale = Vector3.one * scale;
             trunk.layer = modelHolder2.gameObject.layer;
+            modelHolder2.localRotation = GetRandomYAxisRotation();
         }
 
         GameObject treePrefab = SelectRandomElement(treePrefabs);
-        tree = Instantiate(treePrefab, modelHolder.position, GetRandomYAxisRotation(), treeHolder);
+        tree = Instantiate(treePrefab, modelHolder.position, Quaternion.identity, treeHolder);
         tree.transform.localScale = Vector3.one * scale;
         tree.layer = modelHolder.gameObject.layer;
+        modelHolder.localRotation = GetRandomYAxisRotation();
     }
 }
