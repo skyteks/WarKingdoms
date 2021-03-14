@@ -191,16 +191,13 @@ public class Unit : ClickableObject
                 targetOfMovement = command.destination;
                 TransitIntoState(UnitStates.MovingToSpot);
                 break;
-
             case AICommand.CommandTypes.Stop:
                 TransitIntoState(UnitStates.Idleing);
                 break;
-
             case AICommand.CommandTypes.AttackTarget:
                 targetOfAttack = command.target;
                 TransitIntoState(UnitStates.MovingToTarget);
                 break;
-
             case AICommand.CommandTypes.Die:
                 TransitIntoState(UnitStates.Dead);
                 break;
@@ -219,8 +216,6 @@ public class Unit : ClickableObject
 
     private void TransitIntoState(UnitStates newState)
     {
-        state = newState;
-        switchState = null;
         switch (newState)
         {
             case UnitStates.Idleing:
@@ -235,21 +230,19 @@ public class Unit : ClickableObject
                 agentReady = false;
                 break;
             case UnitStates.MovingToTarget:
-                animator?.SetBool("DoAttack", false);
-
                 navMeshAgent.stoppingDistance = template.engageDistance;
                 targetOfMovement = targetOfAttack.transform.position;
                 navMeshAgent.SetDestination(targetOfMovement.Value);
                 navMeshAgent.isStopped = false;
                 agentReady = false;
+                animator?.SetBool("DoAttack", false);
                 break;
             case UnitStates.MovingToSpot:
-                animator?.SetBool("DoAttack", false);
-
                 navMeshAgent.stoppingDistance = 0.1f;
                 navMeshAgent.SetDestination(targetOfMovement.Value);
                 navMeshAgent.isStopped = false;
                 agentReady = false;
+                animator?.SetBool("DoAttack", false);
                 break;
             case UnitStates.Dead:
                 Die();
@@ -267,6 +260,8 @@ public class Unit : ClickableObject
                 agentReady = false;
                 break;
         }
+        state = newState;
+        switchState = null;
     }
 
     private void UpdateState(UnitStates currentState)
@@ -365,12 +360,22 @@ public class Unit : ClickableObject
                 break;
             case UnitStates.CustomActionAtPos:
                 {
-                    switch (customAction.Value)
+                    navMeshAgent.isStopped = true;
+
+                    float remainingDistance = Vector3.Distance(transform.position, targetOfMovement.Value);
+                    //check if in attack range
+                    if (template.engageDistance < remainingDistance)
                     {
-                        case AICommand.CustomActions.collectResources:
-                            switchState = UnitStates.MovingToTarget;
-                            SeekNewResourceSource();
-                            break;
+                        switchState = UnitStates.MovingToSpot;
+                    }
+                    else
+                    {
+                        switch (customAction.Value)
+                        {
+                            case AICommand.CustomActions.collectResources:
+                                SeekNewResourceSource();
+                                break;
+                        }
                     }
                     break;
                 }
@@ -427,6 +432,11 @@ public class Unit : ClickableObject
                     break;
                 }
         }
+
+        if (switchState.HasValue)
+        {
+            //print(gameObject.name + ": switch from " + state + " to " + switchState.Value);
+        }
     }
 
     private void TransitOutOfState(UnitStates oldState)
@@ -465,7 +475,7 @@ public class Unit : ClickableObject
                             AICommand dropResourcesCommand = new AICommand(AICommand.CommandTypes.CustomActionAtObj, dropoffBuilding, AICommand.CustomActions.dropoffResources);
                             AddCommand(dropResourcesCommand);
 
-                            AICommand getBackCollectingCommand = new AICommand(AICommand.CommandTypes.CustomActionAtPos, targetOfMovement.Value, AICommand.CustomActions.collectResources);
+                            AICommand getBackCollectingCommand = new AICommand(AICommand.CommandTypes.CustomActionAtPos, transform.position, AICommand.CustomActions.collectResources);
                             AddCommand(getBackCollectingCommand);
                         }
                         break;
@@ -508,7 +518,7 @@ public class Unit : ClickableObject
 
     private void SeekNewResourceSource()
     {
-        Collider[] colliders = Physics.OverlapSphere(targetOfMovement.Value, template.engageDistance, InputManager.Instance.unitsLayerMask, QueryTriggerInteraction.Collide);
+        Collider[] colliders = Physics.OverlapSphere(transform.position, template.guardDistance, InputManager.Instance.unitsLayerMask, QueryTriggerInteraction.Collide);
         Collider[] resources = colliders.Where(collider => collider.GetComponent<ResourceSource>() != null).ToArray();
 
         InteractableObject closest = null;
@@ -543,13 +553,11 @@ public class Unit : ClickableObject
     {
         if (template.projectile == null || template.projectile.GetComponent<Projectile>() == null)
         {
-            Debug.LogError("This unit has no Projectile set", this);
-            return;
+            throw new System.NullReferenceException("This unit has no Projectile set");
         }
         if (projectileFirePoint == null)
         {
-            Debug.LogError("This unit has no Projectile Fire Point set", this);
-            return;
+            throw new System.NullReferenceException("This unit has no Projectile Fire Point set");
         }
 
         Projectile projectileInstance = Instantiate(template.projectile, projectileFirePoint.position, projectileFirePoint.rotation).GetComponent<Projectile>();
