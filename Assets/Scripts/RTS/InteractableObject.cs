@@ -166,7 +166,7 @@ public class InteractableObject : MonoBehaviour
         GetComponent<Collider>().enabled = false;
     }
 
-    protected IEnumerator DecayIntoGround()
+    protected virtual IEnumerator DecayIntoGround()
     {
         yield return Yielders.Get(5f);
         while (modelHolder.localPosition.y > decayIntoGroundDistance)
@@ -174,6 +174,5 @@ public class InteractableObject : MonoBehaviour
             modelHolder.Translate(Vector3.down * Time.deltaTime * 0.1f, Space.World);
             yield return null;
         }
-        Destroy(gameObject);
     }
 }

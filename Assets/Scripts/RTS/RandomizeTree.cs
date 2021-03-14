@@ -39,7 +39,7 @@ public class RandomizeTree : MonoBehaviour
 
     private static Quaternion GetRandomYAxisRotation()
     {
-        return Quaternion.Euler(0f, Random.Range(-180f, 180f), 0f);
+        return Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
     }
 
     [ContextMenu("Randomize")]

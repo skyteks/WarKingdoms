@@ -253,4 +253,10 @@ public abstract class ClickableObject : InteractableObject
         fieldOfView.MarkTargetsVisibility();
         template.guardDistance = radius;
     }
+
+    protected override IEnumerator DecayIntoGround()
+    {
+        yield return base.DecayIntoGround();
+        Destroy(gameObject);
+    }
 }
