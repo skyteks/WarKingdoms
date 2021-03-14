@@ -37,6 +37,10 @@ public class Building : ClickableObject
         SetSelected(false);
 
         base.Start();
+
+        navMeshObstacle.shape = NavMeshObstacleShape.Capsule;
+        navMeshObstacle.radius = sizeRadius * 1.15f;
+        navMeshObstacle.size = (Vector3.one * navMeshObstacle.radius).ToWithY(navMeshObstacle.size.y);
     }
 
     public static new bool IsDeadOrNull(InteractableObject unit)

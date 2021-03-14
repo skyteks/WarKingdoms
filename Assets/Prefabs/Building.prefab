@@ -378,12 +378,12 @@ NavMeshObstacle:
   m_GameObject: {fileID: 8373508903984173420}
   m_Enabled: 1
   serializedVersion: 3
-  m_Shape: 1
-  m_Extents: {x: 1.5, y: 1, z: 1.5}
+  m_Shape: 0
+  m_Extents: {x: 1, y: 1, z: 1}
   m_MoveThreshold: 0.1
   m_Carve: 1
-  m_CarveOnlyStationary: 0
-  m_Center: {x: 0, y: 1, z: 0}
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
 --- !u!114 &8373508903984173416
 MonoBehaviour:
@@ -397,12 +397,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef375197f79c667409c0f96102628da2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visible: 0
+  visionFadeTime: 1
   drawViewDistance: 0
   drawEngageDistance: 0
   faction: {fileID: 0}
-  visible: 0
   template: {fileID: 0}
-  visionFadeTime: 1
   fieldOfView: {fileID: 8373508903929679138}
   state: 0
 --- !u!65 &8373508903984173423
