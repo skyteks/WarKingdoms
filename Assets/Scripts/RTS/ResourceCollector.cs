@@ -18,6 +18,32 @@ public class ResourceCollector : MonoBehaviour
 
     private Animator animator;
 
+    public bool isFull
+    {
+        get
+        {
+            int max = 0;
+            switch (storedType)
+            {
+                case ResourceSource.ResourceType.Wood:
+                    max = maxWood;
+                    break;
+                case ResourceSource.ResourceType.Ore:
+                    max = maxOre;
+                    break;
+            }
+            return storage >= max;
+        }
+    }
+
+    public bool isNotEmpty
+    {
+        get
+        {
+            return storage > 0;
+        }
+    }
+
     void Awake()
     {
         animator = GetComponent<Animator>();
@@ -34,7 +60,10 @@ public class ResourceCollector : MonoBehaviour
             storage = 0;
             storedType = type;
         }
-        animator?.SetFloat("DoCarry", (float)type);
+        if (animator != null && Mathf.Floor(animator.GetFloat("DoCarry")) != (float)type)
+        {
+            animator.SetFloat("DoCarry", (float)type);
+        }
         int max = 0;
         switch (storedType)
         {
@@ -46,7 +75,7 @@ public class ResourceCollector : MonoBehaviour
                 break;
         }
         storedType = type;
-        storage = Mathf.Clamp(storage + amount, 0, maxWood);
+        storage = Mathf.Clamp(storage + amount, 0, max);
     }
 
     public KeyValuePair<ResourceSource.ResourceType, int> EmptyStorage()
@@ -57,23 +86,5 @@ public class ResourceCollector : MonoBehaviour
         return tmp;
     }
 
-    public bool IsFull()
-    {
-        int max = 0;
-        switch (storedType)
-        {
-            case ResourceSource.ResourceType.Wood:
-                max = maxWood;
-                break;
-            case ResourceSource.ResourceType.Ore:
-                max = maxOre;
-                break;
-        }
-        return storage >= max;
-    }
 
-    public bool IsNotEmpty()
-    {
-        return storage > 0;
-    }
 }

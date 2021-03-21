@@ -19,6 +19,14 @@ public class ResourceSource : MonoBehaviour
 
     private InteractableObject interactableObject;
 
+    public bool isEmpty
+    {
+        get
+        {
+            return stored == 0;
+        }
+    }
+
     void Awake()
     {
         interactableObject = GetComponent<InteractableObject>();
@@ -42,10 +50,5 @@ public class ResourceSource : MonoBehaviour
             stored = 0;
             return amount;
         }
-    }
-
-    public bool IsEmpty()
-    {
-        return stored == 0;
     }
 }

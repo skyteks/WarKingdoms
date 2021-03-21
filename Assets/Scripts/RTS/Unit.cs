@@ -405,12 +405,12 @@ public class Unit : ClickableObject
                         switch (customAction.Value)
                         {
                             case AICommand.CustomActions.collectResources:
-                                if (resourceCollector.IsFull())
+                                if (resourceCollector.isFull)
                                 {
                                     commandExecuted = true;
                                     break;
                                 }
-                                else if (resourceSource.IsEmpty())
+                                else if (resourceSource.isEmpty)
                                 {
                                     SeekNewResourceSource();
                                     break;
@@ -419,7 +419,7 @@ public class Unit : ClickableObject
                                 animator?.SetBool("DoAttack", true);
                                 break;
                             case AICommand.CustomActions.dropoffResources:
-                                if (resourceCollector.IsNotEmpty())
+                                if (resourceCollector.isNotEmpty)
                                 {
                                     KeyValuePair<ResourceSource.ResourceType, int> resourceBundle = resourceCollector.EmptyStorage();
                                     ResourceDropoff resourceDropoff = targetOfAttack.GetComponent<ResourceDropoff>();
@@ -469,7 +469,7 @@ public class Unit : ClickableObject
                     case AICommand.CustomActions.collectResources:
                         animator?.SetBool("DoAttack", false);
 
-                        if (resourceCollector != null && resourceCollector.IsFull())
+                        if (resourceCollector != null && resourceCollector.isFull)
                         {
                             Building dropoffBuilding = faction.GetClosestBuildingWithResourceDropoff(transform.position, targetOfAttack.GetComponent<ResourceSource>().resourceType);
                             AICommand dropResourcesCommand = new AICommand(AICommand.CommandTypes.CustomActionAtObj, dropoffBuilding, AICommand.CustomActions.dropoffResources);
@@ -535,7 +535,7 @@ public class Unit : ClickableObject
 
         if (closest == null)
         {
-            if (resourceCollector.IsNotEmpty())
+            if (resourceCollector.isNotEmpty)
             {
                 Building dropoffBuilding = faction.GetClosestBuildingWithResourceDropoff(transform.position, targetOfAttack.GetComponent<ResourceSource>().resourceType);
                 AICommand dropResourcesCommand = new AICommand(AICommand.CommandTypes.CustomActionAtObj, dropoffBuilding, AICommand.CustomActions.dropoffResources);

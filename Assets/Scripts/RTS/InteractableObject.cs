@@ -135,9 +135,13 @@ public class InteractableObject : MonoBehaviour
     {
         if (resourceCollector != null && resourceSource != null)
         {
+            if (resourceCollector.isFull)
+            {
+                //return false;
+            }
             int earnings = resourceSource.GetAmount(resourceCollector.woodPerHitEarnings);
             resourceCollector.AddResource(earnings, resourceSource.resourceType);
-            if (resourceSource.IsEmpty())
+            if (resourceSource.isEmpty)
             {
                 Die();
             }
