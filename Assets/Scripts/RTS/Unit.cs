@@ -589,6 +589,7 @@ public class Unit : ClickableObject
         commandList.Clear();
 
         navMeshAgent.isStopped = true;
+        navMeshAgent.enabled = false;
 
         animator?.SetBool("DoAttack", false);
         animator?.SetTrigger("DoDeath");

@@ -144,7 +144,7 @@ public class InputManager : Singleton<InputManager>
                             RaycastHit hit;
                             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
-                            if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitsLayerMask))
+                            if (Physics.Raycast(ray, out hit, float.PositiveInfinity, unitsLayerMask))
                             {
                                 ClickableObject newSelectedUnit = hit.collider.GetComponent<ClickableObject>();
                                 if (newSelectedUnit != null && newSelectedUnit.faction == gameManager.playerFaction)
@@ -173,7 +173,7 @@ public class InputManager : Singleton<InputManager>
                     Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
                     bool moveCommand = false;
-                    if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitsLayerMask))
+                    if (Physics.Raycast(ray, out hit, float.PositiveInfinity, unitsLayerMask))
                     {
                         InteractableObject targetUnit = hit.collider.GetComponent<InteractableObject>();
                         if (targetUnit != null)

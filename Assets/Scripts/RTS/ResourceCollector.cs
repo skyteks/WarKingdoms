@@ -60,7 +60,7 @@ public class ResourceCollector : MonoBehaviour
             storage = 0;
             storedType = type;
         }
-        if (animator != null && Mathf.Floor(animator.GetFloat("DoCarry")) != (float)type)
+        if (animator != null)// && Mathf.Floor(animator.GetFloat("DoCarry")) != (float)type)
         {
             animator.SetFloat("DoCarry", (float)type);
         }

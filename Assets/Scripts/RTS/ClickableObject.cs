@@ -207,10 +207,6 @@ public abstract class ClickableObject : InteractableObject
             OnDeath.Invoke(this);
         }
 
-        //To avoid the object participating in any Raycast or tag search
-        //gameObject.tag = "Untagged";
-        gameObject.layer = 0;
-
         globalObjectsList.Remove(this);
 
         //Remove unneeded Components

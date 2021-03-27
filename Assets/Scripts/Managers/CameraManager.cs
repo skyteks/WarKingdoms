@@ -121,7 +121,7 @@ public class CameraManager : Singleton<CameraManager>
         Ray ray = camera.ScreenPointToRay(screenPoint);
 
         RaycastHit hitInfo;
-        if (Physics.Raycast(ray, out hitInfo, 100f, groundMask))
+        if (Physics.Raycast(ray, out hitInfo, float.PositiveInfinity, groundMask))
         {
             hitPoint = hitInfo.point;
             return true;
