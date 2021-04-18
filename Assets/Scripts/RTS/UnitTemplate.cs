@@ -12,6 +12,8 @@ public class UnitTemplate : ScriptableObject
 
     public Sprite icon;
 
+    public GameObject prefab;
+
     public FactionTemplate.Race race;
 
     [Tooltip("Determines the damage the Unit can take before it dies")]

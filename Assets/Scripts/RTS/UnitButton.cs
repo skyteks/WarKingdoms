@@ -5,7 +5,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Button to select/deselect a unit in the UI
 /// </summary>
-public class UnitButton : UIClickable
+public class UnitButton : UIButton
 {
     public Image portrait;
     public Image healthbarSlice;
@@ -15,25 +15,21 @@ public class UnitButton : UIClickable
     protected Color healthColorRed;
     protected Color manaColor;
 
-    public ClickableObject Unit { get; protected set; }
+    public ClickableObject unit { get; protected set; }
 
-    public override void OnPointerDown(PointerEventData e)
+    protected override void ClickThis()
     {
-        base.OnPointerDown(e);
+        GameManager.Instance.SetSelection(unit);
+    }
 
-        if (e.pointerId == -1)
-        {
-            GameManager.Instance.SetSelection(Unit);
-        }
-        else if (e.pointerId == -2)
-        {
-            GameManager.Instance.RemoveFromSelection(Unit);
-        }
+    protected override void ClickSomethingElse()
+    {
+        GameManager.Instance.RemoveFromSelection(unit);
     }
 
     public virtual void SetupButton(ClickableObject unitForButton, Color healthGreen, Color healthOrange, Color healthRed, Color manaBlue)
     {
-        Unit = unitForButton;
+        unit = unitForButton;
         healthColorGreen = healthGreen;
         healthColorOrange = healthOrange;
         healthColorRed = healthRed;
@@ -42,8 +38,8 @@ public class UnitButton : UIClickable
 
     public virtual void UpdateButton()
     {
-        portrait.sprite = Unit.template.icon;
-        float fill = (float)Unit.template.health / (float)Unit.template.original.health;
+        portrait.sprite = unit.template.icon;
+        float fill = (float)unit.template.health / (float)unit.template.original.health;
         if (healthbarSlice != null)
         {
             healthbarSlice.fillAmount = fill;
@@ -58,15 +54,17 @@ public class UnitButton : UIClickable
         }
         if (manabarSlice != null)
         {
-            if (Unit.template.original.mana == 0)
+            if (unit.template.original.mana == 0)
             {
                 manabarSlice.transform.parent.gameObject.SetActive(false);
             }
             else
             {
-                manabarSlice.fillAmount = (float)Unit.template.mana / (float)Unit.template.original.mana;
+                manabarSlice.fillAmount = (float)unit.template.mana / (float)unit.template.original.mana;
                 manabarSlice.color = manaColor;
             }
         }
     }
+
+
 }

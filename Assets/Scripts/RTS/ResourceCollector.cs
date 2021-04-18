@@ -9,11 +9,7 @@ public class ResourceCollector : MonoBehaviour
 
     public int maxWood = 10;
     public int maxOre = 20;
-    [SerializeField]
-    [ReadOnly]
     private ResourceSource.ResourceType storedType;
-    [SerializeField]
-    [ReadOnly]
     private int storage;
 
     private Animator animator;

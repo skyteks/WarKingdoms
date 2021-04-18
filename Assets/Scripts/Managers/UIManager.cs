@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -52,6 +53,11 @@ public class UIManager : Singleton<UIManager>
 
     public Text resourceGoldText;
     public Text resourceWoodText;
+
+    [Space]
+
+    public GridLayoutGroup skillsLayoutGroup;
+    public GameObject skillButtonUIPrefab;
 
     void Awake()
     {
@@ -153,15 +159,41 @@ public class UIManager : Singleton<UIManager>
         {
             selectedPortraitUI.SetupButton(newSelectedUnit, healthColorGreen, healthColorOrange, healthColorRed, manaColor);
             newSelectedUnit.OnDeath += RemoveFromSelection;
+
+            SetupSkillButtons(newSelectedUnit);
         }
         else
         {
             selectedPortraitUI.ClearButton();
+
+            ClearSkillButtons();
         }
         selectionLayoutGroup.gameObject.SetActive(!showPortrait);
 
-        GameObject holder = Instantiate<GameObject>(selectedUnitUIPrefab, selectionLayoutGroup.transform);
-        holder.GetComponent<UnitButton>().SetupButton(newSelectedUnit, healthColorGreen, healthColorOrange, healthColorRed, manaColor);
+        UnitButton button = Instantiate<GameObject>(selectedUnitUIPrefab, selectionLayoutGroup.transform).GetComponent<UnitButton>();
+        button.SetupButton(newSelectedUnit, healthColorGreen, healthColorOrange, healthColorRed, manaColor);
+    }
+
+    private void SetupSkillButtons(ClickableObject newSelectedUnit)
+    {
+        BuildingBuilder builder = newSelectedUnit.GetComponent<BuildingBuilder>();
+        if (builder != null)
+        {
+            foreach (var building in builder.buildingsToBuild)
+            {
+                BuildSkillButton button = Instantiate<GameObject>(skillButtonUIPrefab, skillsLayoutGroup.transform).GetComponent<BuildSkillButton>();
+                button.SetupButton(building);
+            }
+        }
+    }
+
+    private void ClearSkillButtons()
+    {
+        Transform[] children = skillsLayoutGroup.transform.GetChildren();
+        foreach (var child in children)
+        {
+            Destroy(child.gameObject);
+        }
     }
 
     public void UpdateSelection()
@@ -183,7 +215,7 @@ public class UIManager : Singleton<UIManager>
 
     public void RemoveFromSelection(ClickableObject unitToRemove)
     {
-        Transform child = selectionLayoutGroup.transform.GetChildren().Where(holder => holder.GetComponent<UnitButton>().Unit == unitToRemove).FirstOrDefault();
+        Transform child = selectionLayoutGroup.transform.GetChildren().Where(holder => holder.GetComponent<UnitButton>().unit == unitToRemove).FirstOrDefault();
         if (child == null)
         {
             return;
@@ -206,6 +238,8 @@ public class UIManager : Singleton<UIManager>
             child.gameObject.SetActive(false);
         }
         selectedPortraitUI.ClearButton();
+
+        ClearSkillButtons();
     }
 
     public void AddHealthbar(ClickableObject unit)

@@ -19,11 +19,11 @@ public class PortraitButton : UnitButton
     public override void UpdateButton()
     {
         base.UpdateButton();
-        if (Unit.template.original.health > 1)
+        if (unit.template.original.health > 1)
         {
             healthText.enabled = true;
-            float fill = (float)Unit.template.health / (float)Unit.template.original.health;
-            healthText.text = string.Concat(Unit.template.health, " / ", Unit.template.original.health);
+            float fill = (float)unit.template.health / (float)unit.template.original.health;
+            healthText.text = string.Concat(unit.template.health, " / ", unit.template.original.health);
             if (fill > 0.5f)
             {
                 healthText.color = Color.Lerp(healthColorOrange, healthColorGreen, fill.LinearRemap(0.5f, 1f));
@@ -38,10 +38,10 @@ public class PortraitButton : UnitButton
             healthText.enabled = false;
         }
 
-        if (Unit.template.original.mana > 0)
+        if (unit.template.original.mana > 0)
         {
             manaText.enabled = true;
-            manaText.text = string.Concat(Unit.template.mana, " / ", Unit.template.original.mana);
+            manaText.text = string.Concat(unit.template.mana, " / ", unit.template.original.mana);
             manaText.color = manaColor;
         }
         else
@@ -49,11 +49,11 @@ public class PortraitButton : UnitButton
             manaText.enabled = false;
         }
 
-        if (Unit.template.damage.y > 0)
+        if (unit.template.damage.y > 0)
         {
             damageTitle.enabled = true;
             damageText.enabled = true;
-            damageText.text = string.Concat(Unit.template.damage.x, " - ", Unit.template.damage.y);
+            damageText.text = string.Concat(unit.template.damage.x, " - ", unit.template.damage.y);
         }
         else
         {
@@ -63,7 +63,7 @@ public class PortraitButton : UnitButton
 
         armorTitle.enabled = true;
         armorText.enabled = true;
-        armorText.text = Unit.template.armor.ToString();
+        armorText.text = unit.template.armor.ToString();
 
         //movementSpeedText.text = Unit.template.movementSpeed.ToString();
     }
