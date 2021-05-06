@@ -9,7 +9,7 @@ public class ResourceCollector : MonoBehaviour
 
     public int maxWood = 10;
     public int maxOre = 20;
-    private ResourceSource.ResourceType storedType;
+    private ResourceSource.ResourceType storedType = ResourceSource.ResourceType.Wood;
     private int storage;
 
     private Animator animator;
@@ -27,6 +27,8 @@ public class ResourceCollector : MonoBehaviour
                 case ResourceSource.ResourceType.Ore:
                     max = maxOre;
                     break;
+                default:
+                    return false;
             }
             return storage >= max;
         }
