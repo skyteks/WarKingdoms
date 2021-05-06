@@ -20,8 +20,9 @@ public class UIManager : Singleton<UIManager>
     }
 
     public Color healthColorGreen = Color.green;
-    public Color healthColorRed = Color.red;
     public Color healthColorOrange = Color.Lerp(Color.red, Color.yellow, 0.5f);
+    public Color healthColorRed = Color.red;
+    public AnimationCurve healthColorCurve = new AnimationCurve(new Keyframe(0f, 0f), new Keyframe(0.5f, 0.5f), new Keyframe(1f, 1f));
     public Color manaColor = Color.blue;
 
     [Space]
@@ -277,13 +278,15 @@ public class UIManager : Singleton<UIManager>
                     healthbarSlice.color = GetFactionColorForColorMode(unit.faction, true);
                     break;
                 case HealthbarColoringModes.HealthPercentage:
-                    if (healthbarSlice.fillAmount > 0.5f)
+                    float value = healthbarSlice.fillAmount;
+                    value = healthColorCurve.Evaluate(value);
+                    if (value > 0.5f)
                     {
-                        healthbarSlice.color = Color.Lerp(healthColorOrange, healthColorGreen, healthbarSlice.fillAmount.LinearRemap(0.5f, 1f));
+                        healthbarSlice.color = Color.Lerp(healthColorOrange, healthColorGreen, value.LinearRemap(0.5f, 1f));
                     }
                     else
                     {
-                        healthbarSlice.color = Color.Lerp(healthColorRed, healthColorOrange, healthbarSlice.fillAmount.LinearRemap(0f, 0.5f));
+                        healthbarSlice.color = Color.Lerp(healthColorRed, healthColorOrange, value.LinearRemap(0f, 0.5f));
                     }
                     break;
             }
