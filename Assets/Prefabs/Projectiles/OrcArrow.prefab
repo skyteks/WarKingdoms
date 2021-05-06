@@ -48,10 +48,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileFlyMode: 1
   maxCurveHeight: 0
-  trackSpeed: 20
+  trackSpeed: 25
   projectileRotationMode: 0
   useFactionMaterial: 1
-  terrainImpactEffect: {fileID: 0}
 --- !u!54 &7307690093435274700
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -144,6 +143,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 85c407ce764279e44a7e5b7cb7ef65aa, type: 2}
+    - target: {fileID: 2300000, guid: f2492904e2e22a44296278c2ef856c46, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f2492904e2e22a44296278c2ef856c46, type: 3}
 --- !u!4 &704455945799512546 stripped
