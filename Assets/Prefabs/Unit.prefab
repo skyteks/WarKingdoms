@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 114393224487344650}
   - component: {fileID: 95138031281430410}
   - component: {fileID: 136947702010847266}
+  - component: {fileID: 4542764337897909974}
   m_Layer: 15
   m_Name: Unit
   m_TagString: Untagged
@@ -75,7 +76,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   visible: 0
   visionFadeTime: 1
-  health: 0
   drawViewDistance: 0
   drawEngageDistance: 0
   faction: {fileID: 0}
@@ -117,6 +117,21 @@ CapsuleCollider:
   m_Height: 1.5
   m_Direction: 1
   m_Center: {x: 0, y: 0.75, z: 0}
+--- !u!114 &4542764337897909974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1107782487055510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c96a2fc504ef2644b8fce79f2b2592d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lists:
+  - listHolder: {fileID: 11400000, guid: 01c7bc88a8159d34f9070b8e426410e6, type: 2}
+    objectToAdd: {fileID: 114393224487344650}
 --- !u!1 &1107830643762534
 GameObject:
   m_ObjectHideFlags: 0

@@ -131,4 +131,9 @@ public static class Rect_Extension
     {
         return new Vector3(bounds.max.x, bounds.min.y, bounds.min.z);
     }
+
+    public static bool Contains(this Bounds bounds, Bounds otherBounds)
+    {
+        return bounds.Contains(otherBounds.min) && bounds.Contains(otherBounds.max);
+    }
 }

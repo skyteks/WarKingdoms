@@ -1,5 +1,33 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &406529851194027679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5921360813799631417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc269b8616eaa5342a227151635a7c90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resourceType: 1
+  stored: 10000
+--- !u!114 &595132880955825816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5921360813799631417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d5c420f42eea38499c6d09b5b0bfaa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 0
+  visionFadeTime: 1
 --- !u!1001 &2745027202184510293
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7,10 +35,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5463984247288531520, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: lists.Array.data[0].objectToAdd
+      value: 
+      objectReference: {fileID: 406529851194027679}
+    - target: {fileID: -5463984247288531520, guid: 125e509c875919d45ad17327fe3f53d8,
+        type: 3}
+      propertyPath: lists.Array.data[0].listHolder
+      value: 
+      objectReference: {fileID: 11400000, guid: fc0f5a978b4c2ce4db1f68abc5937201,
+        type: 2}
     - target: {fileID: 8373508903984173420, guid: 125e509c875919d45ad17327fe3f53d8,
         type: 3}
       propertyPath: m_Name
-      value: Building
+      value: Gold Mine
       objectReference: {fileID: 0}
     - target: {fileID: 8373508903984173422, guid: 125e509c875919d45ad17327fe3f53d8,
         type: 3}
@@ -67,5 +106,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8373508903984173416, guid: 125e509c875919d45ad17327fe3f53d8, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 125e509c875919d45ad17327fe3f53d8, type: 3}
+--- !u!1 &5921360813799631417 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8373508903984173420, guid: 125e509c875919d45ad17327fe3f53d8,
+    type: 3}
+  m_PrefabInstance: {fileID: 2745027202184510293}
+  m_PrefabAsset: {fileID: 0}

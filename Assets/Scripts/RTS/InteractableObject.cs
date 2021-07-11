@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
+[DisallowMultipleComponent]
 public class InteractableObject : MonoBehaviour
 {
     protected static int layerObjectsVisible = -1;

@@ -19,15 +19,36 @@ public class UnitEditor : Editor
         if (targets.Length == 1)
         {
             unit = (target as Unit);
-            reorderableList = new ReorderableList(unit.GetCommandList(), typeof(AICommand), false, true, false, false);
+            reorderableList = new ReorderableList(unit.listForEditor, typeof(AICommand), false, true, false, false);
             reorderableList.drawHeaderCallback += DrawHeaderCallBack;
             reorderableList.drawElementCallback += DrawElementCallback;
         }
     }
 
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+        EditorGUILayout.Space();
+        if (targets.Length == 1)
+        {
+            reorderableList.DoLayoutList();
+            DrawTemplateEditor(unit.template, ref templateFoldout, ref templateEditor);
+            EditorPrefs.SetBool(nameof(templateFoldout), templateFoldout);
+        }
+        else
+        {
+            EditorGUILayout.HelpBox("multi-select Commands Queue not supported", MessageType.Info, true);
+        }
+    }
+
+    private void DrawHeaderCallBack(Rect rect)
+    {
+        EditorGUI.LabelField(rect, "Commands Queue");
+    }
+
     private void DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
     {
-        AICommand command = unit.GetCommandList()[index];
+        AICommand command = unit.listForEditor[index];
         Rect[] rects = rect.SplitOnXAxis(0.5f);
         for (int i = 0; i < rects.Length; i++)
         {
@@ -58,27 +79,6 @@ public class UnitEditor : Editor
                 break;
         }
         //EditorGUI.EndDisabledGroup();
-    }
-
-    private void DrawHeaderCallBack(Rect rect)
-    {
-        EditorGUI.LabelField(rect, "Commands Queue");
-    }
-
-    public override void OnInspectorGUI()
-    {
-        DrawDefaultInspector();
-        EditorGUILayout.Space();
-        if (targets.Length == 1)
-        {
-            reorderableList.DoLayoutList();
-            DrawTemplateEditor(unit.template, ref templateFoldout, ref templateEditor);
-            EditorPrefs.SetBool(nameof(templateFoldout), templateFoldout);
-        }
-        else
-        {
-            EditorGUILayout.HelpBox("multi-select Commands Queue not supported", MessageType.Info, true);
-        }
     }
 
     void DrawTemplateEditor(Object obj, ref bool foldout, ref Editor editor)

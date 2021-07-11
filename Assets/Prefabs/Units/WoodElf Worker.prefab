@@ -1,20 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &6678564005310521327
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 729119159435421255}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be30a60817a6b6c4b98974649ec522e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  woodPerHitEarnings: 1
-  maxWood: 10
-  maxOre: 20
 --- !u!114 &889932913567765624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28,6 +13,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildingsToBuild: []
+--- !u!114 &6678564005310521327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 729119159435421255}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be30a60817a6b6c4b98974649ec522e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resourceSources: {fileID: 11400000, guid: fc0f5a978b4c2ce4db1f68abc5937201, type: 2}
+  woodPerHitEarnings: 1
+  maxWood: 10
+  maxOre: 20
 --- !u!1001 &728938304060619473
 PrefabInstance:
   m_ObjectHideFlags: 0

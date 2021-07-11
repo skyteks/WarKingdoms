@@ -27,6 +27,7 @@ public class Unit : ClickableObject
     protected ResourceCollector resourceCollector;
 
     protected List<AICommand> commandList = new List<AICommand>();
+
     protected bool agentReady = false;
     protected bool commandRecieved, commandExecuted;
     protected UnitStates? switchState;
@@ -544,6 +545,7 @@ public class Unit : ClickableObject
             commandExecuted = true;
             return;
         }
+
         targetOfAttack = closest;
         targetOfMovement = targetOfAttack.transform.position;
         switchState = UnitStates.CustomActionAtObj;
@@ -704,9 +706,6 @@ public class Unit : ClickableObject
     }
 
 #if UNITY_EDITOR
-    public List<AICommand> GetCommandList()
-    {
-        return commandList;
-    }
+    public List<AICommand> listForEditor { get { return commandList; } }
 #endif
 }

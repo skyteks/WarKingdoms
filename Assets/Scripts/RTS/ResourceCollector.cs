@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Unit))]
+[DisallowMultipleComponent]
 public class ResourceCollector : MonoBehaviour
 {
+    public ListHolderObject resourceSources;
+
     public int woodPerHitEarnings = 1;
 
     public int maxWood = 10;
@@ -83,6 +86,4 @@ public class ResourceCollector : MonoBehaviour
         animator?.SetFloat("DoCarry", 0f);
         return tmp;
     }
-
-
 }
