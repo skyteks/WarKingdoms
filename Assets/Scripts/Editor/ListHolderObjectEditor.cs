@@ -4,10 +4,10 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
-[CustomEditor(typeof(ListHolderObject))]
-public class ListHolderObjectEditor : Editor
+[CustomEditor(typeof(RegisterObject))]
+public class RegisterObjectEditor : Editor
 {
-    private ListHolderObject listHolder;
+    private RegisterObject registerObject;
 
     private ReorderableList reorderableList;
 
@@ -15,8 +15,8 @@ public class ListHolderObjectEditor : Editor
     {
         if (targets.Length == 1)
         {
-            listHolder = (target as ListHolderObject);
-            reorderableList = new ReorderableList(listHolder.listForEditor, listHolder.typeOfListObjects, false, true, false, false);
+            registerObject = (target as RegisterObject);
+            reorderableList = new ReorderableList(registerObject.listForEditor, registerObject.typeOfListObjects, false, true, false, false);
             reorderableList.drawHeaderCallback += DrawHeaderCallBack;
             reorderableList.drawElementCallback += DrawElementCallback;
         }
@@ -32,12 +32,12 @@ public class ListHolderObjectEditor : Editor
 
     private void DrawHeaderCallBack(Rect rect)
     {
-        EditorGUI.LabelField(rect, listHolder.typeOfListObjects == null ? string.Concat(typeof(MonoBehaviour).ToString(), " [0]") : string.Concat(listHolder.typeOfListObjects.ToString(), " [", listHolder.listForEditor.Count, "]"));
+        EditorGUI.LabelField(rect, registerObject.typeOfListObjects == null ? string.Concat(typeof(MonoBehaviour).ToString(), " [0]") : string.Concat(registerObject.typeOfListObjects.ToString(), " [", registerObject.listForEditor.Count, "]"));
     }
 
     private void DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
     {
-        MonoBehaviour obj = listHolder.listForEditor[index];
+        MonoBehaviour obj = registerObject.listForEditor[index];
         /*
         Rect[] rects = rect.SplitOnXAxis(0.5f);
         for (int i = 0; i < rects.Length; i++)
@@ -50,7 +50,7 @@ public class ListHolderObjectEditor : Editor
         */
         //EditorGUI.BeginDisabledGroup(true);
         //EditorGUI.EnumFlagsField(rects[0], );
-        EditorGUI.ObjectField(rect, obj, listHolder.typeOfListObjects, true);
+        EditorGUI.ObjectField(rect, obj, registerObject.typeOfListObjects, true);
         //EditorGUI.EndDisabledGroup();
     }
 

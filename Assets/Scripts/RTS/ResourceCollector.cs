@@ -6,13 +6,14 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class ResourceCollector : MonoBehaviour
 {
-    public ListHolderObject resourceSources;
+    [UnityEngine.Serialization.FormerlySerializedAs("resourceSources")]
+    public RegisterObject resourceSourcesRegister;
 
     public int woodPerHitEarnings = 1;
 
     public int maxWood = 10;
     public int maxOre = 20;
-    private ResourceSource.ResourceType storedType = ResourceSource.ResourceType.Wood;
+    public ResourceSource.ResourceType storedType { get; private set; }
     private int storage;
 
     private Animator animator;

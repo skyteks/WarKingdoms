@@ -80,8 +80,14 @@ public class Unit : ClickableObject
     {
         if (navMeshAgent != null && navMeshAgent.isOnNavMesh && navMeshAgent.hasPath)
         {
-            UnityEditor.Handles.color = Color.yellow;
+            UnityEditor.Handles.color = Color.red;
             UnityEditor.Handles.DrawLine(transform.position, navMeshAgent.destination);
+
+            if (targetOfMovement.HasValue)
+            {
+                UnityEditor.Handles.color = Color.yellow;
+                UnityEditor.Handles.DrawLine(transform.position, targetOfMovement.Value);
+            }
         }
 
         base.OnDrawGizmos();
@@ -160,6 +166,11 @@ public class Unit : ClickableObject
             {
                 AICommand nextCommand = commandList[0];
                 ExecuteCommand(nextCommand);
+                if (!commandRecieved)
+                {
+                    Debug.LogWarning(string.Concat("Command Type '", nextCommand.commandType.ToString(), "' could not be recieved on ", name), gameObject);
+                    return;
+                }
             }
             else if (state != UnitStates.Idleing)
             {
@@ -205,7 +216,22 @@ public class Unit : ClickableObject
             case AICommand.CommandTypes.CustomActionAtPos:
                 targetOfMovement = command.destination;
                 customAction = command.customAction;
-                TransitIntoState(UnitStates.CustomActionAtPos);
+                switch (customAction.Value)
+                {
+                    case AICommand.CustomActions.collectResources:
+                        if (SeekNewResourceSource(resourceCollector.storedType, false))
+                        {
+                            TransitIntoState(UnitStates.CustomActionAtObj);
+                        }
+                        else
+                        {
+                            commandRecieved = false;
+                        }
+                        break;
+                    default:
+                        TransitIntoState(UnitStates.CustomActionAtPos);
+                        break;
+                }
                 break;
             case AICommand.CommandTypes.CustomActionAtObj:
                 targetOfAttack = command.target;
@@ -361,23 +387,25 @@ public class Unit : ClickableObject
                 break;
             case UnitStates.CustomActionAtPos:
                 {
+                    /*
                     navMeshAgent.isStopped = true;
 
                     float remainingDistance = Vector3.Distance(transform.position, targetOfMovement.Value);
-                    //check if in attack range
                     if (template.engageDistance < remainingDistance)
                     {
                         switchState = UnitStates.MovingToSpot;
                     }
                     else
                     {
-                        switch (customAction.Value)
-                        {
-                            case AICommand.CustomActions.collectResources:
-                                SeekNewResourceSource();
-                                break;
-                        }
+                    */
+                    switch (customAction.Value)
+                    {
+                        case AICommand.CustomActions.collectResources:
+                            switchState = UnitStates.CustomActionAtObj;
+                            //SeekNewResourceSource(resourceCollector.storedType, false);
+                            break;
                     }
+                    //}
                     break;
                 }
             case UnitStates.CustomActionAtObj:
@@ -413,7 +441,7 @@ public class Unit : ClickableObject
                                 }
                                 else if (resourceSource.isEmpty)
                                 {
-                                    SeekNewResourceSource();
+                                    SeekNewResourceSource(resourceSource.resourceType, true);
                                     break;
                                 }
                                 FaceTarget();
@@ -426,6 +454,9 @@ public class Unit : ClickableObject
                                     ResourceDropoff resourceDropoff = targetOfAttack.GetComponent<ResourceDropoff>();
                                     resourceDropoff.DropResource(resourceBundle.Value, resourceBundle.Key);
                                 }
+                                AICommand getBackCollectingCommand = new AICommand(AICommand.CommandTypes.CustomActionAtPos, transform.position, AICommand.CustomActions.collectResources);
+                                AddCommand(getBackCollectingCommand);
+
                                 commandExecuted = true;
                                 break;
                         }
@@ -457,12 +488,14 @@ public class Unit : ClickableObject
                 modelHolder.position += Vector3.up * decayIntoGroundDistance;
                 break;
             case UnitStates.CustomActionAtPos:
+                /*
                 switch (customAction.Value)
                 {
                     case AICommand.CustomActions.collectResources:
                         animator?.SetBool("DoAttack", false);
                         break;
                 }
+                */
                 break;
             case UnitStates.CustomActionAtObj:
                 switch (customAction.Value)
@@ -475,9 +508,6 @@ public class Unit : ClickableObject
                             Building dropoffBuilding = faction.GetClosestBuildingWithResourceDropoff(transform.position, targetOfAttack.GetComponent<ResourceSource>().resourceType);
                             AICommand dropResourcesCommand = new AICommand(AICommand.CommandTypes.CustomActionAtObj, dropoffBuilding, AICommand.CustomActions.dropoffResources);
                             AddCommand(dropResourcesCommand);
-
-                            AICommand getBackCollectingCommand = new AICommand(AICommand.CommandTypes.CustomActionAtPos, transform.position, AICommand.CustomActions.collectResources);
-                            AddCommand(getBackCollectingCommand);
                         }
                         break;
                     default:
@@ -517,20 +547,29 @@ public class Unit : ClickableObject
         }
     }
 
-    private void SeekNewResourceSource()
+    private bool SeekNewResourceSource(ResourceSource.ResourceType resourceType, bool closeby)
     {
-        Collider[] colliders = Physics.OverlapSphere(transform.position, template.guardDistance, InputManager.Instance.unitsLayerMask, QueryTriggerInteraction.Collide);
-        Collider[] resources = colliders.Where(collider => collider.GetComponent<ResourceSource>() != null).ToArray();
-
-        InteractableObject closest = null;
-        float distanceToClosestSqr = float.PositiveInfinity;
-        foreach (var collider in resources)
+        IEnumerable<ResourceSource> resources;
+        if (closeby)
         {
-            float distanceSqr = (collider.transform.position - targetOfMovement.Value).sqrMagnitude;
+            /// search surroundings for colliders of resource sources
+            Collider[] colliders = Physics.OverlapSphere(transform.position, template.guardDistance, InputManager.Instance.unitsLayerMask, QueryTriggerInteraction.Collide);
+            resources = colliders.Select(collider => collider.GetComponent<ResourceSource>()).Where(source => source != null && source.resourceType == resourceType);
+        }
+        else
+        {
+            resources = resourceCollector.resourceSourcesRegister.GetEnumerable().Select(behavior => behavior as ResourceSource).Where(source => source.resourceType == resourceType);
+        }
+
+        ResourceSource closest = null;
+        float distanceToClosestSqr = float.PositiveInfinity;
+        foreach (var resource in resources)
+        {
+            float distanceSqr = (resource.transform.position - targetOfMovement.Value).sqrMagnitude;
             if (distanceSqr < distanceToClosestSqr)
             {
                 distanceToClosestSqr = distanceSqr;
-                closest = collider.GetComponent<InteractableObject>();
+                closest = resource;
             }
         }
 
@@ -543,12 +582,12 @@ public class Unit : ClickableObject
                 AddCommand(dropResourcesCommand);
             }
             commandExecuted = true;
-            return;
+            return false;
         }
 
-        targetOfAttack = closest;
+        targetOfAttack = closest.GetComponent<InteractableObject>();
         targetOfMovement = targetOfAttack.transform.position;
-        switchState = UnitStates.CustomActionAtObj;
+        return true;
     }
 
     private void ShootProjectileAtTarget(int damage)

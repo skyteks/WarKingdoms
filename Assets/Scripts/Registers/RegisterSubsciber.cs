@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class ListSubsciber : MonoBehaviour
+public class RegisterSubsciber : MonoBehaviour
 {
     [System.Serializable]
-    public struct ListsAndObjectsToAdd
+    public struct RegistersAndObjectsToAdd
     {
-        public ListHolderObject listHolder;
+        public RegisterObject listHolder;
         public MonoBehaviour objectToAdd;
     }
 
-    public ListsAndObjectsToAdd[] lists;
+    [UnityEngine.Serialization.FormerlySerializedAs("lists")]
+    public RegistersAndObjectsToAdd[] registers;
 
     private void OnEnable()
     {
@@ -26,7 +27,7 @@ public class ListSubsciber : MonoBehaviour
 
     private void Add()
     {
-        foreach (var list in lists)
+        foreach (var list in registers)
         {
             list.listHolder.AddObject(list.objectToAdd);
         }
@@ -34,7 +35,7 @@ public class ListSubsciber : MonoBehaviour
 
     private void Remove()
     {
-        foreach (var list in lists)
+        foreach (var list in registers)
         {
             list.listHolder.RemoveObject(list.objectToAdd);
         }

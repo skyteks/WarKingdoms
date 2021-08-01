@@ -18,6 +18,7 @@ public class ResourceSource : MonoBehaviour
     public int maxStorage { get; private set; }
 
     private InteractableObject interactableObject;
+    private RegisterSubsciber registerSubsciber;
 
     public bool isEmpty
     {
@@ -30,6 +31,7 @@ public class ResourceSource : MonoBehaviour
     void Awake()
     {
         interactableObject = GetComponent<InteractableObject>();
+        registerSubsciber = GetComponent<RegisterSubsciber>();
     }
 
     void Start()
@@ -48,6 +50,7 @@ public class ResourceSource : MonoBehaviour
         {
             amount = stored;
             stored = 0;
+            registerSubsciber.enabled = false;
             return amount;
         }
     }

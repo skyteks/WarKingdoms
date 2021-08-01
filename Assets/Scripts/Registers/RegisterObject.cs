@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "new ListHolderObject", menuName = "List Holder Object")]
-public class ListHolderObject : ScriptableObject
+public class RegisterObject : ScriptableObject
 {
     public System.Type typeOfListObjects = null;
     private List<MonoBehaviour> list = new List<MonoBehaviour>();
