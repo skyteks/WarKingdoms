@@ -35,6 +35,7 @@ public class Unit : ClickableObject
 
     protected InteractableObject targetOfAttack;
     protected Vector3? targetOfMovement;
+    protected Vector3? returnPoint;
 
     private readonly float combatReadySwitchTime = 7f;
 
@@ -124,8 +125,8 @@ public class Unit : ClickableObject
         switch (command.commandType)
         {
             case AICommand.CommandTypes.MoveTo:
-                //case AICommand.CommandType.AttackMoveTo:
-                //case AICommand.CommandType.Guard:
+            //case AICommand.CommandTypes.AttackMoveTo:
+            //case AICommand.CommandTypes.Guard:
                 return !command.destination.IsNaN();
             case AICommand.CommandTypes.AttackTarget:
                 return !IsDeadOrNull(command.target) && command.target != this;
@@ -300,11 +301,8 @@ public class Unit : ClickableObject
         switch (currentState)
         {
             case UnitStates.Idleing:
-                {
-                    navMeshAgent.isStopped = true;
-
-                    break;
-                }
+                navMeshAgent.isStopped = true;
+                break;
             case UnitStates.Attacking:
                 {
                     navMeshAgent.isStopped = true;
@@ -330,8 +328,8 @@ public class Unit : ClickableObject
                         FaceTarget();
                         animator?.SetBool("DoAttack", true);
                     }
-                    break;
                 }
+                break;
             case UnitStates.MovingToTarget:
                 {
                     if (!agentReady || navMeshAgent.pathPending)
@@ -361,8 +359,8 @@ public class Unit : ClickableObject
                             switchState = UnitStates.CustomActionAtObj;
                         }
                     }
-                    break;
                 }
+                break;
             case UnitStates.MovingToSpot:
                 {
                     if (!agentReady || navMeshAgent.pathPending)
@@ -370,44 +368,24 @@ public class Unit : ClickableObject
                         break;
                     }
                     float remainingDistance = Vector3.Distance(transform.position, targetOfMovement.Value);
-                    if (remainingDistance < 0.3f)
+                    if (remainingDistance < 0.1f)
                     {
-                        if (customAction == null)
-                        {
-                            commandExecuted = true;
-                        }
-                        else
-                        {
-                            switchState = UnitStates.CustomActionAtPos;
-                        }
+                        commandExecuted = true;
                     }
-                    break;
                 }
+                break;
             case UnitStates.Dead:
                 break;
             case UnitStates.CustomActionAtPos:
                 {
-                    /*
-                    navMeshAgent.isStopped = true;
-
-                    float remainingDistance = Vector3.Distance(transform.position, targetOfMovement.Value);
-                    if (template.engageDistance < remainingDistance)
-                    {
-                        switchState = UnitStates.MovingToSpot;
-                    }
-                    else
-                    {
-                    */
                     switch (customAction.Value)
                     {
                         case AICommand.CustomActions.collectResources:
                             switchState = UnitStates.CustomActionAtObj;
-                            //SeekNewResourceSource(resourceCollector.storedType, false);
                             break;
                     }
-                    //}
-                    break;
                 }
+                break;
             case UnitStates.CustomActionAtObj:
                 {
                     navMeshAgent.isStopped = true;
@@ -461,13 +439,8 @@ public class Unit : ClickableObject
                                 break;
                         }
                     }
-                    break;
                 }
-        }
-
-        if (switchState.HasValue)
-        {
-            //print(gameObject.name + ": switch from " + state + " to " + switchState.Value);
+                break;
         }
     }
 
@@ -488,14 +461,6 @@ public class Unit : ClickableObject
                 modelHolder.position += Vector3.up * decayIntoGroundDistance;
                 break;
             case UnitStates.CustomActionAtPos:
-                /*
-                switch (customAction.Value)
-                {
-                    case AICommand.CustomActions.collectResources:
-                        animator?.SetBool("DoAttack", false);
-                        break;
-                }
-                */
                 break;
             case UnitStates.CustomActionAtObj:
                 switch (customAction.Value)
@@ -517,7 +482,7 @@ public class Unit : ClickableObject
         }
     }
 
-    public void TriggerAttackAnimEvent(int Int)//Functionname equals Eventname
+    public void TriggerAttackAnimEvent(int Int)///Functionname equals Eventname
     {
         if (state == UnitStates.Dead || IsDeadOrNull(targetOfAttack))
         {
@@ -545,6 +510,36 @@ public class Unit : ClickableObject
                 return;
             }
         }
+    }
+
+    private bool SeekNewEnemies()
+    {
+        IEnumerable<ClickableObject> enemies;
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, template.guardDistance, InputManager.Instance.unitsLayerMask, QueryTriggerInteraction.Collide);
+        enemies = colliders.Select(collider => collider.GetComponent<ClickableObject>()).Where(clickable => clickable != null && !FactionTemplate.IsAlliedWith(faction, clickable.faction));
+
+        ClickableObject closest = null;
+        float distanceToClosestSqr = float.PositiveInfinity;
+        foreach (var enemy in enemies)
+        {
+            float distanceSqr = (enemy.transform.position - targetOfMovement.Value).sqrMagnitude;
+            if (distanceSqr < distanceToClosestSqr)
+            {
+                distanceToClosestSqr = distanceSqr;
+                closest = enemy;
+            }
+        }
+
+        if (closest == null)
+        {
+            return false;
+        }
+
+        returnPoint = transform.position;
+        targetOfAttack = closest;
+        targetOfMovement = targetOfAttack.transform.position;
+        return true;
     }
 
     private bool SeekNewResourceSource(ResourceSource.ResourceType resourceType, bool closeby)
@@ -635,16 +630,16 @@ public class Unit : ClickableObject
         animator?.SetBool("DoAttack", false);
         animator?.SetTrigger("DoDeath");
 
-        //Remove itself from the selection Platoon
+        ///Remove itself from the selection Platoon
         GameManager.Instance.RemoveFromSelection(this);
         SetSelected(false);
 
         faction.data.units.Remove(this);
 
-        //Remove unneeded Components
+        ///Remove unneeded Components
         StartCoroutine(HideSeenThings(visionFadeTime));
         StartCoroutine(VisionFade(visionFadeTime, true));
-        //navMeshAgent.enabled = false;
+        ///navMeshAgent.enabled = false;
         StartCoroutine(DecayIntoGround());
     }
 

@@ -14,9 +14,9 @@ public struct AICommand
         Stop,
         Guard,
         Die,
-        AttackMoveTo, //TODO: implement follow behavior
         CustomActionAtPos,
         CustomActionAtObj,
+        AttackMoveTo, //TODO: implement follow behavior
     }
 
     public enum CustomActions
