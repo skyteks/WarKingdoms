@@ -36,7 +36,7 @@ public class WaveSpawnerBrain : MonoBehaviour
 
     void Update()
     {
-        if (Building.IsDeadOrNull(building))
+        if (building.attackable.isDead)
         {
             enabled = false;
         }

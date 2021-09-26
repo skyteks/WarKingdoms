@@ -243,11 +243,10 @@ public class Projectile : MonoBehaviour
 
     private bool TryHitUnit(Transform target)
     {
-        ClickableObject hitUnit = target.GetComponentInParent<ClickableObject>();
-        if (!ClickableObject.IsDeadOrNull(hitUnit))
+        Attackable attackable = target.GetComponentInParent<Attackable>();
+        if (attackable != null)
         {
-            hitUnit.SufferAttack(damage);
-            return true;
+            return attackable.SufferAttack(damage, owner.gameObject);
         }
         return false;
     }

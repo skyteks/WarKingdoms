@@ -342,6 +342,7 @@ GameObject:
   - component: {fileID: 8373508903984173422}
   - component: {fileID: 8373508903984173417}
   - component: {fileID: 8373508903984173416}
+  - component: {fileID: 22807673784795719}
   - component: {fileID: 8373508903984173423}
   - component: {fileID: -5463984247288531520}
   m_Layer: 15
@@ -406,6 +407,18 @@ MonoBehaviour:
   template: {fileID: 0}
   fieldOfView: {fileID: 8373508903929679138}
   state: 0
+--- !u!114 &22807673784795719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8373508903984173420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b543f210365eeb241afb4044fed08aef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!65 &8373508903984173423
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -431,7 +444,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c96a2fc504ef2644b8fce79f2b2592d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lists:
+  registers:
   - listHolder: {fileID: 11400000, guid: 776b0c3caab84df46a0edfec83178832, type: 2}
     objectToAdd: {fileID: 8373508903984173416}
 --- !u!1 &8373508904559875560

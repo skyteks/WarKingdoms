@@ -216,7 +216,7 @@ public class FieldOfView : MonoBehaviour
         {
             yield return Yielders.Get(delay);
 
-            if (ClickableObject.IsDeadOrNull(unit))
+            if (unit.attackable.isDead)
             {
                 yield break;
             }
@@ -253,7 +253,7 @@ public class FieldOfView : MonoBehaviour
                 continue;
             }
 
-            if (ClickableObject.IsDeadOrNull(target))
+            if (target.attackable.isDead)
             {
                 continue;//Don't hide dead enemies, we wanna see the death anim
             }

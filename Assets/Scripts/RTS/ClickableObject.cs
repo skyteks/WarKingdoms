@@ -5,8 +5,6 @@ using UnityEngine.Events;
 
 public abstract class ClickableObject : InteractableObject
 {
-    public static List<ClickableObject> globalObjectsList;
-
 #if UNITY_EDITOR
     [SerializeField]
     private bool drawViewDistance = false;
@@ -25,19 +23,6 @@ public abstract class ClickableObject : InteractableObject
     public UnityAction<ClickableObject> OnDeath;
     public UnityAction<ClickableObject> OnDisapearInFOW;
 
-    public float damageReductionMuliplier
-    {
-        get
-        {
-            return template.armor >= 0 ? 100f / (100f + template.armor) : 2f - (100f / (100f - template.armor));
-        }
-    }
-
-    static ClickableObject()
-    {
-        globalObjectsList = new List<ClickableObject>();
-    }
-
     protected override void Awake()
     {
         base.Awake();
@@ -47,8 +32,6 @@ public abstract class ClickableObject : InteractableObject
         fieldOfView = transform.Find("FieldOfView").GetComponent<FieldOfView>();
 
         template = template.Clone(); //we copy the template otherwise it's going to overwrite the original asset!
-
-        globalObjectsList.Add(this);
     }
 
     protected virtual void Start()
@@ -83,8 +66,12 @@ public abstract class ClickableObject : InteractableObject
         {
             selectionCircle = transform.Find("SelectionCircle")?.GetComponent<MeshRenderer>();
         }
+        if (attackable == null)
+        {
+            Awake();
+        }
 
-        if (!IsDeadOrNull(this) && template != null && fieldOfView != null)
+        if (template != null && !attackable.isDead && fieldOfView != null)
         {
             if (drawViewDistance)
             {
@@ -109,26 +96,6 @@ public abstract class ClickableObject : InteractableObject
         }
     }
 #endif
-
-    public new static bool IsDeadOrNull(InteractableObject unit)
-    {
-        if (unit is Unit)
-        {
-            return Unit.IsDeadOrNull(unit as Unit);
-        }
-        else if (unit is Building)
-        {
-            return Building.IsDeadOrNull(unit as Building);
-        }
-        else if (unit is ClickableObject)
-        {
-            return unit == null;
-        }
-        else
-        {
-            return InteractableObject.IsDeadOrNull(unit as InteractableObject);
-        }
-    }
 
     protected void UpdateMaterialTeamColor()
     {
@@ -179,25 +146,7 @@ public abstract class ClickableObject : InteractableObject
         selectionCircle.SetPropertyBlock(materialPropertyBlock);
     }
 
-    public override bool SufferAttack(int damage, ResourceCollector resourceCollector = null)
-    {
-        if (template.health <= 0)
-        {
-            return false;
-        }
-
-        damage = Mathf.RoundToInt(damage * damageReductionMuliplier);
-        template.health -= damage;
-
-        if (template.health <= 0)
-        {
-            Die();
-        }
-        return true;
-    }
-
-    //called in SufferAttack, but can also be from a Timeline clip
-    protected override void Die()
+    public override void Die()
     {
         template.health = 0;
 
@@ -206,8 +155,6 @@ public abstract class ClickableObject : InteractableObject
         {
             OnDeath.Invoke(this);
         }
-
-        globalObjectsList.Remove(this);
 
         //Remove unneeded Components
         selectionCircle.enabled = false;

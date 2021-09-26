@@ -95,11 +95,6 @@ public class Unit : ClickableObject
     }
 #endif
 
-    public static new bool IsDeadOrNull(InteractableObject unit)
-    {
-        return unit == null || ((unit is Unit) ? (unit as Unit).state == UnitStates.Dead : ClickableObject.IsDeadOrNull(unit));
-    }
-
     public void AddCommand(AICommand command, bool clear = false)
     {
         if (!CheckCommandViability(command))
@@ -129,7 +124,7 @@ public class Unit : ClickableObject
             //case AICommand.CommandTypes.Guard:
                 return !command.destination.IsNaN();
             case AICommand.CommandTypes.AttackTarget:
-                return !IsDeadOrNull(command.target) && command.target != this;
+                return command.target != null && !command.target.attackable.isDead && command.target != this;
             case AICommand.CommandTypes.Stop:
             case AICommand.CommandTypes.Die:
                 return true;
@@ -144,7 +139,7 @@ public class Unit : ClickableObject
                 {
                     throw new System.ArgumentNullException();
                 }
-                return template.original.customActions.Contains(command.customAction.Value) && !IsDeadOrNull(command.target);
+                return template.original.customActions.Contains(command.customAction.Value) && command.target != null && !command.target.attackable.isDead;
         }
         throw new System.NotImplementedException(string.Concat("Command Type '", command.commandType.ToString(), "' not valid"));
     }
@@ -307,7 +302,7 @@ public class Unit : ClickableObject
                 {
                     navMeshAgent.isStopped = true;
 
-                    if (IsDeadOrNull(targetOfAttack))
+                    if (targetOfAttack.attackable.isDead)
                     {
                         commandExecuted = true;
                     }
@@ -336,7 +331,7 @@ public class Unit : ClickableObject
                     {
                         break;
                     }
-                    if (IsDeadOrNull(targetOfAttack))
+                    if (targetOfAttack.attackable.isDead)
                     {
                         commandExecuted = true;
                     }
@@ -390,7 +385,7 @@ public class Unit : ClickableObject
                 {
                     navMeshAgent.isStopped = true;
 
-                    if (IsDeadOrNull(targetOfAttack))
+                    if (targetOfAttack.attackable.isDead)
                     {
                         commandExecuted = true;
                     }
@@ -484,7 +479,7 @@ public class Unit : ClickableObject
 
     public void TriggerAttackAnimEvent(int Int)///Functionname equals Eventname
     {
-        if (state == UnitStates.Dead || IsDeadOrNull(targetOfAttack))
+        if (state == UnitStates.Dead || targetOfAttack.attackable.isDead)
         {
             animator?.SetBool("DoAttack", false);
             return;
@@ -497,7 +492,7 @@ public class Unit : ClickableObject
         }
         else
         {
-            bool success = targetOfAttack.SufferAttack(damage, resourceCollector);
+            bool success = targetOfAttack.GetComponent<Attackable>().SufferAttack(damage, gameObject);
             if (!success)
             {
                 animator?.SetBool("DoAttack", false);
@@ -600,17 +595,7 @@ public class Unit : ClickableObject
         projectileInstance.LaunchAt(targetOfAttack.transform, damage, this);
     }
 
-    public override bool SufferAttack(int damage, ResourceCollector resourceCollector = null)
-    {
-        if (state == UnitStates.Dead)
-        {
-            return false;
-        }
-
-        return base.SufferAttack(damage);
-    }
-
-    protected override void Die()
+    public override void Die()
     {
         if (state != UnitStates.Dead)
         {

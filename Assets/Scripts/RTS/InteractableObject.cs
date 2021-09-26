@@ -18,9 +18,10 @@ public class InteractableObject : MonoBehaviour
     protected Transform modelHolder;
     private Transform modelHolder2;
     protected MeshRenderer selectionCircle;
-    private Animator anim;
+    public Animator anim { get; protected set; }
     private NavMeshObstacle navObstacle;
     private ResourceSource resourceSource;
+    public Attackable attackable { get; protected set; }
 
     protected readonly float decayIntoGroundDistance = -7f;
 
@@ -40,6 +41,7 @@ public class InteractableObject : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
         navObstacle = GetComponent<NavMeshObstacle>();
         resourceSource = GetComponent<ResourceSource>();
+        attackable = GetComponent<Attackable>();
 
         SetLayers();
     }
@@ -76,18 +78,6 @@ public class InteractableObject : MonoBehaviour
         }
     #endif
     */
-
-    public static bool IsDeadOrNull(InteractableObject unit)
-    {
-        if (unit is ClickableObject)
-        {
-            return ClickableObject.IsDeadOrNull(unit as ClickableObject);
-        }
-        else
-        {
-            return unit == null;
-        }
-    }
 
     public virtual void SetVisibility(bool visibility, bool force = false)
     {
@@ -132,30 +122,7 @@ public class InteractableObject : MonoBehaviour
         }
     }
 
-    public virtual bool SufferAttack(int damage, ResourceCollector resourceCollector = null)
-    {
-        if (resourceCollector != null && resourceSource != null)
-        {
-            if (resourceCollector.isFull)
-            {
-                //return false;
-            }
-            int earnings = resourceSource.GetAmount(resourceCollector.woodPerHitEarnings);
-            resourceCollector.AddResource(earnings, resourceSource.resourceType);
-            if (resourceSource.isEmpty)
-            {
-                Die();
-            }
-            else
-            {
-                anim?.SetTrigger("DoHit");
-            }
-            return true;
-        }
-        return false;
-    }
-
-    protected virtual void Die()
+    public virtual void Die()
     {
         anim?.SetBool("DoDeath", true);
 

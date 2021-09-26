@@ -43,11 +43,6 @@ public class Building : ClickableObject
         navMeshObstacle.size = (Vector3.one * navMeshObstacle.radius).ToWithY(navMeshObstacle.size.y);
     }
 
-    public static new bool IsDeadOrNull(InteractableObject unit)
-    {
-        return unit == null || ((unit is Building) ? (unit as Building).state == BuildingStates.Dead : ClickableObject.IsDeadOrNull(unit));
-    }
-
     public override void SetVisibility(bool visibility, bool force = false)
     {
         if (!force && visibility == visible)
@@ -70,18 +65,7 @@ public class Building : ClickableObject
         }
     }
 
-    public override bool SufferAttack(int damage, ResourceCollector resourceCollector = null)
-    {
-        if (state == BuildingStates.Dead)
-        {
-            return false;
-        }
-
-        TriggerBurnEffects();
-        return base.SufferAttack(damage);
-    }
-
-    protected void TriggerBurnEffects()
+    public void TriggerBurnEffects()
     {
         if (burnEffects == null || burnEffects.Length == 0)
         {
@@ -139,7 +123,7 @@ public class Building : ClickableObject
         }
     }
 
-    protected override void Die()
+    public override void Die()
     {
         base.Die();
 
