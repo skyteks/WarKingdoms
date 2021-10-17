@@ -85,9 +85,18 @@ public class Building : ClickableObject
             bool[] shouldBurn = new bool[burnEffects.Length];
             switch (burnEffects.Length)
             {
+                case 5:
+                    shouldBurn[0] = healthPerc < 0.8f;
+
+                    shouldBurn[1] = healthPerc < 0.5f;
+
+                    shouldBurn[2] = healthPerc < 0.25f;
+                    shouldBurn[3] = healthPerc < 0.25f;
+
+                    shouldBurn[4] = healthPerc < 0.1f;
+                    break;
                 case 4:
                 case 3:
-                default:
                     shouldBurn[0] = healthPerc < 0.75f;
                     shouldBurn[1] = healthPerc < 0.5f;
                     for (int i = 2; i < burnEffects.Length; i++)

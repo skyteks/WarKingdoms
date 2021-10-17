@@ -66,12 +66,8 @@ public abstract class ClickableObject : InteractableObject
         {
             selectionCircle = transform.Find("SelectionCircle")?.GetComponent<MeshRenderer>();
         }
-        if (attackable == null)
-        {
-            Awake();
-        }
 
-        if (template != null && !attackable.isDead && fieldOfView != null)
+        if (template != null && attackable != null && !attackable.isDead && fieldOfView != null)
         {
             if (drawViewDistance)
             {
