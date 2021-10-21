@@ -144,7 +144,7 @@ public class Projectile : MonoBehaviour
 
         if (useFactionMaterial)
         {
-            SetMaterialColor();
+            UpdateMaterialTeamColor();
         }
 
         switch (projectileFlyMode)
@@ -209,19 +209,19 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    private void SetMaterialColor()
+    protected void UpdateMaterialTeamColor()
     {
-        if (render == null)
+        Shader teamcolorShader = GameManager.Instance.teamcolorShader;
+        UIManager uiManager = UIManager.Instance;
+
+        for (int i = 0; i < render.sharedMaterials.Length; i++)
         {
-            return;
-        }
-        if (render.materials.Length == 1)
-        {
-            render.material.SetColor("_TeamColor", owner.faction.color);
-        }
-        else
-        {
-            render.materials[render.materials.Length - 1].SetColor("_TeamColor", owner.faction.color);
+            if (render.sharedMaterials[i].shader == teamcolorShader)
+            {
+                Color tmpColor = uiManager.GetFactionColorForColorMode(owner.faction, UIManager.ColorType.Shader);
+                FactionTemplate.ChangeTeamcolorOnRenderer(render, tmpColor, teamcolorShader);
+                break;
+            }
         }
     }
 

@@ -18,6 +18,7 @@ public class FactionTemplate : ScriptableObject
         red,
         orange,
         white,
+        cyan,
     }
 
     public enum Race
@@ -55,7 +56,9 @@ public class FactionTemplate : ScriptableObject
     }
 
     public FactionColor factionColorName = FactionColor.black;
-    public Color color = Color.black;
+
+    public Color colorShader = Color.black;
+    public Color colorUI = Color.black;
 
     public FactionInfo data;
 
@@ -68,7 +71,7 @@ public class FactionTemplate : ScriptableObject
     {
         Shader teamcolorShader = GameManager.Instance.teamcolorShader;
         UIManager uiManager = UIManager.Instance;
-        Color tmpColor = uiManager.GetFactionColorForColorMode(this);
+        Color tmpColor = uiManager.GetFactionColorForColorMode(this, UIManager.ColorType.Shader);
 
         foreach (var render in data.renderersTeamcolor)
         {
@@ -82,7 +85,7 @@ public class FactionTemplate : ScriptableObject
 
         Shader teamcolorShader = GameManager.Instance.teamcolorShader;
         UIManager uiManager = UIManager.Instance;
-        Color tmpColor = uiManager.GetFactionColorForColorMode(this);
+        Color tmpColor = uiManager.GetFactionColorForColorMode(this, UIManager.ColorType.Shader);
 
         ChangeTeamcolorOnRenderer(render, tmpColor, teamcolorShader);
     }

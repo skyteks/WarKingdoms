@@ -104,9 +104,7 @@ public abstract class ClickableObject : InteractableObject
             {
                 if (render.sharedMaterials[i].shader == teamcolorShader)
                 {
-                    //faction.AddRendererForTeamColorChange(render);
-
-                    Color tmpColor = uiManager.GetFactionColorForColorMode(faction);
+                    Color tmpColor = uiManager.GetFactionColorForColorMode(faction, UIManager.ColorType.Shader);
                     FactionTemplate.ChangeTeamcolorOnRenderer(render, tmpColor, teamcolorShader);
                     break;
                 }
@@ -117,7 +115,7 @@ public abstract class ClickableObject : InteractableObject
     protected void UpdateMinimapUI()
     {
         UIManager uiManager = UIManager.Instance;
-        Color newColor = uiManager.GetFactionColorForColorMode(faction);
+        Color newColor = uiManager.GetFactionColorForColorMode(faction, UIManager.ColorType.UI);
 
         MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
         miniMapCircle.GetPropertyBlock(materialPropertyBlock, 0);

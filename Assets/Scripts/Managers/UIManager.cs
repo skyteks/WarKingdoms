@@ -13,10 +13,17 @@ public class UIManager : Singleton<UIManager>
         UnitColor,
         HealthPercentage,
     }
+
     public enum FactionColoringModes : int
     {
         TeamColor,
         FriendFoe,
+    }
+
+    public enum ColorType
+    {
+        Shader,
+        UI,
     }
 
     public Color healthColorGreen = Color.green;
@@ -84,33 +91,44 @@ public class UIManager : Singleton<UIManager>
         UpdateHealthbars();
     }
 
-    public Color GetFactionColorForColorMode(FactionTemplate faction, bool shiftUpOnLowGreyscale = false)
+    public Color GetFactionColorForColorMode(FactionTemplate faction, ColorType colorType)
     {
         GameManager gameManager = GameManager.Instance;
-
 
         Color tmpColor = Color.clear;
         switch (factionColoringMode)
         {
             case UIManager.FactionColoringModes.FriendFoe:
-                if (faction == gameManager.playerFaction)
+                switch (colorType)
                 {
-                    tmpColor = factionPlayerColor;
-                }
-                else if (FactionTemplate.IsAlliedWith(faction, gameManager.playerFaction))
-                {
-                    tmpColor = factionAlliesColor;
-                }
-                else
-                {
-                    tmpColor = factionEnemiesColor;
+                    case ColorType.Shader:
+                        if (faction == gameManager.playerFaction)
+                        {
+                            tmpColor = factionPlayerColor;
+                        }
+                        else if (FactionTemplate.IsAlliedWith(faction, gameManager.playerFaction))
+                        {
+                            tmpColor = factionAlliesColor;
+                        }
+                        else
+                        {
+                            tmpColor = factionEnemiesColor;
+                        }
+                        break;
+                    case ColorType.UI:
+                        tmpColor = GetUIColorForColorMode(faction, true);
+                        break;
                 }
                 break;
             case UIManager.FactionColoringModes.TeamColor:
-                tmpColor = faction.color;
-                if (shiftUpOnLowGreyscale && tmpColor.grayscale < 0.2f)
+                switch (colorType)
                 {
-                    tmpColor = tmpColor.ToSumWithoutAlpha(Vector3.one * 0.28f);
+                    case ColorType.Shader:
+                        tmpColor = faction.colorShader;
+                        break;
+                    case ColorType.UI:
+                        tmpColor = faction.colorUI;
+                        break;
                 }
                 break;
         }
@@ -120,7 +138,6 @@ public class UIManager : Singleton<UIManager>
     public Color GetUIColorForColorMode(FactionTemplate faction, bool selected)
     {
         GameManager gameManager = GameManager.Instance;
-
 
         Color tmpColor = Color.clear;
         if (faction == gameManager.playerFaction)
@@ -275,7 +292,7 @@ public class UIManager : Singleton<UIManager>
             switch (healthbarColoringMode)
             {
                 case HealthbarColoringModes.UnitColor:
-                    healthbarSlice.color = GetFactionColorForColorMode(unit.faction, true);
+                    healthbarSlice.color = GetFactionColorForColorMode(unit.faction, ColorType.UI);
                     break;
                 case HealthbarColoringModes.HealthPercentage:
                     float value = healthbarSlice.fillAmount;
