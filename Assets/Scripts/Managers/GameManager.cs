@@ -29,7 +29,7 @@ public class GameManager : Singleton<GameManager>
     public List<FactionTemplate> factions;
     public FactionTemplate playerFaction { get { return factions[playerFactionIndex]; } }
 
-    public Shader teamcolorShader;
+    public Shader tintShader;
 
     public int startResourceGold = 300;
     public int startResourceWood = 0;

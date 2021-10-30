@@ -1,4 +1,4 @@
-﻿Shader "Custom/TeamColor"
+﻿Shader "Custom/Tint"
 {
     Properties
     {
@@ -7,10 +7,11 @@
         _Cutoff("Alpha cutoff", Range(0,1)) = 0.5
         _Glossiness("Smoothness", Range(0,1)) = 0.0
         _Metallic("Metallic", Range(0,1)) = 0.0
-        _TeamColorMap("TeamColorMap (B/W)", 2D) = "black" {}
-        _TeamColor("TeamColor", Color) = (1,1,1,1)
-        _TeamColorCutoff("TeamColor cutoff", Range(0,1)) = 0.5
-        _Mode("Shader Mode", Range(0,2.99)) = 1
+
+        _TintMaskMap("Tint Mask (B/W)", 2D) = "black" {}
+        _TintRColor("Tint (R Channel)", Color) = (1,1,1,1)
+        _TintGColor("Tint (G Channel)", Color) = (1,1,1,1)
+        _TintBColor("Tint (B Channel)", Color) = (1,1,1,1)
 
     }
     SubShader
@@ -23,19 +24,16 @@
         #pragma target 3.0
 
         sampler2D _MainTex;
-        sampler2D _TeamColorMap;
+        sampler2D _TintMaskMap;
         float _Cutoff;
         float _Glossiness;
         float _Metallic;
-        float _TeamColorCutoff;
-        uint _Mode;
 
         struct Input
         {
             float2 uv_MainTex;
-            float2 uv_TeamColorMap;
+            float2 uv_TintMaskMap;
         };
-
 
         // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
         // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -43,45 +41,30 @@
         UNITY_INSTANCING_BUFFER_START(Props)
         // put more per-instance properties here
             UNITY_DEFINE_INSTANCED_PROP(fixed4, _Color)
-            UNITY_DEFINE_INSTANCED_PROP(fixed4, _TeamColor)
+            UNITY_DEFINE_INSTANCED_PROP(fixed4, _TintRColor)
+            UNITY_DEFINE_INSTANCED_PROP(fixed4, _TintGColor)
+            UNITY_DEFINE_INSTANCED_PROP(fixed4, _TintBColor)
         UNITY_INSTANCING_BUFFER_END(Props)
-
-        float3 BlendOverlay( float3 a, float3 b )
-        {
-            return a < 0.5 ? 2 *a * b : 1-2 *(1-a) * (1-b);
-        }
 
         void surf(Input IN, inout SurfaceOutputStandard o)
         {
             fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * UNITY_ACCESS_INSTANCED_PROP(Props, _Color);
-            fixed4 m = tex2D(_TeamColorMap, IN.uv_TeamColorMap);
+            fixed4 m = tex2D(_TintMaskMap, IN.uv_TintMaskMap);
 
-            float3 teamColor = UNITY_ACCESS_INSTANCED_PROP(Props, _TeamColor).rgb;
-            if (_Mode == 0)// multiply
-            {
-                if (m.r > _TeamColorCutoff)
-                {
-                    c.rgb = c.rgb * teamColor;
-                }
-            }
-            else if (_Mode == 1) // overtune lerp multiply
-            {
-                if (m.r > _TeamColorCutoff)
-                {
-                    c.rgb = 1.5 * c.rgb * lerp( 1, teamColor, m.r );
-                }
-            }
-            else if (_Mode == 2) // 0.75 blend
-            {
-                c.rgb = lerp( c.rgb, BlendOverlay(c.rgb * 0.75, teamColor), m.r );
-            }
+            float3 tintR = UNITY_ACCESS_INSTANCED_PROP(Props, _TintRColor).rgb;
+            float3 tintG = UNITY_ACCESS_INSTANCED_PROP(Props, _TintGColor).rgb;
+            float3 tintB = UNITY_ACCESS_INSTANCED_PROP(Props, _TintBColor).rgb;
+
+            c.rgb = lerp(c.rgb, c.rgb * tintR, m.r);
+            c.rgb = lerp(c.rgb, c.rgb * tintG, m.g);
+            c.rgb = lerp(c.rgb, c.rgb * tintB, m.b);
 
             if (c.a > _Cutoff)
             {
                 o.Albedo = c.rgb;
                 o.Metallic = _Metallic;
                 o.Smoothness = _Glossiness;
-                o.Alpha = clamp(c.a,0,1);
+                o.Alpha = clamp(c.a, 0, 1);
             }
             else
             {

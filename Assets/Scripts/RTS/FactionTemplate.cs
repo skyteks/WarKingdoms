@@ -69,7 +69,7 @@ public class FactionTemplate : ScriptableObject
 
     public void SetTeamColorToRenderers()
     {
-        Shader teamcolorShader = GameManager.Instance.teamcolorShader;
+        Shader teamcolorShader = GameManager.Instance.tintShader;
         UIManager uiManager = UIManager.Instance;
         Color tmpColor = uiManager.GetFactionColorForColorMode(this, UIManager.ColorType.Shader);
 
@@ -83,22 +83,22 @@ public class FactionTemplate : ScriptableObject
     {
         data.renderersTeamcolor.Add(render);
 
-        Shader teamcolorShader = GameManager.Instance.teamcolorShader;
+        Shader teamcolorShader = GameManager.Instance.tintShader;
         UIManager uiManager = UIManager.Instance;
         Color tmpColor = uiManager.GetFactionColorForColorMode(this, UIManager.ColorType.Shader);
 
         ChangeTeamcolorOnRenderer(render, tmpColor, teamcolorShader);
     }
 
-    public static void ChangeTeamcolorOnRenderer(Renderer render, Color color, Shader teamcolorShader)
+    public static void ChangeTeamcolorOnRenderer(Renderer render, Color color, Shader tintShader)
     {
         for (int i = 0; i < render.sharedMaterials.Length; i++)
         {
-            if (render.sharedMaterials[i].shader == teamcolorShader)
+            if (render.sharedMaterials[i].shader == tintShader)
             {
                 MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
                 render.GetPropertyBlock(materialPropertyBlock, i);
-                materialPropertyBlock.SetColor("_TeamColor", color);
+                materialPropertyBlock.SetColor("_TintRColor", color);
                 render.SetPropertyBlock(materialPropertyBlock);
             }
         }

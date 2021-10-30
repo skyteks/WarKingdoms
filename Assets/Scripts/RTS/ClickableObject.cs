@@ -58,6 +58,10 @@ public abstract class ClickableObject : InteractableObject
 #if UNITY_EDITOR
     protected virtual void OnDrawGizmos()
     {
+        if (!Application.isPlaying)
+        {
+            return;
+        }
         if (fieldOfView == null)
         {
             fieldOfView = transform.Find("FieldOfView")?.GetComponent<FieldOfView>();
@@ -95,7 +99,7 @@ public abstract class ClickableObject : InteractableObject
 
     protected void UpdateMaterialTeamColor()
     {
-        Shader teamcolorShader = GameManager.Instance.teamcolorShader;
+        Shader teamcolorShader = GameManager.Instance.tintShader;
         UIManager uiManager = UIManager.Instance;
 
         foreach (Renderer render in modelRenderers)
