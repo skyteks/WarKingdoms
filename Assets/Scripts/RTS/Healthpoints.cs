@@ -37,7 +37,7 @@ public class Healthpoints : Attackable
             return false;
         }
 
-        damage = Mathf.RoundToInt(damage * damageReductionMuliplier);
+        damage = Mathf.RoundToInt(damage);
         clickableObject.template.health -= damage;
 
         if (clickableObject is Building)
