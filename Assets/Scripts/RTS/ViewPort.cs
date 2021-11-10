@@ -5,7 +5,6 @@ using UnityEngine;
 /// <summary>
 /// Creates a mesh on ground plane with camera frustum collision points
 /// </summary>
-[ExecuteInEditMode]
 [RequireComponent(typeof(MeshFilter))]
 public class ViewPort : MonoBehaviour
 {
