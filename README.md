@@ -33,7 +33,9 @@ Assets not included
 * **Lutz Kadoch** - https://github.com/hadea
 * **Pascal Jacob**
 * **Lehis Luguer**
+* **Victor Halgaard** - https://www.artstation.com/lordvictorhalgaard
 * **Polygon Blacksmith** - https://assetstore.unity.com/publishers/17894
+* **BitGem** - https://assetstore.unity.com/publishers/1299
 * **Sebastian Lague** - https://youtu.be/rQG9aUWarwE
 * **Andrew Hung** - https://andrewhungblog.wordpress.com/2018/06/23/implementing-fog-of-war-in-unity/
 * **Game Dev Guide** - https://youtu.be/rnqF6S7PfFA
