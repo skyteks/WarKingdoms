@@ -1,4 +1,4 @@
-Shader "ERB/Particles/Add_CenterGlow"
+Shader "Hovl/Particles/Add_CenterGlow"
 {
 	Properties
 	{	
@@ -187,7 +187,7 @@ Node;AmplifyShaderEditor.RangedFloatNode;52;-621.877,229.5624;Float;False;Proper
 Node;AmplifyShaderEditor.ToggleSwitchNode;90;-697.314,128.5203;Float;False;Property;_Usecenterglow;Use center glow?;8;0;Create;True;0;0;False;0;0;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;51;-461.6268,132.2673;Float;False;2;2;0;COLOR;0,0,0,0;False;1;FLOAT;0;False;1;COLOR;0
 Node;AmplifyShaderEditor.ComponentMaskNode;72;-1580.242,1135.946;Float;False;True;True;True;False;1;0;COLOR;0,0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;68;-322.6836,135.062;Float;False;True;2;Float;;0;7;EGA/Particles/Add_CenterGlow;0b6a9f8b4f707c74ca64c0be8e590de0;True;SubShader 0 Pass 0;0;0;SubShader 0 Pass 0;2;True;4;1;False;-1;1;False;-1;0;1;False;-1;0;False;-1;False;False;True;2;False;-1;True;True;True;True;False;0;False;-1;False;True;2;False;-1;True;3;False;-1;False;True;4;Queue=AlphaTest=Queue=0;IgnoreProjector=True;RenderType=Transparent=RenderType;PreviewType=Plane;False;0;False;False;False;False;False;False;False;False;False;False;True;0;0;;0;0;Standard;0;0;1;True;False;2;0;FLOAT4;0,0,0,0;False;1;FLOAT3;0,0,0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;68;-322.6836,135.062;Float;False;True;2;Float;;0;7;Hovl/Particles/Add_CenterGlow;0b6a9f8b4f707c74ca64c0be8e590de0;True;SubShader 0 Pass 0;0;0;SubShader 0 Pass 0;2;True;4;1;False;-1;1;False;-1;0;1;False;-1;0;False;-1;False;False;True;2;False;-1;True;True;True;True;False;0;False;-1;False;True;2;False;-1;True;3;False;-1;False;True;4;Queue=AlphaTest=Queue=0;IgnoreProjector=True;RenderType=Transparent=RenderType;PreviewType=Plane;False;0;False;False;False;False;False;False;False;False;False;False;True;0;0;;0;0;Standard;0;0;1;True;False;2;0;FLOAT4;0,0,0,0;False;1;FLOAT3;0,0,0;False;0
 WireConnection;100;0;99;1
 WireConnection;100;1;99;2
 WireConnection;59;0;98;0
