@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a7e0af18d709db649b9ab43f488c561a
+guid: 0648e13f999e5b74d9afa456b290e2a2
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable:
@@ -77,13 +77,13 @@ ModelImporter:
     second: //RootNode
   - first:
       74: 7400000
-    second: Orc_catapult_03_attack
+    second: ORC_catapult_03_attack
   - first:
       95: 9500000
     second: //RootNode
   externalObjects: {}
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
     materialLocation: 0
@@ -110,7 +110,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Orc_catapult_03_attack
+      name: ORC_catapult_03_attack
       takeName: Take 001
       internalID: 0
       firstFrame: 0
@@ -121,7 +121,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -133,14 +133,7 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events:
-      - time: 0.05839416
-        functionName: TriggerAttackAnimEvent
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
+      events: []
       transformMask:
       - path: 
         weight: 1
@@ -178,7 +171,7 @@ ModelImporter:
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
     importVisibility: 0
-    importBlendShapes: 1
+    importBlendShapes: 0
     importCameras: 0
     importLights: 0
     swapUVChannels: 0
@@ -200,8 +193,8 @@ ModelImporter:
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
-    tangentImportMode: 3
-    normalCalculationMode: 0
+    tangentImportMode: 0
+    normalCalculationMode: 1
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0

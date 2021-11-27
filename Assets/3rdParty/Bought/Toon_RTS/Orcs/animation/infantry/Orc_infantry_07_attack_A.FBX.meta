@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8aeaa1e8b75cd9141bb27ea6e334f6fe
+guid: 75411b2211b60d74eaffb97e20b05ab0
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable:
@@ -137,13 +137,13 @@ ModelImporter:
     second: //RootNode
   - first:
       74: 7400000
-    second: Orc_infantry_07_attack_A
+    second: ORC_infantry_07_attack_A
   - first:
       95: 9500000
     second: //RootNode
   externalObjects: {}
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
     materialLocation: 0
@@ -170,18 +170,18 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Orc_infantry_07_attack_A
+      name: ORC_infantry_07_attack_A
       takeName: Take 001
       internalID: 0
       firstFrame: 0
-      lastFrame: 30
+      lastFrame: 40
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1
@@ -193,14 +193,7 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events:
-      - time: 0.33029196
-        functionName: TriggerAttackAnimEvent
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
+      events: []
       transformMask:
       - path: 
         weight: 1
@@ -264,7 +257,7 @@ ModelImporter:
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
     importVisibility: 0
-    importBlendShapes: 1
+    importBlendShapes: 0
     importCameras: 0
     importLights: 0
     swapUVChannels: 0
@@ -286,8 +279,8 @@ ModelImporter:
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
-    tangentImportMode: 3
-    normalCalculationMode: 0
+    tangentImportMode: 0
+    normalCalculationMode: 1
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0

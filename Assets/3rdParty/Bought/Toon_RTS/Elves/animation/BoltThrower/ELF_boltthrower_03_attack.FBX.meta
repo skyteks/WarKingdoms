@@ -1,14 +1,14 @@
 fileFormatVersion: 2
 guid: b61d6fe763a86c945acf93d27e3907a9
 ModelImporter:
-  serializedVersion: 20101
+  serializedVersion: 26
   internalIDToNameTable:
   - first:
       74: 1827226128182048838
     second: ELF_boltthrower_03_attack
   externalObjects: {}
   materials:
-    materialImportMode: 0
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
     materialLocation: 1
@@ -46,7 +46,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -58,14 +58,7 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events:
-      - time: 0.04940849
-        functionName: TriggerAttackAnimEvent
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
+      events: []
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
@@ -82,13 +75,11 @@ ModelImporter:
     importBlendShapes: 0
     importCameras: 0
     importLights: 0
-    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
     keepQuads: 0
     weldVertices: 1
-    bakeAxisConversion: 0
     preserveHierarchy: 0
     skinWeightsMode: 0
     maxBonesPerVertex: 4
@@ -98,9 +89,6 @@ ModelImporter:
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
-    secondaryUVMarginMethod: 0
-    secondaryUVMinLightmapResolution: 40
-    secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
   tangentSpace:
@@ -113,6 +101,7 @@ ModelImporter:
     normalSmoothingSource: 0
   referencedClips: []
   importAnimation: 1
+  copyAvatar: 1
   humanDescription:
     serializedVersion: 3
     human: []
@@ -481,10 +470,8 @@ ModelImporter:
     skeletonHasParents: 0
   lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: e6fe95228c173374989de6b8863f5406,
     type: 3}
-  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
-  avatarSetup: 2
   additionalBone: 0
   userData: 
   assetBundleName: 

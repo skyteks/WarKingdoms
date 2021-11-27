@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: cd3c37c7420c09f47850653c47607b9e
+guid: d87cdc72f4017144c82f8518888b203a
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable:
@@ -137,7 +137,7 @@ ModelImporter:
     second: //RootNode
   - first:
       74: 7400000
-    second: Orc_archer_09_take_damage
+    second: ORC_archer_09_take_damage
   - first:
       95: 9500000
     second: //RootNode
@@ -154,7 +154,14 @@ ModelImporter:
     optimizeGameObjects: 0
     motionNodeName: 
     rigImportErrors: 
-    rigImportWarnings: 
+    rigImportWarnings: "Copied Avatar Rig Configuration mis-match. Bone length in
+      copied configuration does not match position in animation file:\n\t'Bip001 L
+      Thigh' : position error = 3.661349 mm\n\t'Bip001 L Calf' : position error =
+      12.674853 mm\n\t'Bip001 L Foot' : position error = 7.973907 mm\n\t'Bip001 L
+      Toe0' : position error = 8.379739 mm\n\t'Bip001 R Thigh' : position error =
+      3.661393 mm\n\t'Bip001 R Calf' : position error = 12.674782 mm\n\t'Bip001 R
+      Foot' : position error = 7.973888 mm\n\t'Bip001 R Toe0' : position error = 8.379765
+      mm\n"
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -170,7 +177,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Orc_archer_09_take_damage
+      name: ORC_archer_09_take_damage
       takeName: Take 001
       internalID: 0
       firstFrame: 0
@@ -181,7 +188,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1
@@ -279,8 +286,8 @@ ModelImporter:
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
-    tangentImportMode: 3
-    normalCalculationMode: 0
+    tangentImportMode: 0
+    normalCalculationMode: 1
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0

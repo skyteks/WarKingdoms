@@ -45,7 +45,7 @@ public class Unit : ClickableObject
     {
         base.Awake();
         navMeshAgent = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
         resourceCollector = GetComponent<ResourceCollector>();
     }
 
