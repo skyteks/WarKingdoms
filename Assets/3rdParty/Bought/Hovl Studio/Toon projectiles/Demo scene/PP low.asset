@@ -14,6 +14,7 @@ MonoBehaviour:
   settings:
   - {fileID: 114731164026991314}
   - {fileID: 114065851182806750}
+  - {fileID: 114838521199288270}
 --- !u!114 &114065851182806750
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -122,10 +123,10 @@ MonoBehaviour:
     overrideState: 1
     value: {x: 1, y: 1, z: 1, w: -0.077419356}
   gain:
-    overrideState: 1
+    overrideState: 0
     value: {x: 0.99999934, y: 0.9999999, z: 1, w: 0.0025244094}
   masterCurve:
-    overrideState: 0
+    overrideState: 1
     value:
       curve:
         serializedVersion: 2
@@ -284,7 +285,7 @@ MonoBehaviour:
       - 0.984375
       - 0.9921875
   redCurve:
-    overrideState: 0
+    overrideState: 1
     value:
       curve:
         serializedVersion: 2
@@ -1370,3 +1371,28 @@ MonoBehaviour:
   dirtIntensity:
     overrideState: 0
     value: 0
+--- !u!114 &114838521199288270
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6050e2d5de785ce4d931e4dbdbf2d755, type: 3}
+  m_Name: ChromaticAberration
+  m_EditorClassIdentifier: 
+  active: 0
+  enabled:
+    overrideState: 1
+    value: 1
+  spectralLut:
+    overrideState: 0
+    value: {fileID: 0}
+    defaultState: 1
+  intensity:
+    overrideState: 1
+    value: 1
+  fastMode:
+    overrideState: 0
+    value: 1
