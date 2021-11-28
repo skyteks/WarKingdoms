@@ -48,7 +48,7 @@ public class ResourceCollector : MonoBehaviour
 
     void Awake()
     {
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     public void AddResource(int amount, ResourceSource.ResourceType type)
@@ -62,10 +62,7 @@ public class ResourceCollector : MonoBehaviour
             storage = 0;
             storedType = type;
         }
-        if (animator != null)// && Mathf.Floor(animator.GetFloat("DoCarry")) != (float)type)
-        {
-            animator.SetFloat("DoCarry", (float)type);
-        }
+        animator?.SetFloat("DoCarry", (float)type);
         int max = 0;
         switch (storedType)
         {

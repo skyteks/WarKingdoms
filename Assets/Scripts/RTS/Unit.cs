@@ -37,9 +37,11 @@ public class Unit : ClickableObject
     protected Vector3? targetOfMovement;
     protected Vector3? returnPoint;
 
-    private readonly float combatReadySwitchTime = 7f;
+    private static readonly float combatReadySwitchTime = 3f;
+    private static readonly AnimationCurve combatReadyAnimCurve = new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, 1f, 0f, 0f));
 
     private Coroutine lerpingCombatReady;
+    private Coroutine lerpingAttackEvent;
 
     protected override void Awake()
     {
@@ -120,8 +122,8 @@ public class Unit : ClickableObject
         switch (command.commandType)
         {
             case AICommand.CommandTypes.MoveTo:
-            //case AICommand.CommandTypes.AttackMoveTo:
-            //case AICommand.CommandTypes.Guard:
+                //case AICommand.CommandTypes.AttackMoveTo:
+                //case AICommand.CommandTypes.Guard:
                 return !command.destination.IsNaN();
             case AICommand.CommandTypes.AttackTarget:
                 return command.target != null && !command.target.attackable.isDead && command.target != this;
@@ -242,7 +244,7 @@ public class Unit : ClickableObject
         switch (newState)
         {
             case UnitStates.Idleing:
-                animator?.SetBool("DoAttack", false);
+                AttackAnim(false);
 
                 navMeshAgent.isStopped = true;
                 break;
@@ -258,14 +260,14 @@ public class Unit : ClickableObject
                 navMeshAgent.SetDestination(targetOfMovement.Value);
                 navMeshAgent.isStopped = false;
                 agentReady = false;
-                animator?.SetBool("DoAttack", false);
+                AttackAnim(false);
                 break;
             case UnitStates.MovingToSpot:
                 navMeshAgent.stoppingDistance = 0.1f;
                 navMeshAgent.SetDestination(targetOfMovement.Value);
                 navMeshAgent.isStopped = false;
                 agentReady = false;
-                animator?.SetBool("DoAttack", false);
+                AttackAnim(false);
                 break;
             case UnitStates.Dead:
                 Die();
@@ -321,7 +323,7 @@ public class Unit : ClickableObject
                     else
                     {
                         FaceTarget();
-                        animator?.SetBool("DoAttack", true);
+                        AttackAnim(true);
                     }
                 }
                 break;
@@ -387,7 +389,16 @@ public class Unit : ClickableObject
 
                     if (targetOfAttack.attackable.isDead)
                     {
-                        commandExecuted = true;
+                        switch (customAction.Value)
+                        {
+                            case AICommand.CustomActions.collectResources:
+                                ResourceSource resourceSource = targetOfAttack.GetComponent<ResourceSource>();
+                                SeekNewResourceSource(resourceSource.resourceType, true);
+                                break;
+                            case AICommand.CustomActions.dropoffResources:
+                                commandExecuted = true;
+                                break;
+                        }
                     }
                     float remainingDistance = Vector3.Distance(transform.position, targetOfMovement.Value);
                     //recalculate path
@@ -412,13 +423,8 @@ public class Unit : ClickableObject
                                     commandExecuted = true;
                                     break;
                                 }
-                                else if (resourceSource.isEmpty)
-                                {
-                                    SeekNewResourceSource(resourceSource.resourceType, true);
-                                    break;
-                                }
                                 FaceTarget();
-                                animator?.SetBool("DoAttack", true);
+                                AttackAnim(true);
                                 break;
                             case AICommand.CustomActions.dropoffResources:
                                 if (resourceCollector.isNotEmpty)
@@ -446,7 +452,7 @@ public class Unit : ClickableObject
             case UnitStates.Idleing:
                 break;
             case UnitStates.Attacking:
-                animator?.SetBool("DoAttack", false);
+                AttackAnim(false);
                 break;
             case UnitStates.MovingToTarget:
                 break;
@@ -461,7 +467,7 @@ public class Unit : ClickableObject
                 switch (customAction.Value)
                 {
                     case AICommand.CustomActions.collectResources:
-                        animator?.SetBool("DoAttack", false);
+                        AttackAnim(false);
 
                         if (resourceCollector != null && resourceCollector.isFull)
                         {
@@ -479,9 +485,9 @@ public class Unit : ClickableObject
 
     public void TriggerAttackAnimEvent(int Int)///Functionname equals Eventname
     {
-        if (state == UnitStates.Dead || targetOfAttack.attackable.isDead)
+        if (state == UnitStates.Dead || targetOfAttack == null || targetOfAttack.attackable.isDead)
         {
-            animator?.SetBool("DoAttack", false);
+            AttackAnim(false);
             return;
         }
 
@@ -495,7 +501,7 @@ public class Unit : ClickableObject
             bool success = targetOfAttack.GetComponent<Attackable>().SufferAttack(damage, gameObject);
             if (!success)
             {
-                animator?.SetBool("DoAttack", false);
+                AttackAnim(false);
 
                 if (state == UnitStates.CustomActionAtObj && customAction.Value == AICommand.CustomActions.collectResources)
                 {
@@ -612,7 +618,7 @@ public class Unit : ClickableObject
         navMeshAgent.isStopped = true;
         navMeshAgent.enabled = false;
 
-        animator?.SetBool("DoAttack", false);
+        AttackAnim(false);
         animator?.SetTrigger("DoDeath");
 
         ///Remove itself from the selection Platoon
@@ -706,13 +712,15 @@ public class Unit : ClickableObject
     {
         const string name = "DoCombatReady";
 
+        float start = animator.GetFloat(name);
+        float key = start;
         float value;
         for (; ; )
         {
-            value = animator.GetFloat(name);
-            value = Mathf.MoveTowards(value, state, Time.deltaTime * combatReadySwitchTime);
+            key = Mathf.MoveTowards(key, state, Time.deltaTime * combatReadySwitchTime);
+            value = combatReadyAnimCurve.Evaluate(key);
             animator.SetFloat(name, value);
-            if (value != state)
+            if (key != state)
             {
                 yield return null;
             }
@@ -722,6 +730,51 @@ public class Unit : ClickableObject
                 yield break;
             }
         }
+    }
+
+    private void AttackAnim(bool state)
+    {
+        if (state)
+        {
+            if (lerpingAttackEvent != null)
+            {
+                return;
+            }
+            else
+            {
+                lerpingAttackEvent = StartCoroutine(LerpAttackEvent());
+            }
+        }
+        else if (lerpingAttackEvent != null)
+        {
+            animator?.SetBool("DoAttack", false);
+            StopCoroutine(lerpingAttackEvent);
+            lerpingAttackEvent = null;
+        }
+    }
+
+    private IEnumerator LerpAttackEvent()
+    {
+        animator?.SetBool("DoAttack", false);
+        yield return null;
+        yield return null;
+        animator?.SetBool("DoAttack", true);
+
+        float lenght = float.NaN;
+        if (animator != null)
+        {
+            lenght = animator.GetCurrentAnimatorStateInfo(0).length;
+            yield return Yielders.Get(lenght * template.attackEventTime);
+        }
+
+        TriggerAttackAnimEvent(0);
+
+        if (animator != null)
+        {
+            yield return Yielders.Get(lenght * (1f - template.attackEventTime));
+        }
+
+        lerpingAttackEvent = null;
     }
 
 #if UNITY_EDITOR

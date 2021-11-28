@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7634443698438496266}
   - component: {fileID: 5870410003216884574}
   m_Layer: 14
-  m_Name: CatapultStone
+  m_Name: Catapult Stone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -52,7 +52,6 @@ MonoBehaviour:
   trackSpeed: 10
   projectileRotationMode: 1
   useFactionMaterial: 0
-  terrainImpactEffect: {fileID: 0}
 --- !u!54 &7307690093435274700
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -117,6 +116,10 @@ PrefabInstance:
       value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 811b49ca85d7f4d48a3c0c5e83f34c12, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 811b49ca85d7f4d48a3c0c5e83f34c12, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0
       objectReference: {fileID: 0}
@@ -129,6 +132,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 811b49ca85d7f4d48a3c0c5e83f34c12, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 811b49ca85d7f4d48a3c0c5e83f34c12, type: 3}
       propertyPath: m_LocalRotation.x
       value: -0.7071068
       objectReference: {fileID: 0}
@@ -138,14 +145,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 811b49ca85d7f4d48a3c0c5e83f34c12, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 811b49ca85d7f4d48a3c0c5e83f34c12, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 811b49ca85d7f4d48a3c0c5e83f34c12, type: 3}
-      propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 811b49ca85d7f4d48a3c0c5e83f34c12, type: 3}
@@ -163,7 +162,7 @@ PrefabInstance:
     - target: {fileID: 2300000, guid: 811b49ca85d7f4d48a3c0c5e83f34c12, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 85c407ce764279e44a7e5b7cb7ef65aa, type: 2}
+      objectReference: {fileID: 2100000, guid: 774e107f0e5b80a488ad5e03d4ac252f, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 811b49ca85d7f4d48a3c0c5e83f34c12, type: 3}
 --- !u!4 &4185645221811526970 stripped

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Attackable : MonoBehaviour
 {
-    protected ClickableObject clickableObject;
+    protected InteractableObject interactableObject;
     protected ResourceSource resourceSource;
 
     private bool alive = true;
@@ -20,7 +20,7 @@ public class Attackable : MonoBehaviour
     protected virtual void Awake()
     {
         resourceSource = GetComponent<ResourceSource>();
-        clickableObject = GetComponent<ClickableObject>();
+        interactableObject = GetComponent<InteractableObject>();
     }
 
     public virtual bool SufferAttack(int damage, GameObject source)
@@ -40,12 +40,12 @@ public class Attackable : MonoBehaviour
             resourceCollector.AddResource(earnings, resourceSource.resourceType);
             if (resourceSource.isEmpty)
             {
-                clickableObject.Die();
+                interactableObject.Die();
                 alive = false;
             }
             else
             {
-                clickableObject.anim?.SetTrigger("DoHit");
+                interactableObject.anim?.SetTrigger("DoHit");
             }
             return true;
         }

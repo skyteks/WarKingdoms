@@ -216,6 +216,11 @@ public class Projectile : MonoBehaviour
 
         for (int i = 0; i < render.sharedMaterials.Length; i++)
         {
+            if (render.sharedMaterials[i] == null)
+            {
+                Debug.LogError(string.Concat("Material missing on ", render.gameObject.name), render);
+                continue;
+            }
             if (render.sharedMaterials[i].shader == teamcolorShader)
             {
                 Color tmpColor = uiManager.GetFactionColorForColorMode(owner.faction, UIManager.ColorType.Shader);

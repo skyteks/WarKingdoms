@@ -5,11 +5,13 @@ using UnityEngine;
 [RequireComponent(typeof(InteractableObject))]
 public class Healthpoints : Attackable
 {
+    private ClickableObject clickableObject;
+
     public override bool isDead
     {
         get
         {
-            if (clickableObject == null)
+            if (interactableObject == null)
             {
                 Awake();
             }
@@ -28,6 +30,7 @@ public class Healthpoints : Attackable
     protected override void Awake()
     {
         base.Awake();
+        clickableObject = GetComponent<ClickableObject>();
     }
 
     public override bool SufferAttack(int damage, GameObject source)
@@ -40,14 +43,14 @@ public class Healthpoints : Attackable
         damage = Mathf.RoundToInt(damage);
         clickableObject.template.health -= damage;
 
-        if (clickableObject is Building)
+        if (interactableObject is Building)
         {
-            (clickableObject as Building).TriggerBurnEffects();
+            (interactableObject as Building).TriggerBurnEffects();
         }
 
         if (clickableObject.template.health <= 0)
         {
-            clickableObject.Die();
+            interactableObject.Die();
         }
         return true;
     }

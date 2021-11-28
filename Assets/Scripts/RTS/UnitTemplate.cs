@@ -29,6 +29,9 @@ public class UnitTemplate : ScriptableObject
     [Tooltip("The attack rate. The higher, the faster the Unit is in attacking. 1 second/attackSpeed = time it takes for a single attack")]
     public float attackSpeed = 1f;
 
+    [Range(0f, 1f)]
+    public float attackEventTime = 0.5f;
+
     public GameObject projectile;
     [Tooltip("When it has reached this distance from its target, the Unit stops and attacks it")]
     public float engageDistance = 1f;
