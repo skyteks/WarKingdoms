@@ -212,6 +212,10 @@ public class Projectile : MonoBehaviour
     protected void UpdateMaterialTeamColor()
     {
         Shader teamcolorShader = GameManager.Instance.tintShader;
+        if (teamcolorShader == null)
+        {
+            throw new System.NullReferenceException();
+        }
         UIManager uiManager = UIManager.Instance;
 
         for (int i = 0; i < render.sharedMaterials.Length; i++)

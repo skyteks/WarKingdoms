@@ -27,6 +27,7 @@ public class FactionTemplate : ScriptableObject
         Human,
         Orc,
         WoodElf,
+        Undead,
     }
 
     [System.Serializable]
@@ -70,6 +71,10 @@ public class FactionTemplate : ScriptableObject
     public void SetTeamColorToRenderers()
     {
         Shader teamcolorShader = GameManager.Instance.tintShader;
+        if (teamcolorShader == null)
+        {
+            throw new System.NullReferenceException();
+        }
         UIManager uiManager = UIManager.Instance;
         Color tmpColor = uiManager.GetFactionColorForColorMode(this, UIManager.ColorType.Shader);
 
@@ -84,6 +89,10 @@ public class FactionTemplate : ScriptableObject
         data.renderersTeamcolor.Add(render);
 
         Shader teamcolorShader = GameManager.Instance.tintShader;
+        if (teamcolorShader == null)
+        {
+            throw new System.NullReferenceException();
+        }
         UIManager uiManager = UIManager.Instance;
         Color tmpColor = uiManager.GetFactionColorForColorMode(this, UIManager.ColorType.Shader);
 

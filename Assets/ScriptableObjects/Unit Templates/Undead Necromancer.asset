@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6313511d6d3aa4e45ae57357f9e4f939, type: 3}
+  m_Name: Undead Necromancer
+  m_EditorClassIdentifier: 
+  icon: {fileID: 21300000, guid: 2312f1dd9c32b864d8f778c73b667a3c, type: 3}
+  prefab: {fileID: 6143523602997217605, guid: 7aa4cde9edcf14945898e034a7eb5183, type: 3}
+  race: 1
+  health: 70
+  healthRegen: 0.3
+  armor: 10
+  damage: {x: 4, y: 9}
+  attackSpeed: 1
+  attackEventTime: 0.6
+  projectile: {fileID: 3580919731394271526, guid: c25ecb740dc0d894884ffdf09dcbfddc,
+    type: 3}
+  engageDistance: 6
+  guardDistance: 10
+  mana: 100
+  manaRegen: 1
+  costGold: 75
+  costWood: 20
+  customActions: 

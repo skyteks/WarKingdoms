@@ -53,6 +53,10 @@ public class Unit : ClickableObject
 
     protected override void Start()
     {
+        if (faction == null)
+        {
+            throw new System.NullReferenceException(string.Concat("No faction assigned to: ", gameObject.name));
+        }
         faction.data.units.Add(this);
 
         UpdateMaterialTeamColor();

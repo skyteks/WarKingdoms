@@ -100,6 +100,10 @@ public abstract class ClickableObject : InteractableObject
     protected void UpdateMaterialTeamColor()
     {
         Shader teamcolorShader = GameManager.Instance.tintShader;
+        if (teamcolorShader == null)
+        {
+            throw new System.NullReferenceException();
+        }
         UIManager uiManager = UIManager.Instance;
 
         foreach (Renderer render in modelRenderers)
