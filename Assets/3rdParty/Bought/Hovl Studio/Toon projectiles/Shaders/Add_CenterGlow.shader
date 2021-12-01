@@ -12,7 +12,6 @@ Shader "Hovl/Particles/Add_CenterGlow"
 		_Color("Color", Color) = (0.5,0.5,0.5,1)
 		[Toggle]_Usecenterglow("Use center glow?", Float) = 0
 		[MaterialToggle] _Usedepth ("Use depth?", Float ) = 0
-		[MaterialToggle] _Usecustomrandom ("Use Custom Random?", Float ) = 0
         _Depthpower ("Depth power", Float ) = 1
 		[Enum(Cull Off,0, Cull Front,1, Cull Back,2)] _CullMode("Culling", Float) = 0
 		[Enum(One,1,OneMinuSrcAlpha,6)] _Blend2 ("Blend mode subset", Float) = 1
@@ -86,7 +85,6 @@ Shader "Hovl/Particles/Add_CenterGlow"
 				uniform float4 _Color;
 				uniform float _Emission;
 				uniform fixed _Usedepth;
-				uniform fixed _Usecustomrandom;
 				uniform float _Depthpower;
 
 				v2f vert ( appdata_t v  )
@@ -123,7 +121,7 @@ Shader "Hovl/Particles/Add_CenterGlow"
 					float2 uv0_MainTex = i.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw;
 					float2 panner107 = ( 1.0 * _Time.y * appendResult21 + uv0_MainTex);
 					float2 appendResult100 = (float2(_DistortionSpeedXYPowerZ.x , _DistortionSpeedXYPowerZ.y));
-					float4 uv0_Flow = i.texcoord;
+					float3 uv0_Flow = i.texcoord.xyz;
 					uv0_Flow.xy = i.texcoord.xy * _Flow_ST.xy + _Flow_ST.zw;
 					float2 panner110 = ( 1.0 * _Time.y * appendResult100 + (uv0_Flow).xy);
 					float2 uv_Mask = i.texcoord.xy * _Mask_ST.xy + _Mask_ST.zw;
@@ -132,13 +130,13 @@ Shader "Hovl/Particles/Add_CenterGlow"
 					float4 tex2DNode13 = tex2D( _MainTex, ( panner107 - ( (( tex2D( _Flow, panner110 ) * tex2DNode33 )).rg * Flowpower102 ) ) );
 					float2 appendResult22 = (float2(_SpeedMainTexUVNoiseZW.z , _SpeedMainTexUVNoiseZW.w));
 					float2 uv0_Noise = i.texcoord.xy * _Noise_ST.xy + _Noise_ST.zw;
-					float ur = lerp(0, i.texcoord.w, _Usecustomrandom);
-					float2 panner108 = ( 1.0 * _Time.y * appendResult22 + ( uv0_Noise + ur ));
+					float2 panner108 = ( 1.0 * _Time.y * appendResult22 + uv0_Noise);
 					float4 tex2DNode14 = tex2D( _Noise, panner108 );
 					float4 temp_output_30_0 = ( tex2DNode13 * tex2DNode14 * _Color * i.color * tex2DNode13.a * tex2DNode14.a * _Color.a * i.color.a );
 					float4 temp_cast_0 = ((1.0 + (uv0_Flow.z - 0.0) * (0.0 - 1.0) / (1.0 - 0.0))).xxxx;
 					float4 clampResult38 = clamp( ( tex2DNode33 - temp_cast_0 ) , float4( 0,0,0,0 ) , float4( 1,1,1,1 ) );
-					float4 clampResult40 = clamp( ( tex2DNode33 * clampResult38 ) , float4( 0,0,0,0 ) , float4( 1,1,1,1 ) );		
+					float4 clampResult40 = clamp( ( tex2DNode33 * clampResult38 ) , float4( 0,0,0,0 ) , float4( 1,1,1,1 ) );
+					
 
 					fixed4 col = ( lerp(temp_output_30_0,( temp_output_30_0 * clampResult40 ),_Usecenterglow) * _Emission );
 					UNITY_APPLY_FOG_COLOR(i.fogCoord, col, fixed4(0,0,0,1));
