@@ -1657,6 +1657,87 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 310258146}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &312325031
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1001555644}
+    m_Modifications:
+    - target: {fileID: 8134649057710586144, guid: 2ff5aa3261e0d5f4fbd1235bbb0776eb,
+        type: 3}
+      propertyPath: m_Name
+      value: Monster Spider Bug
+      objectReference: {fileID: 0}
+    - target: {fileID: 8139965769007211102, guid: 2ff5aa3261e0d5f4fbd1235bbb0776eb,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8139965769007211102, guid: 2ff5aa3261e0d5f4fbd1235bbb0776eb,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 3.43
+      objectReference: {fileID: 0}
+    - target: {fileID: 8139965769007211102, guid: 2ff5aa3261e0d5f4fbd1235bbb0776eb,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8139965769007211102, guid: 2ff5aa3261e0d5f4fbd1235bbb0776eb,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -12.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 8139965769007211102, guid: 2ff5aa3261e0d5f4fbd1235bbb0776eb,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8139965769007211102, guid: 2ff5aa3261e0d5f4fbd1235bbb0776eb,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8139965769007211102, guid: 2ff5aa3261e0d5f4fbd1235bbb0776eb,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8139965769007211102, guid: 2ff5aa3261e0d5f4fbd1235bbb0776eb,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8139965769007211102, guid: 2ff5aa3261e0d5f4fbd1235bbb0776eb,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8139965769007211102, guid: 2ff5aa3261e0d5f4fbd1235bbb0776eb,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8139965769007211102, guid: 2ff5aa3261e0d5f4fbd1235bbb0776eb,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8174477206981492668, guid: 2ff5aa3261e0d5f4fbd1235bbb0776eb,
+        type: 3}
+      propertyPath: faction
+      value: 
+      objectReference: {fileID: 11400000, guid: 85c4d6ddd476c4b40aa973060d5f71cc,
+        type: 2}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2ff5aa3261e0d5f4fbd1235bbb0776eb, type: 3}
+--- !u!4 &312325032 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8139965769007211102, guid: 2ff5aa3261e0d5f4fbd1235bbb0776eb,
+    type: 3}
+  m_PrefabInstance: {fileID: 312325031}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &317004679
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2695,7 +2776,7 @@ PrefabInstance:
     - target: {fileID: 8134649057710586144, guid: ee83b37a6d7c5fc4b9f5d1b4ab406d3a,
         type: 3}
       propertyPath: m_Name
-      value: Spider
+      value: Monster Hairy Spider
       objectReference: {fileID: 0}
     - target: {fileID: 8139965769007211102, guid: ee83b37a6d7c5fc4b9f5d1b4ab406d3a,
         type: 3}
@@ -5464,6 +5545,7 @@ Transform:
   - {fileID: 1726651506}
   - {fileID: 563822408}
   - {fileID: 992306345}
+  - {fileID: 312325032}
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
