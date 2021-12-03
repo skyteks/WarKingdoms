@@ -24,16 +24,17 @@ public class SubParticleSpawner : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         if (spawnEffectPrefab != null)
         {
-            var flashInstance = Instantiate(spawnEffectPrefab, transform.position, Quaternion.identity);
+            GameObject flashInstance = Instantiate(spawnEffectPrefab, transform.position, Quaternion.identity);
+            flashInstance.SetLayerRecursivly(gameObject.layer);
             flashInstance.transform.forward = gameObject.transform.forward;
-            var flashPs = flashInstance.GetComponent<ParticleSystem>();
+            ParticleSystem flashPs = flashInstance.GetComponent<ParticleSystem>();
             if (flashPs != null)
             {
                 Destroy(flashInstance, flashPs.main.duration);
             }
             else
             {
-                var flashPsParts = flashInstance.transform.GetChild(0).GetComponent<ParticleSystem>();
+                ParticleSystem flashPsParts = flashInstance.transform.GetChild(0).GetComponent<ParticleSystem>();
                 Destroy(flashInstance, flashPsParts.main.duration);
             }
         }
@@ -47,7 +48,8 @@ public class SubParticleSpawner : MonoBehaviour
 
         if (hitEffectPrefab != null)
         {
-            var hitInstance = Instantiate(hitEffectPrefab, transform.position, transform.rotation);
+            GameObject hitInstance = Instantiate(hitEffectPrefab, transform.position, transform.rotation);
+            hitInstance.SetLayerRecursivly(gameObject.layer);
             switch (useFirePointRotation)
             {
                 case SubParticleSpawnRotation.PrefabAsIs:
@@ -60,14 +62,14 @@ public class SubParticleSpawner : MonoBehaviour
                     break;
             }
 
-            var hitPs = hitInstance.GetComponent<ParticleSystem>();
+            ParticleSystem hitPs = hitInstance.GetComponent<ParticleSystem>();
             if (hitPs != null)
             {
                 Destroy(hitInstance, hitPs.main.duration);
             }
             else
             {
-                var hitPsParts = hitInstance.transform.GetChild(0).GetComponent<ParticleSystem>();
+                ParticleSystem hitPsParts = hitInstance.transform.GetChild(0).GetComponent<ParticleSystem>();
                 Destroy(hitInstance, hitPsParts.main.duration);
             }
         }
@@ -75,7 +77,7 @@ public class SubParticleSpawner : MonoBehaviour
         {
             if (detachedPrefab != null)
             {
-                detachedPrefab.transform.parent = null;
+                detachedPrefab.transform.SetParent(null);
             }
         }
     }
