@@ -23,7 +23,7 @@ public class Unit : ClickableObject
 
     //references
     protected Animator animator;
-    protected NavMeshAgent navMeshAgent;
+    protected MovementNavigation navigation;
     protected ResourceCollector resourceCollector;
 
     protected List<AICommand> commandList = new List<AICommand>();
@@ -46,7 +46,7 @@ public class Unit : ClickableObject
     protected override void Awake()
     {
         base.Awake();
-        navMeshAgent = GetComponent<NavMeshAgent>();
+        navigation = GetComponent<MovementNavigation>();
         animator = GetComponentInChildren<Animator>();
         resourceCollector = GetComponent<ResourceCollector>();
     }
@@ -85,10 +85,10 @@ public class Unit : ClickableObject
 #if UNITY_EDITOR
     protected override void OnDrawGizmos()
     {
-        if (navMeshAgent != null && navMeshAgent.isOnNavMesh && navMeshAgent.hasPath)
+        if (navigation != null && navigation.isOnMesh && navigation.hasPath)
         {
             UnityEditor.Handles.color = Color.red;
-            UnityEditor.Handles.DrawLine(transform.position, navMeshAgent.destination);
+            UnityEditor.Handles.DrawLine(transform.position, navigation.destination);
 
             if (targetOfMovement.HasValue)
             {
@@ -250,26 +250,26 @@ public class Unit : ClickableObject
             case UnitStates.Idleing:
                 AttackAnim(false);
 
-                navMeshAgent.isStopped = true;
+                navigation.isStopped = true;
                 break;
             case UnitStates.Attacking:
-                navMeshAgent.stoppingDistance = template.engageDistance;
+                navigation.stoppingDistance = template.engageDistance;
                 targetOfMovement = targetOfAttack.transform.position;
-                navMeshAgent.SetDestination(targetOfMovement.Value);
+                navigation.SetDestination(targetOfMovement.Value);
                 agentReady = false;
                 break;
             case UnitStates.MovingToTarget:
-                navMeshAgent.stoppingDistance = template.engageDistance;
+                navigation.stoppingDistance = template.engageDistance;
                 targetOfMovement = targetOfAttack.transform.position;
-                navMeshAgent.SetDestination(targetOfMovement.Value);
-                navMeshAgent.isStopped = false;
+                navigation.SetDestination(targetOfMovement.Value);
+                navigation.isStopped = false;
                 agentReady = false;
                 AttackAnim(false);
                 break;
             case UnitStates.MovingToSpot:
-                navMeshAgent.stoppingDistance = 0.1f;
-                navMeshAgent.SetDestination(targetOfMovement.Value);
-                navMeshAgent.isStopped = false;
+                navigation.stoppingDistance = 0.1f;
+                navigation.SetDestination(targetOfMovement.Value);
+                navigation.isStopped = false;
                 agentReady = false;
                 AttackAnim(false);
                 break;
@@ -277,15 +277,15 @@ public class Unit : ClickableObject
                 Die();
                 break;
             case UnitStates.CustomActionAtPos:
-                navMeshAgent.stoppingDistance = 0.1f;
-                navMeshAgent.SetDestination(targetOfMovement.Value);
-                navMeshAgent.isStopped = false;
+                navigation.stoppingDistance = 0.1f;
+                navigation.SetDestination(targetOfMovement.Value);
+                navigation.isStopped = false;
                 agentReady = false;
                 break;
             case UnitStates.CustomActionAtObj:
-                navMeshAgent.stoppingDistance = template.engageDistance;
+                navigation.stoppingDistance = template.engageDistance;
                 targetOfMovement = targetOfAttack.transform.position;
-                navMeshAgent.SetDestination(targetOfMovement.Value);
+                navigation.SetDestination(targetOfMovement.Value);
                 agentReady = false;
                 break;
         }
@@ -302,11 +302,11 @@ public class Unit : ClickableObject
         switch (currentState)
         {
             case UnitStates.Idleing:
-                navMeshAgent.isStopped = true;
+                navigation.isStopped = true;
                 break;
             case UnitStates.Attacking:
                 {
-                    navMeshAgent.isStopped = true;
+                    navigation.isStopped = true;
 
                     if (targetOfAttack.attackable.isDead)
                     {
@@ -317,7 +317,7 @@ public class Unit : ClickableObject
                     if (Vector3.Distance(targetOfAttack.transform.position, targetOfMovement.Value) > 0.05f)
                     {
                         targetOfMovement = targetOfAttack.transform.position;
-                        navMeshAgent.SetDestination(targetOfMovement.Value);
+                        navigation.SetDestination(targetOfMovement.Value);
                     }
                     //check if in attack range
                     if ((template.engageDistance + targetOfAttack.sizeRadius) < remainingDistance)
@@ -333,7 +333,7 @@ public class Unit : ClickableObject
                 break;
             case UnitStates.MovingToTarget:
                 {
-                    if (!agentReady || navMeshAgent.pathPending)
+                    if (!agentReady || !navigation.hasPath)
                     {
                         break;
                     }
@@ -346,7 +346,7 @@ public class Unit : ClickableObject
                     if (Vector3.Distance(targetOfAttack.transform.position, targetOfMovement.Value) > 0.05f)
                     {
                         targetOfMovement = targetOfAttack.transform.position;
-                        navMeshAgent.SetDestination(targetOfMovement.Value);
+                        navigation.SetDestination(targetOfMovement.Value);
                     }
                     //check if in attack range
                     if ((template.engageDistance + targetOfAttack.sizeRadius) >= remainingDistance)
@@ -364,7 +364,7 @@ public class Unit : ClickableObject
                 break;
             case UnitStates.MovingToSpot:
                 {
-                    if (!agentReady || navMeshAgent.pathPending)
+                    if (!agentReady || !navigation.hasPath)
                     {
                         break;
                     }
@@ -389,7 +389,7 @@ public class Unit : ClickableObject
                 break;
             case UnitStates.CustomActionAtObj:
                 {
-                    navMeshAgent.isStopped = true;
+                    navigation.isStopped = true;
 
                     if (targetOfAttack.attackable.isDead)
                     {
@@ -409,7 +409,7 @@ public class Unit : ClickableObject
                     if (Vector3.Distance(targetOfAttack.transform.position, targetOfMovement.Value) > 0.05f)
                     {
                         targetOfMovement = targetOfAttack.transform.position;
-                        navMeshAgent.SetDestination(targetOfMovement.Value);
+                        navigation.SetDestination(targetOfMovement.Value);
                     }
                     //check if in attack range
                     if ((template.engageDistance + targetOfAttack.sizeRadius) < remainingDistance)
@@ -619,8 +619,8 @@ public class Unit : ClickableObject
 
         commandList.Clear();
 
-        navMeshAgent.isStopped = true;
-        navMeshAgent.enabled = false;
+        navigation.isStopped = true;
+        navigation.enabled = false;
 
         AttackAnim(false);
         animator?.SetTrigger("DoDeath");
@@ -640,7 +640,7 @@ public class Unit : ClickableObject
 
     private void SetWalkingSpeed()
     {
-        float navMeshAgentSpeed = navMeshAgent.velocity.magnitude;
+        float navMeshAgentSpeed = navigation.velocity;
         animator?.SetFloat("Speed", navMeshAgentSpeed * 0.05f);
     }
 
