@@ -333,7 +333,7 @@ public class Unit : ClickableObject
                 break;
             case UnitStates.MovingToTarget:
                 {
-                    if (!agentReady || !navigation.hasPath)
+                    if (!agentReady || navigation.pathPending)
                     {
                         break;
                     }
@@ -364,7 +364,7 @@ public class Unit : ClickableObject
                 break;
             case UnitStates.MovingToSpot:
                 {
-                    if (!agentReady || !navigation.hasPath)
+                    if (!agentReady || navigation.pathPending)
                     {
                         break;
                     }
@@ -640,7 +640,7 @@ public class Unit : ClickableObject
 
     private void SetWalkingSpeed()
     {
-        float navMeshAgentSpeed = navigation.velocity;
+        float navMeshAgentSpeed = navigation.velocity.magnitude;
         animator?.SetFloat("Speed", navMeshAgentSpeed * 0.05f);
     }
 

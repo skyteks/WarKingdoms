@@ -16,13 +16,20 @@ public static class Component_Extension
     /// <returns></returns>
     public static T GetClosestInEnumeration<T>(this IEnumerable<T> components, Vector3 currentPosition) where T : Component
     {
-        if (components.Count() == 0) return null;
+        if (components.Count() == 0)
+        {
+            return null;
+        }
 
         T closest = null;
         float closestsDistance = Mathf.Infinity;
         foreach (T component in components)
         {
-            if (component == null) continue;
+            if (component == null)
+            {
+                continue;
+            }
+
             float currentsDistance = Vector3.Distance(component.transform.position, currentPosition);
             if (currentsDistance < closestsDistance)
             {
@@ -40,15 +47,31 @@ public static class Component_Extension
         var fields = type.GetFields();
         foreach (var field in fields)
         {
-            if (field.IsStatic) continue;
+            if (field.IsStatic)
+            {
+                continue;
+            }
+
             field.SetValue(destination, field.GetValue(original));
         }
         var props = type.GetProperties();
         foreach (var prop in props)
         {
-            if (!prop.CanWrite || !prop.CanWrite || prop.Name == "name") continue;
+            if (!prop.CanWrite || !prop.CanWrite || prop.Name == "name")
+            {
+                continue;
+            }
+
             prop.SetValue(destination, prop.GetValue(original, null), null);
         }
         return destination as T;
+    }
+
+    public static void SetEnabled<T>(this T behaviour, bool toggle) where T : Behaviour
+    {
+        if (behaviour != null)
+        {
+            behaviour.enabled = toggle;
+        }
     }
 }
