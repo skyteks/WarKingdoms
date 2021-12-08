@@ -1,14 +1,12 @@
-# WarKingdoms
+# WarKingdoms #
 
-A Warcraft-3-like Realtime Strategie Game
+A Warcraft-3-like Realtime Strategy Game
 
 * [Youtube log Playlist](https://www.youtube.com/playlist?list=PLL6EQjZiYj7Kilumpq9UtLevmKPRU_OL6)
 
-## Getting Started
+## Prerequisites ##
 
-### Prerequisites
-
-Assets not included
+Assets not included!
 
 [Human units](https://assetstore.unity.com/packages/3d/characters/toon-rts-units-67948), 
 [Orc units](https://assetstore.unity.com/packages/3d/characters/toon-rts-units-orcs-78906), 
@@ -20,15 +18,15 @@ Assets not included
 [Spell projectiles](https://assetstore.unity.com/packages/vfx/particles/spells/toon-projectiles-158199),
 [Trees](https://assetstore.unity.com/packages/3d/vegetation/trees/low-poly-trees-conifers-111807)
 
-## Built With
+## Built With ##
 
 * [UNITY](https://unity.com/) - 3D Game Engine
 
-## Authors
+## Author ##
 
 * **Daniel Emig** - https://github.com/skyteks
 
-## Acknowledgments
+## Acknowledgments ##
 
 * **Lutz Kadoch** - https://github.com/hadea
 * **Pascal Jacob**
