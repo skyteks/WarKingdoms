@@ -22,13 +22,12 @@ public class Unit : ClickableObject
     public bool alignToGround;
 
     //references
-    protected Animator animator;
+    protected new UnitAnimation animation;
     protected MovementNavigation navigation;
     protected ResourceCollector resourceCollector;
 
     protected List<AICommand> commandList = new List<AICommand>();
 
-    protected bool agentReady = false;
     protected bool commandRecieved, commandExecuted;
     protected UnitStates? switchState;
     protected AICommand.CustomActions? customAction;
@@ -47,7 +46,7 @@ public class Unit : ClickableObject
     {
         base.Awake();
         navigation = GetComponent<MovementNavigation>();
-        animator = GetComponentInChildren<Animator>();
+        animation = GetComponent<UnitAnimation>();
         resourceCollector = GetComponent<ResourceCollector>();
     }
 
@@ -69,14 +68,6 @@ public class Unit : ClickableObject
 
     protected override void Update()
     {
-        //Little hack to give time to the NavMesh agent to set its destination.
-        //without this, the Unit would switch its state before the NavMeshAgent can kick off, leading to unpredictable results
-        if (!agentReady)
-        {
-            agentReady = true;
-            return;
-        }
-
         base.Update();
 
         UpdateStates();
@@ -256,21 +247,21 @@ public class Unit : ClickableObject
                 navigation.stoppingDistance = template.engageDistance;
                 targetOfMovement = targetOfAttack.transform.position;
                 navigation.SetDestination(targetOfMovement.Value);
-                agentReady = false;
+                navigation.agentReady = false;
                 break;
             case UnitStates.MovingToTarget:
                 navigation.stoppingDistance = template.engageDistance;
                 targetOfMovement = targetOfAttack.transform.position;
                 navigation.SetDestination(targetOfMovement.Value);
                 navigation.isStopped = false;
-                agentReady = false;
+                navigation.agentReady = false;
                 AttackAnim(false);
                 break;
             case UnitStates.MovingToSpot:
                 navigation.stoppingDistance = 0.1f;
                 navigation.SetDestination(targetOfMovement.Value);
                 navigation.isStopped = false;
-                agentReady = false;
+                navigation.agentReady = false;
                 AttackAnim(false);
                 break;
             case UnitStates.Dead:
@@ -280,13 +271,13 @@ public class Unit : ClickableObject
                 navigation.stoppingDistance = 0.1f;
                 navigation.SetDestination(targetOfMovement.Value);
                 navigation.isStopped = false;
-                agentReady = false;
+                navigation.agentReady = false;
                 break;
             case UnitStates.CustomActionAtObj:
                 navigation.stoppingDistance = template.engageDistance;
                 targetOfMovement = targetOfAttack.transform.position;
                 navigation.SetDestination(targetOfMovement.Value);
-                agentReady = false;
+                navigation.agentReady = false;
                 break;
         }
         state = newState;
@@ -333,7 +324,7 @@ public class Unit : ClickableObject
                 break;
             case UnitStates.MovingToTarget:
                 {
-                    if (!agentReady || navigation.pathPending)
+                    if (!navigation.agentReady || navigation.pathPending)
                     {
                         break;
                     }
@@ -364,7 +355,7 @@ public class Unit : ClickableObject
                 break;
             case UnitStates.MovingToSpot:
                 {
-                    if (!agentReady || navigation.pathPending)
+                    if (!navigation.agentReady || navigation.pathPending)
                     {
                         break;
                     }
@@ -623,7 +614,7 @@ public class Unit : ClickableObject
         navigation.enabled = false;
 
         AttackAnim(false);
-        animator?.SetTrigger("DoDeath");
+        animation.SetTrigger(UnitAnimation.StateNames.DoDeath);
 
         ///Remove itself from the selection Platoon
         GameManager.Instance.RemoveFromSelection(this);
@@ -641,7 +632,7 @@ public class Unit : ClickableObject
     private void SetWalkingSpeed()
     {
         float navMeshAgentSpeed = navigation.velocity.magnitude;
-        animator?.SetFloat("Speed", navMeshAgentSpeed * 0.05f);
+        animation?.SetFloat(UnitAnimation.StateNames.Speed, navMeshAgentSpeed * 0.05f);
     }
 
     private void FaceTarget()
@@ -691,12 +682,9 @@ public class Unit : ClickableObject
 
     public bool SetCombatReady(bool state)
     {
-        const string name = "DoCombatReady";
-        foreach (AnimatorControllerParameter parameter in animator.parameters)
-        {
-            if (parameter.name == name)
+            if (animation.CheckParameterExistance(UnitAnimation.StateNames.DoCombatReady))
             {
-                float value = animator.GetFloat(name);
+                float value = animation.GetFloat(UnitAnimation.StateNames.DoCombatReady);
                 float stat = state.ToFloat();
                 if (value != stat)
                 {
@@ -708,22 +696,19 @@ public class Unit : ClickableObject
                     return true;
                 }
             }
-        }
         return false;
     }
 
     private IEnumerator LerpCombatReadyAnim(float state)
     {
-        const string name = "DoCombatReady";
-
-        float start = animator.GetFloat(name);
+        float start = animation.GetFloat(UnitAnimation.StateNames.DoCombatReady);
         float key = start;
         float value;
         for (; ; )
         {
             key = Mathf.MoveTowards(key, state, Time.deltaTime * combatReadySwitchTime);
             value = combatReadyAnimCurve.Evaluate(key);
-            animator.SetFloat(name, value);
+            animation.SetFloat(UnitAnimation.StateNames.DoCombatReady, value);
             if (key != state)
             {
                 yield return null;
@@ -751,7 +736,7 @@ public class Unit : ClickableObject
         }
         else if (lerpingAttackEvent != null)
         {
-            animator?.SetBool("DoAttack", false);
+            animation?.SetBool(UnitAnimation.StateNames.DoAttack, false);
             StopCoroutine(lerpingAttackEvent);
             lerpingAttackEvent = null;
         }
@@ -759,21 +744,21 @@ public class Unit : ClickableObject
 
     private IEnumerator LerpAttackEvent()
     {
-        animator?.SetBool("DoAttack", false);
+        animation?.SetBool(UnitAnimation.StateNames.DoAttack, false);
         yield return null;
         yield return null;
-        animator?.SetBool("DoAttack", true);
+        animation?.SetBool(UnitAnimation.StateNames.DoAttack, true);
 
         float lenght = float.NaN;
-        if (animator != null)
+        if (animation != null)
         {
-            lenght = animator.GetCurrentAnimatorStateInfo(0).length;
+            lenght = animation.GetCurrentAnimationLenght();
             yield return Yielders.Get(lenght * template.attackEventTime);
         }
 
         TriggerAttackAnimEvent(0);
 
-        if (animator != null)
+        if (animation != null)
         {
             yield return Yielders.Get(lenght * (1f - template.attackEventTime));
         }
