@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.AI;
 
 [DisallowMultipleComponent]
 public class InteractableObject : MonoBehaviour
@@ -19,9 +18,11 @@ public class InteractableObject : MonoBehaviour
     private Transform modelHolder2;
     protected MeshRenderer selectionCircle;
     public Animator anim { get; protected set; }
-    private NavMeshObstacle navObstacle;
     private ResourceSource resourceSource;
     public Attackable attackable { get; protected set; }
+
+    private UnityEngine.AI.NavMeshObstacle navObstacle;
+    private Pathfinding.NavmeshCut navCut;
 
     protected readonly float decayIntoGroundDistance = -7f;
 
@@ -39,9 +40,11 @@ public class InteractableObject : MonoBehaviour
         modelHolder2 = transform.Find("Model2");
         selectionCircle = transform.Find("SelectionCircle").GetComponent<MeshRenderer>();
         anim = GetComponentInChildren<Animator>();
-        navObstacle = GetComponent<NavMeshObstacle>();
         resourceSource = GetComponent<ResourceSource>();
         attackable = GetComponent<Attackable>();
+
+        navObstacle = GetComponent<UnityEngine.AI.NavMeshObstacle>();
+        navCut = GetComponent<Pathfinding.NavmeshCut>();
 
         SetLayers();
     }
@@ -126,7 +129,8 @@ public class InteractableObject : MonoBehaviour
     {
         anim?.SetBool("DoDeath", true);
 
-        navObstacle.enabled = false;
+        navObstacle?.SetEnabled(false);
+        navCut?.SetEnabled(false);
 
         //To avoid the object participating in any Raycast or tag search
         //gameObject.tag = "Untagged";
