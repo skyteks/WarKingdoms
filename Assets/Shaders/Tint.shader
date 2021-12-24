@@ -22,6 +22,7 @@
 
         #pragma surface surf Standard addshadow fullforwardshadows
         #pragma target 3.0
+        #pragma instancing_options assumeuniformscaling
 
         sampler2D _MainTex;
         sampler2D _TintMaskMap;

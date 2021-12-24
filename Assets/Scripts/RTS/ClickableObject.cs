@@ -36,7 +36,14 @@ public abstract class ClickableObject : InteractableObject
 
     protected virtual void Start()
     {
-        visionCircle.material.color = visionCircle.material.color.ToWithA(0f);
+        if (visionCircle != null)
+        {
+            //visionCircle.material.color = visionCircle.material.color.ToWithA(0f);
+            MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
+            visionCircle.GetPropertyBlock(materialPropertyBlock, 0);
+            materialPropertyBlock.SetColor("_Color", materialPropertyBlock.GetColor("_Color").ToWithA(0f));
+            visionCircle.SetPropertyBlock(materialPropertyBlock);
+        }
 
         if (FactionTemplate.IsAlliedWith(faction, GameManager.Instance.playerFaction))
         {
@@ -166,6 +173,10 @@ public abstract class ClickableObject : InteractableObject
 
     protected IEnumerator VisionFade(float fadeTime, bool fadeOut)
     {
+        if (visionCircle == null)
+        {
+            yield break;
+        }
         Color newColor = visionCircle.material.color;
         float deadline = Time.time + fadeTime;
         MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
