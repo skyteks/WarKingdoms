@@ -114,9 +114,9 @@ public static class Vector_Extension
         return new Vector3(vector2.x, y, vector2.y);
     }
 
-    public static Vector3 ToVector3ZY(this Vector2 vector2, float x = 0f)
+    public static Vector3Int ToVector3XZ(this Vector2Int vector2, int y = 0)
     {
-        return new Vector3(x, vector2.y, vector2.x);
+        return new Vector3Int(vector2.x, y, vector2.y);
     }
 
     public static Vector2 ToVector2XZ(this Vector3 vector3)
@@ -132,6 +132,11 @@ public static class Vector_Extension
     public static Vector3 ToVector3(this Vector2 vector2, float z = 0f)
     {
         return new Vector3(vector2.x, vector2.y, z);
+    }
+
+    public static Vector3Int ToVector3Int(this Vector2Int vector2, int z = 0)
+    {
+        return new Vector3Int(vector2.y, vector2.x, z);
     }
 
     public static Vector4 ToVector4(this Vector2 vector2, float z = 0f, float w = 0f)
@@ -252,6 +257,16 @@ public static class Vector_Extension
     public static Vector4 Abs(this Vector4 vector)
     {
         return new Vector4(Mathf.Abs(vector.x), Mathf.Abs(vector.y), Mathf.Abs(vector.z), Mathf.Abs(vector.w));
+    }
+
+    public static bool InBounds(this Vector2 vector, Vector2 upper, Vector2 lower = default(Vector2))
+    {
+        return vector.x >= lower.x && vector.y >= lower.y && vector.x <= upper.x && vector.y <= upper.y;
+    }
+
+    public static bool InBounds(this Vector2Int vector, Vector2Int upper, Vector2Int lower = default(Vector2Int))
+    {
+        return vector.x >= lower.x && vector.y >= lower.y && vector.x <= upper.x && vector.y <= upper.y;
     }
 
     /// <summary>

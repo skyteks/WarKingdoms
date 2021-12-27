@@ -107,4 +107,9 @@ public static class Float_Extension
         if (value == 0f) return 0f;
         return Sign(value);
     }
+
+    public static bool Is01(this float value)
+    {
+        return value >= 0f && value <= 1f;
+    }
 }

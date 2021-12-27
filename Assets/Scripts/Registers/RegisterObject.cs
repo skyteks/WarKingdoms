@@ -9,7 +9,15 @@ public class RegisterObject : ScriptableObject
     public System.Type typeOfListObjects = null;
     private List<MonoBehaviour> list = new List<MonoBehaviour>();
 
-    private void OnEnable()
+    public int Count
+    {
+        get
+        {
+            return list.Count;
+        }
+    }
+
+    void OnEnable()
     {
         list.Clear();
     }

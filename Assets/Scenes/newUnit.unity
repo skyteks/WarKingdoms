@@ -2792,6 +2792,55 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 456874442}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &457413006
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 457413008}
+  - component: {fileID: 457413007}
+  m_Layer: 0
+  m_Name: FOW
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &457413007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 457413006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06faf9462d1bad5408f767ce5438fb00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visionGrid:
+    size: {x: 128, y: 128}
+  drawGrid: 1
+  drawHeightValues: 0
+  units: {fileID: 11400000, guid: 01c7bc88a8159d34f9070b8e426410e6, type: 2}
+  buildings: {fileID: 11400000, guid: 776b0c3caab84df46a0edfec83178832, type: 2}
+--- !u!4 &457413008
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 457413006}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -30, y: 0.01, z: -30}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 18
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &458140795
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10687,6 +10736,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Orc Grunt (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6143523602997217605, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6147639645433565755, guid: 9a6476a774e7514469db4f7665d98ac2,
         type: 3}
