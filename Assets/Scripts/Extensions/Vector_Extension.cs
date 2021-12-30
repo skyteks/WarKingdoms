@@ -154,6 +154,26 @@ public static class Vector_Extension
         return new Vector4(vector3.x, vector3.y, vector3.z, w);
     }
 
+    public static Vector2Int ToRoundInt(this Vector2 vector2)
+    {
+        return new Vector2Int(Mathf.RoundToInt(vector2.x), Mathf.RoundToInt(vector2.y));
+    }
+
+    public static Vector3Int ToRoundInt(this Vector3 vector3)
+    {
+        return new Vector3Int(Mathf.RoundToInt(vector3.x), Mathf.RoundToInt(vector3.y), Mathf.RoundToInt(vector3.z));
+    }
+
+    public static Vector2Int ToFloorInt(this Vector2 vector2)
+    {
+        return new Vector2Int(Mathf.FloorToInt(vector2.x), Mathf.FloorToInt(vector2.y));
+    }
+
+    public static Vector3Int ToFloorInt(this Vector3 vector3)
+    {
+        return new Vector3Int(Mathf.FloorToInt(vector3.x), Mathf.FloorToInt(vector3.y), Mathf.FloorToInt(vector3.z));
+    }
+
     /// <summary>
     /// 
     /// </summary>

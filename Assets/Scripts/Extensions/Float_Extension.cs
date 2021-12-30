@@ -108,7 +108,7 @@ public static class Float_Extension
         return Sign(value);
     }
 
-    public static bool Is01(this float value)
+    public static bool IsPercent(this float value)
     {
         return value >= 0f && value <= 1f;
     }

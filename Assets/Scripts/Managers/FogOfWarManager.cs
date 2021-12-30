@@ -6,7 +6,7 @@ using UnityEngine;
 public class FogOfWarManager : MonoBehaviour
 {
     [System.Serializable]
-    struct UnitVision
+    public struct UnitVision
     {
         // A bit mask representing a group of players inside the vision system.
         public FactionTemplate.PlayerId playerId;
@@ -18,22 +18,21 @@ public class FogOfWarManager : MonoBehaviour
         public Vector2Int position;
 
         // used for blocking vision
-        public int terrainHeight;
+        //public int terrainHeight;
 
         public UnitVision(FactionTemplate.PlayerId player, int range, Vector2Int pos, int height)
         {
             playerId = player;
             visionRange = range;
             position = pos;
-            terrainHeight = height;
+            //terrainHeight = height;
         }
     }
 
-    [System.Serializable]
     public class VisionGrid
     {
         // the width and height of the grid (needed to access the arrays)
-        public Vector2Int size = new Vector2Int(128, 128);
+        public Vector2Int size { get; private set; }
 
         // array of size width * height, each entry has an int with the 
         // bits representing which players have this entry in vision.
@@ -43,29 +42,22 @@ public class FogOfWarManager : MonoBehaviour
         // that entry at some point in time.
         private int[] visited = null;
 
-        public void Setup()
+        public VisionGrid(Vector2Int gridSize)
         {
+            size = gridSize;
             values = new int[size.x * size.y];
             visited = new int[size.x * size.y];
         }
 
         public void SetVisible(Vector2Int pos, FactionTemplate.PlayerId players)
         {
-            if (values == null)
-            {
-                Setup();
-            }
             values[pos.x + pos.y * size.y] |= (int)players;
             visited[pos.x + pos.y * size.y] |= (int)players;
         }
 
         public void Clear()
         {
-            if (values == null)
-            {
-                Setup();
-            }
-            else
+            if (values != null)
             {
                 System.Array.Clear(values, 0, size.x * size.y);
             }
@@ -73,24 +65,15 @@ public class FogOfWarManager : MonoBehaviour
 
         public bool IsVisible(Vector2Int pos, FactionTemplate.PlayerId players)
         {
-            if (values == null)
-            {
-                Setup();
-            }
             return (values[pos.x + pos.y * size.y] & (int)players) > 0;
         }
 
         public bool WasVisible(Vector2Int pos, FactionTemplate.PlayerId players)
         {
-            if (values == null)
-            {
-                Setup();
-            }
             return (visited[pos.x + pos.y * size.y] & (int)players) > 0;
         }
     }
 
-    [System.Serializable]
     public class Terrain
     {
         // the width and height of the grid (needed to access the arrays) 
@@ -100,10 +83,30 @@ public class FogOfWarManager : MonoBehaviour
         // grid entry. 
         private int[] height;
 
-        public Terrain(Vector2Int gridSize, int[] data)
+        public Terrain(Vector2Int gridSize, Vector3 unityPos)
         {
             size = gridSize;
-            height = data;
+            CreateMap(unityPos);
+        }
+
+        private void CreateMap(Vector3 unityPos)
+        {
+            LayerMask layerMask = new LayerMask().Add("Terrain");
+            float heightOffset = unityPos.y;
+            int length = size.x * size.y;
+            height = new int[length];
+            Vector2Int gridOffset = new Vector2Int(Mathf.RoundToInt(unityPos.x), Mathf.RoundToInt(unityPos.z));
+            for (int i = 0; i < length; i++)
+            {
+                int x = i % size.x;
+                int y = i / size.x;
+                Ray ray = new Ray(new Vector3(x + 0.5f + gridOffset.x, 24f, y + 0.5f + gridOffset.y), Vector3.down);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit, 32f, layerMask, QueryTriggerInteraction.Ignore))
+                {
+                    height[i] = Mathf.RoundToInt(hit.point.y);
+                }
+            }
         }
 
         public int GetHeight(int i)
@@ -113,14 +116,31 @@ public class FogOfWarManager : MonoBehaviour
 
         public int GetHeight(Vector2Int pos)
         {
-            if (pos.x < 0 || pos.y < 0 || pos.x > size.x || pos.y > size.y)
+            if (!pos.InBounds(size))
             {
-                throw new System.ArgumentOutOfRangeException(string.Concat(pos, " is not inside the grid of size: ", size));
+                throw new System.ArgumentOutOfRangeException(size.ToString());
             }
             return height[pos.x + pos.y * size.y];
         }
     }
 
+    public Vector2Int gridSize = new Vector2Int(128, 128);
+    private VisionGrid visionGrid;
+    private Terrain terrainGrid;
+    public RenderTexture renderTexture;
+
+    [Space]
+
+    public bool drawGrid;
+    public bool drawHeightValues;
+
+    [Space]
+
+    public RegisterObject units;
+    public RegisterObject buildings;
+
+    private FactionTemplate playerFaction;
+    private List<UnitVision> unitVisions = new List<UnitVision>();
 
     public Vector2Int gridOffset
     {
@@ -129,23 +149,18 @@ public class FogOfWarManager : MonoBehaviour
             return new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.z));
         }
     }
-    public VisionGrid visionGrid;
-    private Terrain terrain;
-    public bool drawGrid;
-    public bool drawHeightValues;
-
-    public RegisterObject units;
-    public RegisterObject buildings;
-
-    [Space]
-
-    private FactionTemplate playerFaction;
-    private List<UnitVision> unitVisions = new List<UnitVision>();
 
     void Start()
     {
         playerFaction = GameManager.Instance.playerFaction;
 
+        Vector2Int texSize = new Vector2Int(renderTexture.width, renderTexture.height);
+        if (texSize != gridSize)
+        {
+            throw new System.ArgumentOutOfRangeException(texSize.ToString());
+        }
+
+        visionGrid = new VisionGrid(gridSize);
         SetTerrain();
     }
 
@@ -156,31 +171,31 @@ public class FogOfWarManager : MonoBehaviour
             float heightOffset = transform.position.y;
 
             UnityEditor.Handles.color = Color.grey;
-            for (int x = 0; x <= visionGrid.size.x; x++)
+            for (int x = 0; x <= gridSize.x; x++)
             {
-                UnityEditor.Handles.DrawAAPolyLine(new Vector3(x + gridOffset.x, heightOffset, 0 + gridOffset.y), new Vector3(x + gridOffset.x, heightOffset, visionGrid.size.y + gridOffset.y));
+                UnityEditor.Handles.DrawAAPolyLine(new Vector3(x + gridOffset.x, heightOffset, 0 + gridOffset.y), new Vector3(x + gridOffset.x, heightOffset, gridSize.y + gridOffset.y));
             }
-            for (int y = 0; y <= visionGrid.size.y; y++)
+            for (int y = 0; y <= gridSize.y; y++)
             {
-                UnityEditor.Handles.DrawAAPolyLine(new Vector3(0f + gridOffset.x, heightOffset, y + gridOffset.y), new Vector3(visionGrid.size.x + gridOffset.x, heightOffset, y + gridOffset.y));
+                UnityEditor.Handles.DrawAAPolyLine(new Vector3(0f + gridOffset.x, heightOffset, y + gridOffset.y), new Vector3(gridSize.x + gridOffset.x, heightOffset, y + gridOffset.y));
             }
         }
-        if (drawHeightValues && terrain != null)
+        if (drawHeightValues && terrainGrid != null)
         {
             float heightOffset = transform.position.y;
 
             GUIStyle style = new GUIStyle();
             style.fontSize = 20;
-            int length = terrain.size.x * terrain.size.y;
-            Camera cam = UnityEditor.SceneView.currentDrawingSceneView.camera;
+            int length = terrainGrid.size.x * terrainGrid.size.y;
+            Camera cam = UnityEditor.SceneView.currentDrawingSceneView != null ? UnityEditor.SceneView.currentDrawingSceneView.camera : Camera.current;
             for (int i = 0; i < length; i++)
             {
-                int height = terrain.GetHeight(i);
-                int x = i % visionGrid.size.x;
-                int y = i / visionGrid.size.x;
+                int height = terrainGrid.GetHeight(i);
+                int x = i % gridSize.x;
+                int y = i / gridSize.x;
                 Vector3 point = new Vector3(x + 0.5f + gridOffset.x, heightOffset, y + 0.5f + gridOffset.y);
                 Vector3 tmp = cam.WorldToViewportPoint(point);
-                if (tmp.x.Is01() && tmp.y.Is01() && tmp.z > 0f && Vector3.Distance(cam.transform.position, point) < 30f)
+                if (tmp.x.IsPercent() && tmp.y.IsPercent() && tmp.z > 0f && Vector3.Distance(cam.transform.position, point) < 30f)
                 {
                     style.normal.textColor = Color.Lerp(Color.cyan, Color.blue, ((float)height).LinearRemap(0, 10));
                     UnityEditor.Handles.Label(point, height.ToString(), style);
@@ -188,16 +203,24 @@ public class FogOfWarManager : MonoBehaviour
             }
         }
 
-        int gridLenght = visionGrid.size.x * visionGrid.size.y;
-        FactionTemplate.PlayerId playerId = GameManager.Instance.playerFaction.data.playerId;
-        for (int i = 0; i < gridLenght; i++)
+        
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        if (visionGrid != null)
         {
-            int x = i % visionGrid.size.x;
-            int y = i / visionGrid.size.x;
-            if (visionGrid.IsVisible(new Vector2Int(x, y), playerId))
+            int gridLenght = gridSize.x * gridSize.y;
+            FactionTemplate.PlayerId playerId = GameManager.Instance.playerFaction.data.playerId;
+            for (int i = 0; i < gridLenght; i++)
             {
-                Gizmos.color = Color.cyan;
-                Gizmos.DrawCube(GridPosToUnityPos(new Vector2Int(x, y)), (Vector3.one * 0.9f).ToWithY(0.001f));
+                int x = i % gridSize.x;
+                int y = i / gridSize.x;
+                if (visionGrid.IsVisible(new Vector2Int(x, y), playerId))
+                {
+                    Gizmos.color = Color.cyan;
+                    Gizmos.DrawCube(GridPosToUnityPos(new Vector2Int(x, y)), (Vector3.one * 0.9f).ToWithY(0.001f));
+                }
             }
         }
     }
@@ -205,27 +228,13 @@ public class FogOfWarManager : MonoBehaviour
     void LateUpdate()
     {
         CalculateVision();
+        DrawVision();
     }
 
     [ContextMenu("SetTerrain")]
     private void SetTerrain()
     {
-        LayerMask layerMask = new LayerMask().Add("Terrain");
-        float heightOffset = transform.position.y;
-        int length = visionGrid.size.x * visionGrid.size.y;
-        var heightData = new int[length];
-        for (int i = 0; i < length; i++)
-        {
-            int x = i % visionGrid.size.x;
-            int y = i / visionGrid.size.x;
-            Ray ray = new Ray(new Vector3(x + 0.5f + gridOffset.x, 24f, y + 0.5f + gridOffset.y), Vector3.down);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 32f, layerMask, QueryTriggerInteraction.Ignore))
-            {
-                heightData[i] = Mathf.RoundToInt(hit.point.y);
-            }
-        }
-        terrain = new Terrain(visionGrid.size, heightData);
+        terrainGrid = new Terrain(gridSize, transform.position);
     }
 
     private void CalculateVision()
@@ -237,7 +246,7 @@ public class FogOfWarManager : MonoBehaviour
         {
             Unit unit = units.GetByIndex(i) as Unit;
             Vector2Int unitPos = UnityPosToGridPos(unit.transform.position);
-            int height = terrain.GetHeight(unitPos);
+            int height = terrainGrid.GetHeight(unitPos);
             UnitVision vision = new UnitVision(unit.faction.data.playerId, Mathf.RoundToInt(unit.template.guardDistance), unitPos, height);
             unitVisions.Add(vision);
         }
@@ -245,7 +254,7 @@ public class FogOfWarManager : MonoBehaviour
         {
             Building unit = buildings.GetByIndex(i) as Building;
             Vector2Int unitPos = UnityPosToGridPos(unit.transform.position);
-            int height = terrain.GetHeight(unitPos);
+            int height = terrainGrid.GetHeight(unitPos);
             UnitVision vision = new UnitVision(unit.faction.data.playerId, Mathf.RoundToInt(unit.template.guardDistance), unitPos, height);
             unitVisions.Add(vision);
         }
@@ -258,7 +267,7 @@ public class FogOfWarManager : MonoBehaviour
                 List<Vector2Int> line = GetLinePositions(unit.position, outlinePos, visionGrid.size);
                 foreach (var linePos in line)
                 {
-                    if (terrain.GetHeight(linePos) > unit.terrainHeight)
+                    if (terrainGrid.GetHeight(linePos) > terrainGrid.GetHeight(unit.position))// unit.terrainHeight
                     {
                         break;
                     }
@@ -266,6 +275,11 @@ public class FogOfWarManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void DrawVision()
+    {
+        
     }
 
     public static List<Vector2Int> GetCirclePositions(Vector2Int center, int radius, Vector2Int upperBounds)
