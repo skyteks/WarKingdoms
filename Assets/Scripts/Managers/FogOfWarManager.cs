@@ -158,6 +158,8 @@ public class FogOfWarManager : MonoBehaviour
     public FactionTemplate.PlayerId activePlayers;
     private List<UnitVision> unitVisions = new List<UnitVision>();
 
+    private float lastCheck;
+
     public Vector2Int gridOffset
     {
         get
@@ -243,8 +245,13 @@ public class FogOfWarManager : MonoBehaviour
 
     void LateUpdate()
     {
+        if (Time.realtimeSinceStartup - lastCheck < 0.05f)
+        {
+            return;
+        }
         CalculateVision();
         DrawVision();
+        lastCheck = Time.realtimeSinceStartup;
     }
 
     [ContextMenu("SetTerrain")]
