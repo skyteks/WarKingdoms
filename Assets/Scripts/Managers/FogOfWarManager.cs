@@ -63,9 +63,19 @@ public class FogOfWarManager : MonoBehaviour
             }
         }
 
+        public bool IsVisible(int index, FactionTemplate.PlayerId players)
+        {
+            return (values[index] & (int)players) > 0;
+        }
+
         public bool IsVisible(Vector2Int pos, FactionTemplate.PlayerId players)
         {
             return (values[pos.x + pos.y * size.y] & (int)players) > 0;
+        }
+
+        public bool WasVisible(int index, FactionTemplate.PlayerId players)
+        {
+            return (visited[index] & (int)players) > 0;
         }
 
         public bool WasVisible(Vector2Int pos, FactionTemplate.PlayerId players)
@@ -127,7 +137,13 @@ public class FogOfWarManager : MonoBehaviour
     public Vector2Int gridSize = new Vector2Int(128, 128);
     private VisionGrid visionGrid;
     private Terrain terrainGrid;
-    public RenderTexture renderTexture;
+
+    private Texture2D texture;
+    private Color[] colors;
+    public Material material;
+    public Projector projector;
+    private Color fowUnexplored = Color.black;
+    private Color fowNotViewed = Color.black.ToWithA(0.6f);
 
     [Space]
 
@@ -139,7 +155,7 @@ public class FogOfWarManager : MonoBehaviour
     public RegisterObject units;
     public RegisterObject buildings;
 
-    private FactionTemplate playerFaction;
+    public FactionTemplate.PlayerId activePlayers;
     private List<UnitVision> unitVisions = new List<UnitVision>();
 
     public Vector2Int gridOffset
@@ -152,16 +168,18 @@ public class FogOfWarManager : MonoBehaviour
 
     void Start()
     {
-        playerFaction = GameManager.Instance.playerFaction;
+        activePlayers = GameManager.Instance.playerFaction.data.playerId;
 
-        Vector2Int texSize = new Vector2Int(renderTexture.width, renderTexture.height);
-        if (texSize != gridSize)
-        {
-            throw new System.ArgumentOutOfRangeException(texSize.ToString());
-        }
 
         visionGrid = new VisionGrid(gridSize);
         SetTerrain();
+
+        colors = new Color[gridSize.x * gridSize.y];
+
+        texture = new Texture2D(gridSize.x, gridSize.y);
+        texture.name = "FOW grid";
+        material.SetTexture("_MainTex", texture);
+        projector.material = material;
     }
 
     void OnDrawGizmos()
@@ -202,8 +220,6 @@ public class FogOfWarManager : MonoBehaviour
                 }
             }
         }
-
-        
     }
 
     void OnDrawGizmosSelected()
@@ -261,13 +277,14 @@ public class FogOfWarManager : MonoBehaviour
 
         foreach (var unit in unitVisions)
         {
+            int terrainHeight = terrainGrid.GetHeight(unit.position);
             List<Vector2Int> visionRange = GetCirclePositions(unit.position, unit.visionRange, visionGrid.size);
             foreach (var outlinePos in visionRange)
             {
                 List<Vector2Int> line = GetLinePositions(unit.position, outlinePos, visionGrid.size);
                 foreach (var linePos in line)
                 {
-                    if (terrainGrid.GetHeight(linePos) > terrainGrid.GetHeight(unit.position))// unit.terrainHeight
+                    if (terrainGrid.GetHeight(linePos) > terrainHeight)// unit.terrainHeight
                     {
                         break;
                     }
@@ -279,7 +296,27 @@ public class FogOfWarManager : MonoBehaviour
 
     private void DrawVision()
     {
-        
+        int length = gridSize.x * gridSize.y;
+        for (int i = 0; i < length; i++)
+        {
+            //int x = i % gridSize.x;
+            //int y = i / gridSize.x;
+            if (colors[i] != fowUnexplored)
+            {
+                colors[i] = fowUnexplored;
+            }
+
+            if (visionGrid.IsVisible(i, activePlayers))
+            {
+                colors[i] = Color.clear;
+            }
+            else if (visionGrid.WasVisible(i, activePlayers))
+            {
+                colors[i] = fowNotViewed;
+            }
+        }
+        texture.SetPixels(colors);
+        texture.Apply();
     }
 
     public static List<Vector2Int> GetCirclePositions(Vector2Int center, int radius, Vector2Int upperBounds)
@@ -293,42 +330,42 @@ public class FogOfWarManager : MonoBehaviour
             {
                 Vector2Int p;
                 p = new Vector2Int(center.x + x, center.y + y);
-                if (p.InBounds(upperBounds) && !list.Contains(p))
+                if (!list.Contains(p))
                 {
                     list.Add(p);
                 }
                 p = new Vector2Int(center.x - x, center.y + y);
-                if (p.InBounds(upperBounds) && !list.Contains(p))
+                if (!list.Contains(p))
                 {
                     list.Add(p);
                 }
                 p = new Vector2Int(center.x + x, center.y - y);
-                if (p.InBounds(upperBounds) && !list.Contains(p))
+                if (!list.Contains(p))
                 {
                     list.Add(p);
                 }
                 p = new Vector2Int(center.x - x, center.y - y);
-                if (p.InBounds(upperBounds) && !list.Contains(p))
+                if (!list.Contains(p))
                 {
                     list.Add(p);
                 }
                 p = new Vector2Int(center.x + y, center.y + x);
-                if (p.InBounds(upperBounds) && !list.Contains(p))
+                if (!list.Contains(p))
                 {
                     list.Add(p);
                 }
                 p = new Vector2Int(center.x - y, center.y + x);
-                if (p.InBounds(upperBounds) && !list.Contains(p))
+                if (!list.Contains(p))
                 {
                     list.Add(p);
                 }
                 p = new Vector2Int(center.x + y, center.y - x);
-                if (p.InBounds(upperBounds) && !list.Contains(p))
+                if (!list.Contains(p))
                 {
                     list.Add(p);
                 }
                 p = new Vector2Int(center.x - y, center.y - x);
-                if (p.InBounds(upperBounds) && !list.Contains(p))
+                if (!list.Contains(p))
                 {
                     list.Add(p);
                 }
@@ -361,7 +398,11 @@ public class FogOfWarManager : MonoBehaviour
         float x = p0.x, y = p0.y;
         for (int step = 0; step <= N; step++, x += xstep, y += ystep)
         {
-            list.Add(new Vector2Int(Mathf.RoundToInt(x), Mathf.RoundToInt(y)));
+            Vector2Int p = new Vector2Int(Mathf.RoundToInt(x), Mathf.RoundToInt(y));
+            if (p.InBounds(upperBounds))
+            {
+                list.Add(p);
+            }
         }
         return list;
     }

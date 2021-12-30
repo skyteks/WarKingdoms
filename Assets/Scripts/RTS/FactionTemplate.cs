@@ -8,17 +8,18 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "new Faction Template", menuName = "RTS/Faction Template", order = 2)]
 public class FactionTemplate : ScriptableObject
 {
+    [System.Flags]
     public enum PlayerId : int
     {
-        None = 0,
-        _01 = 1,
-        _02 = 2,
-        _03 = 4,
-        _04 = 8,
-        _05 = 16,
-        _06 = 32,
-        _07 = 64,
-        _08 = 128,
+        None,
+        _01 = (1 << 0),
+        _02 = (1 << 1),
+        _03 = (1 << 2),
+        _04 = (1 << 3),
+        _05 = (1 << 4),
+        _06 = (1 << 5),
+        _07 = (1 << 6),
+        _08 = (1 << 7),
     }
 
     public enum FactionColor
