@@ -77,19 +77,12 @@ public class Platoon : MonoBehaviour
         //so they move to a formation position rather than in the exact same place
         Vector3 destination = command.destination;
         Vector3 origin;
-        if (units.Count == 1)
+        Vector3[] positions = new Vector3[units.Count];
+        for (int i = 0; i < units.Count; i++)
         {
-            origin = units[0].transform.position;
+            positions[i] = units[i].transform.position;
         }
-        else
-        {
-            Vector3[] positions = new Vector3[units.Count];
-            for (int i = 0; i < units.Count; i++)
-            {
-                positions[i] = units[i].transform.position;
-            }
-            origin = positions.FindCentroid();
-        }
+        origin = units.Count == 1 ? positions[0] : positions.FindCentroid();
         Quaternion rotation = Quaternion.LookRotation((destination - origin).normalized);
         Vector3[] offsets = GetFormationOffsets();
 #if UNITY_EDITOR
@@ -100,17 +93,23 @@ public class Platoon : MonoBehaviour
         }
 #endif
 
-        List<Unit> sortedUnits = units.OrderBy(unit => Vector3.Distance(unit.transform.position, origin)).ToList();
-
-        List<Vector3> remainingOffsets = offsets.ToList();
-
-        for (int i = 0; i < sortedUnits.Count; i++)
+        int[,] assignments = new int[units.Count, offsets.Length];
+        for (int i = 0; i < units.Count; i++)
         {
-            Vector3 nextOffset = remainingOffsets.OrderBy(offset => Vector3.Distance(sortedUnits[i].transform.position, origin + rotation * offset)).First();
-            remainingOffsets.Remove(nextOffset);
-            command.destination = destination + rotation * nextOffset;
-            sortedUnits[i].AddCommand(command, !followUpCommand);
-            //yield return null;
+            for (int j = 0; j < offsets.Length; j++)
+            {
+                Vector3 newPos = origin + rotation * offsets[i];
+                assignments[i, j] = 1000 - Mathf.RoundToInt(Vector3.Distance(units[i].transform.position, newPos));
+            }
+        }
+
+        int[] results = HungarianAlgorithm.HungarianAlgorithm.FindAssignments(assignments);
+
+        for (int i = 0; i < results.Length; i++)
+        {
+
+            command.destination = destination + rotation * offsets[results[i]];
+            units[i].AddCommand(command, !followUpCommand);
         }
     }
 
@@ -303,8 +302,7 @@ public class Platoon : MonoBehaviour
 
         for (int i = 0; i < units.Count; i++)
         {
-            if (units[i] != null
-                && units[i].state != Unit.UnitStates.Dead)
+            if (units[i] != null && units[i].state != Unit.UnitStates.Dead)
             {
                 allDead = false;
                 break;
