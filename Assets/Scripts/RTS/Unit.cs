@@ -247,21 +247,18 @@ public class Unit : ClickableObject
                 navigation.stoppingDistance = template.engageDistance;
                 targetOfMovement = targetOfAttack.transform.position;
                 navigation.SetDestination(targetOfMovement.Value);
-                navigation.agentReady = false;
                 break;
             case UnitStates.MovingToTarget:
                 navigation.stoppingDistance = template.engageDistance;
                 targetOfMovement = targetOfAttack.transform.position;
                 navigation.SetDestination(targetOfMovement.Value);
                 navigation.isStopped = false;
-                navigation.agentReady = false;
                 AttackAnim(false);
                 break;
             case UnitStates.MovingToSpot:
                 navigation.stoppingDistance = 0.1f;
                 navigation.SetDestination(targetOfMovement.Value);
                 navigation.isStopped = false;
-                navigation.agentReady = false;
                 AttackAnim(false);
                 break;
             case UnitStates.Dead:
@@ -271,13 +268,11 @@ public class Unit : ClickableObject
                 navigation.stoppingDistance = 0.1f;
                 navigation.SetDestination(targetOfMovement.Value);
                 navigation.isStopped = false;
-                navigation.agentReady = false;
                 break;
             case UnitStates.CustomActionAtObj:
                 navigation.stoppingDistance = template.engageDistance;
                 targetOfMovement = targetOfAttack.transform.position;
                 navigation.SetDestination(targetOfMovement.Value);
-                navigation.agentReady = false;
                 break;
         }
         state = newState;
@@ -324,7 +319,7 @@ public class Unit : ClickableObject
                 break;
             case UnitStates.MovingToTarget:
                 {
-                    if (!navigation.agentReady || navigation.pathPending)
+                    if (navigation.pathPending)
                     {
                         break;
                     }
@@ -355,7 +350,7 @@ public class Unit : ClickableObject
                 break;
             case UnitStates.MovingToSpot:
                 {
-                    if (!navigation.agentReady || navigation.pathPending)
+                    if (navigation.pathPending)
                     {
                         break;
                     }

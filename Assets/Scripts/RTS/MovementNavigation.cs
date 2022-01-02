@@ -15,7 +15,6 @@ public class MovementNavigation : MonoBehaviour
 
     // Unity NavMesh
     private UnityEngine.AI.NavMeshAgent navMeshAgent;
-    public bool agentReady { get; set; }
 
     // A* Pro
     private static AstarPath aStarPath;
@@ -202,7 +201,6 @@ public class MovementNavigation : MonoBehaviour
         {
             case NavSystems.UnityNavMesh:
                 navMeshAgent.enabled = true;
-                StartCoroutine(ReadyUpNavMeshAgent());
                 break;
             case NavSystems.AStarProAIPath:
                 seeker.enabled = true;
@@ -218,7 +216,6 @@ public class MovementNavigation : MonoBehaviour
     void OnDisable()
     {
         navMeshAgent?.SetEnabled(false);
-        agentReady = false;
 
         seeker?.SetEnabled(false);
         pathAI?.SetEnabled(false);
@@ -238,13 +235,5 @@ public class MovementNavigation : MonoBehaviour
                 richAI.destination = position;
                 break;
         }
-    }
-
-    private IEnumerator ReadyUpNavMeshAgent()
-    {
-        //Little hack to give time to the NavMesh agent to set its destination.
-        //without this, the Unit would switch its state before the NavMeshAgent can kick off, leading to unpredictable results
-        yield return null;
-        agentReady = true;
     }
 }
