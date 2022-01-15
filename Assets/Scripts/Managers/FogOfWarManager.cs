@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class FogOfWarManager : MonoBehaviour
@@ -134,6 +133,40 @@ public class FogOfWarManager : MonoBehaviour
         }
     }
 
+    [System.Serializable]
+    public class GridTreeCell
+    {
+        public Vector2Int localPos;// { get; private set; }
+        public int level;// { get; private set; }
+        public GridTreeCell parent { get; private set; }
+        [SerializeField]
+        private List<GridTreeCell> branchedOffCells;
+
+        public GridTreeCell(Vector2Int pos, int treeLevel, GridTreeCell parentCell = null)
+        {
+            localPos = pos;
+            level = treeLevel;
+            branchedOffCells = new List<GridTreeCell>();
+            parent = parentCell;
+            parentCell?.AddBranchCell(this);
+        }
+
+        public void AddBranchCell(GridTreeCell branchCell)
+        {
+            branchedOffCells.Add(branchCell);
+        }
+
+        public bool ContainsChildAt(Vector2Int pos)
+        {
+            return pos == localPos || branchedOffCells.Exists(cell => cell.localPos == pos) || parent != null && parent.ContainsChildAt(pos);
+        }
+
+        public List<GridTreeCell> GetChildren()
+        {
+            return branchedOffCells;
+        }
+    }
+
     public Vector2Int gridSize = new Vector2Int(128, 128);
     private VisionGrid visionGrid;
     private Terrain terrainGrid;
@@ -167,6 +200,8 @@ public class FogOfWarManager : MonoBehaviour
             return new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.z));
         }
     }
+
+    public GridTreeCell rootCell;
 
     void Start()
     {
@@ -241,6 +276,25 @@ public class FogOfWarManager : MonoBehaviour
                 }
             }
         }
+
+        if (rootCell != null)
+        {
+            DrawTreeLevel(new GridTreeCell[1] { rootCell }, Random.ColorHSV());
+        }
+    }
+
+    private void DrawTreeLevel(IList<GridTreeCell> cells, Color color)
+    {
+        Color nextColor = Random.ColorHSV();
+        if (cells != null)
+        {
+            foreach (GridTreeCell cell in cells)
+            {
+                Gizmos.color = color;
+                Gizmos.DrawCube(GridPosToUnityPos(cell.localPos), (Vector3.one * 0.9f).ToWithY(0.001f));
+                DrawTreeLevel(cell.GetChildren(), nextColor);
+            }
+        }
     }
 
     void LateUpdate()
@@ -285,10 +339,10 @@ public class FogOfWarManager : MonoBehaviour
         foreach (var unit in unitVisions)
         {
             int terrainHeight = terrainGrid.GetHeight(unit.position);
-            List<Vector2Int> visionRange = GetCirclePositions(unit.position, unit.visionRange, visionGrid.size);
+            List<Vector2Int> visionRange = GetCirclePositions(unit.position, unit.visionRange);
             foreach (var outlinePos in visionRange)
             {
-                List<Vector2Int> line = GetLinePositions(unit.position, outlinePos, visionGrid.size);
+                List<Vector2Int> line = GetLinePositions(unit.position, outlinePos, new RectInt(Vector2Int.zero, visionGrid.size));
                 foreach (var linePos in line)
                 {
                     if (terrainGrid.GetHeight(linePos) > terrainHeight)// unit.terrainHeight
@@ -298,6 +352,70 @@ public class FogOfWarManager : MonoBehaviour
                     visionGrid.SetVisible(linePos, unit.playerId);
                 }
             }
+        }
+    }
+
+    [ContextMenu("CreateGridSelectionTree")]
+    public void CreateGridSelectionTree()//int radius)
+    {
+        int radius = 6;
+        List<Vector2Int> circlePoints = GetCirclePositions(Vector2Int.zero, radius);
+        List<List<Vector2Int>> linePointLists = new List<List<Vector2Int>>();
+        int maxListLenght = 0;
+        foreach (var outlinePos in circlePoints)
+        {
+            List<Vector2Int> linePoints = GetLinePositions(Vector2Int.zero, outlinePos, new RectInt(0, 0, int.MaxValue, int.MaxValue));
+            linePoints.RemoveAt(0);
+            if (linePoints.Count > 0)
+            {
+                linePointLists.Add(linePoints);
+            }
+            if (maxListLenght < linePoints.Count)
+            {
+                maxListLenght = linePoints.Count;
+            }
+        }
+
+        int treeLevel = 0;
+        rootCell = new GridTreeCell(Vector2Int.zero, treeLevel);
+
+        AddGridSelectionTreeLevel(treeLevel + 1, linePointLists, rootCell);
+    }
+
+    private void AddGridSelectionTreeLevel(int treeLevel, List<List<Vector2Int>> linePointLists, GridTreeCell cell)
+    {
+        List<GridTreeCell> levelCells = new List<GridTreeCell>();
+
+        List<List<Vector2Int>> linesWithPointInIt = new List<List<Vector2Int>>();
+        for (int i = 0; i < linePointLists.Count; i++)
+        {
+            List<Vector2Int> list = linePointLists[i];
+            Vector2Int linePos = list[0];
+            //list.RemoveAt(0);
+            if (!cell.ContainsChildAt(linePos))
+            {
+                GridTreeCell branchCell = new GridTreeCell(linePos, treeLevel, cell);
+                levelCells.Add(branchCell);
+            }
+            if (list.Count <= 1)
+            {
+                linePointLists.RemoveAt(i);
+                i--;
+            }
+        }
+        foreach (GridTreeCell branchCell in levelCells)
+        {
+            for (int i = 0; i < linePointLists.Count; i++)
+            {
+                List<Vector2Int> list = linePointLists[i];
+                if (list[0] == branchCell.localPos)
+                {
+                    List<Vector2Int> pointsList = new List<Vector2Int>(list);
+                    pointsList.RemoveAt(0);
+                    linesWithPointInIt.Add(pointsList);
+                }
+            }
+            AddGridSelectionTreeLevel(treeLevel + 1, linesWithPointInIt, branchCell);
         }
     }
 
@@ -326,7 +444,7 @@ public class FogOfWarManager : MonoBehaviour
         texture.Apply();
     }
 
-    public static List<Vector2Int> GetCirclePositions(Vector2Int center, int radius, Vector2Int upperBounds)
+    public static List<Vector2Int> GetCirclePositions(Vector2Int center, int radius)
     {
         List<Vector2Int> list = new List<Vector2Int>();
         for (int i = 0; i <= 1; i++, radius--)
@@ -393,7 +511,7 @@ public class FogOfWarManager : MonoBehaviour
         return list;
     }
 
-    private static List<Vector2Int> GetLinePositions(Vector2Int p0, Vector2Int p1, Vector2Int upperBounds)
+    private static List<Vector2Int> GetLinePositions(Vector2Int p0, Vector2Int p1, RectInt bounds)
     {
         List<Vector2Int> list = new List<Vector2Int>();
         int dx = p1.x - p0.x;
@@ -406,7 +524,7 @@ public class FogOfWarManager : MonoBehaviour
         for (int step = 0; step <= N; step++, x += xstep, y += ystep)
         {
             Vector2Int p = new Vector2Int(Mathf.RoundToInt(x), Mathf.RoundToInt(y));
-            if (p.InBounds(upperBounds))
+            if (bounds.Contains(p))
             {
                 list.Add(p);
             }
