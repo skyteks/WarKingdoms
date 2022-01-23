@@ -82,7 +82,20 @@ public static class Float_Extension
         return deg;
     }
 
-    public static float Sign(this float value)
+    /// <summary>
+    /// Returns the arc-cosine of f - the angle in radians whose cosine is f
+    /// </summary>
+    /// <param name="y"></param>
+    /// <param name="x"></param>
+    /// <returns></returns>
+    public static float ACos(this float f)
+    {
+        float tmp = Mathf.Acos(f);
+        float deg = tmp * Mathf.Rad2Deg;
+        return deg;
+    }
+
+    public static float SignOr0(this float value)
     {
         return (value == 0f) ? 0f : Mathf.Sign(value);
     }
@@ -100,12 +113,6 @@ public static class Float_Extension
     public static bool IsInRange(this float value, float center, float negativeOffset, float positiveOffset)
     {
         return value >= center - negativeOffset && value <= center + positiveOffset;
-    }
-
-    public static float SignOr0(this float value)
-    {
-        if (value == 0f) return 0f;
-        return Sign(value);
     }
 
     public static bool IsPercent(this float value)

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class FogOfWarManager : MonoBehaviour
@@ -182,6 +183,7 @@ public class FogOfWarManager : MonoBehaviour
 
     public bool drawGrid;
     public bool drawHeightValues;
+    public Mesh drawQuadMesh;
 
     [Space]
 
@@ -285,13 +287,13 @@ public class FogOfWarManager : MonoBehaviour
 
     private void DrawTreeLevel(IList<GridTreeCell> cells, Color color)
     {
-        Color nextColor = Random.ColorHSV();
-        if (cells != null)
+        Color nextColor = Random.ColorHSV(0f, 1f, 0f, 1f, 0.5f, 0.8f);
+        if (cells != null && drawQuadMesh != null)
         {
             foreach (GridTreeCell cell in cells)
             {
                 Gizmos.color = color;
-                Gizmos.DrawCube(GridPosToUnityPos(cell.localPos), (Vector3.one * 0.9f).ToWithY(0.001f));
+                Gizmos.DrawMesh(drawQuadMesh, 0, GridPosToUnityPos(cell.localPos) - Random.insideUnitCircle.ToVector3XZ() * 0.5f, Quaternion.identity, (Vector3.one * 0.2f).ToWithY(0.001f));
                 DrawTreeLevel(cell.GetChildren(), nextColor);
             }
         }
@@ -358,13 +360,28 @@ public class FogOfWarManager : MonoBehaviour
     [ContextMenu("CreateGridSelectionTree")]
     public void CreateGridSelectionTree()//int radius)
     {
-        int radius = 6;
+        int radius = 5;
+        RectInt bounds = new RectInt(0, 0, int.MaxValue, int.MaxValue);
         List<Vector2Int> circlePoints = GetCirclePositions(Vector2Int.zero, radius);
+        int startLenght = circlePoints.Count;
+        for (int i = 0; i < startLenght; i++)
+        {
+            int j = (i + 1) % startLenght;
+            List<Vector2Int> tmp = GetLinePositions(circlePoints[i], circlePoints[j], bounds);
+
+            foreach (Vector2Int lineOnCirclePos in tmp)
+            {
+                if (!circlePoints.Contains(lineOnCirclePos))
+                {
+                    circlePoints.Add(lineOnCirclePos);
+                }
+            }
+        }
         List<List<Vector2Int>> linePointLists = new List<List<Vector2Int>>();
         int maxListLenght = 0;
         foreach (var outlinePos in circlePoints)
         {
-            List<Vector2Int> linePoints = GetLinePositions(Vector2Int.zero, outlinePos, new RectInt(0, 0, int.MaxValue, int.MaxValue));
+            List<Vector2Int> linePoints = GetLinePositions(Vector2Int.zero, outlinePos, bounds);
             linePoints.RemoveAt(0);
             if (linePoints.Count > 0)
             {
@@ -447,89 +464,115 @@ public class FogOfWarManager : MonoBehaviour
     public static List<Vector2Int> GetCirclePositions(Vector2Int center, int radius)
     {
         List<Vector2Int> list = new List<Vector2Int>();
-        for (int i = 0; i <= 1; i++, radius--)
+        int x = 0;
+        int y = radius;
+        int d = 3 - 2 * radius;
+        do
         {
-            int x = 0, y = radius;
-            int d = 3 - 2 * radius;
-            do
-            {
-                Vector2Int p;
-                p = new Vector2Int(center.x + x, center.y + y);
-                if (!list.Contains(p))
-                {
-                    list.Add(p);
-                }
-                p = new Vector2Int(center.x - x, center.y + y);
-                if (!list.Contains(p))
-                {
-                    list.Add(p);
-                }
-                p = new Vector2Int(center.x + x, center.y - y);
-                if (!list.Contains(p))
-                {
-                    list.Add(p);
-                }
-                p = new Vector2Int(center.x - x, center.y - y);
-                if (!list.Contains(p))
-                {
-                    list.Add(p);
-                }
-                p = new Vector2Int(center.x + y, center.y + x);
-                if (!list.Contains(p))
-                {
-                    list.Add(p);
-                }
-                p = new Vector2Int(center.x - y, center.y + x);
-                if (!list.Contains(p))
-                {
-                    list.Add(p);
-                }
-                p = new Vector2Int(center.x + y, center.y - x);
-                if (!list.Contains(p))
-                {
-                    list.Add(p);
-                }
-                p = new Vector2Int(center.x - y, center.y - x);
-                if (!list.Contains(p))
-                {
-                    list.Add(p);
-                }
+            MirrorCircle8th(center, list, x, y);
 
-                x++;
-                if (d > 0)
-                {
-                    y--;
-                    d = d + 4 * (x - y) + 10;
-                }
-                else
-                {
-                    d = d + 4 * x + 6;
-                }
-            } while (y >= x);
-        }
+            x++;
+            if (d > 0)
+            {
+                y--;
+                d = d + 4 * (x - y) + 10;
+            }
+            else
+            {
+                d = d + 4 * x + 6;
+            }
+        } while (y >= x);
 
         return list;
     }
 
+    private static void MirrorCircle8th(Vector2Int center, List<Vector2Int> list, int x, int y)
+    {
+        Vector2Int p = new Vector2Int(center.x + x, center.y + y);
+        if (!list.Contains(p))
+        {
+            list.Add(p);
+        }
+        p = new Vector2Int(center.x - x, center.y + y);
+        if (!list.Contains(p))
+        {
+            list.Add(p);
+        }
+        p = new Vector2Int(center.x + x, center.y - y);
+        if (!list.Contains(p))
+        {
+            list.Add(p);
+        }
+        p = new Vector2Int(center.x - x, center.y - y);
+        if (!list.Contains(p))
+        {
+            list.Add(p);
+        }
+        p = new Vector2Int(center.x + y, center.y + x);
+        if (!list.Contains(p))
+        {
+            list.Add(p);
+        }
+        p = new Vector2Int(center.x - y, center.y + x);
+        if (!list.Contains(p))
+        {
+            list.Add(p);
+        }
+        p = new Vector2Int(center.x + y, center.y - x);
+        if (!list.Contains(p))
+        {
+            list.Add(p);
+        }
+        p = new Vector2Int(center.x - y, center.y - x);
+        if (!list.Contains(p))
+        {
+            list.Add(p);
+        }
+    }
+
     private static List<Vector2Int> GetLinePositions(Vector2Int p0, Vector2Int p1, RectInt bounds)
     {
-        List<Vector2Int> list = new List<Vector2Int>();
         int dx = p1.x - p0.x;
         int dy = p1.y - p0.y;
-        int N = Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy));
-        float divN = (N == 0) ? 0f : 1f / N;
-        float xstep = dx * divN;
-        float ystep = dy * divN;
-        float x = p0.x, y = p0.y;
-        for (int step = 0; step <= N; step++, x += xstep, y += ystep)
+        int nx = Mathf.Abs(dx);
+        int ny = Mathf.Abs(dy);
+        int sign_x = dx > 0 ? 1 : -1;
+        int sign_y = dy > 0 ? 1 : -1;
+
+        Vector2Int p = p0;
+        List<Vector2Int> points = new List<Vector2Int>();
+        points.Add(p);
+
+        for (int ix = 0, iy = 0; ix < nx || iy < ny;)
         {
-            Vector2Int p = new Vector2Int(Mathf.RoundToInt(x), Mathf.RoundToInt(y));
-            if (bounds.Contains(p))
+            if (dx.Sign() != dy.Sign())
             {
-                list.Add(p);
+                if ((2 * ix + 1) * ny < (2 * iy + 1) * nx)
+                {
+                    p.x += sign_x;
+                    ix++;
+                }
+                else
+                {
+                    p.y += sign_y;
+                    iy++;
+                }
             }
+            else
+            {
+                if ((2 * ix - 0) * ny < (2 * iy + 1) * nx)
+                {
+                    p.x += sign_x;
+                    ix++;
+                }
+                else
+                {
+                    iy++;
+                }
+            }
+            points.Add(p);
         }
-        return list;
+        return points;
     }
 
     private Vector2Int UnityPosToGridPos(Vector3 position)

@@ -154,6 +154,16 @@ public static class Vector_Extension
         return new Vector4(vector3.x, vector3.y, vector3.z, w);
     }
 
+    public static Vector2 ToFloat(this Vector2Int vector2Int)
+    {
+        return new Vector2(vector2Int.x, vector2Int.y);
+    }
+
+    public static Vector3 ToFloat(this Vector3Int vector3Int)
+    {
+        return new Vector3(vector3Int.x, vector3Int.y, vector3Int.z);
+    }
+
     public static Vector2Int ToRoundInt(this Vector2 vector2)
     {
         return new Vector2Int(Mathf.RoundToInt(vector2.x), Mathf.RoundToInt(vector2.y));
