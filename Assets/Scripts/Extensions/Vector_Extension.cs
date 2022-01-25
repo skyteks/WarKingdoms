@@ -289,6 +289,16 @@ public static class Vector_Extension
         return new Vector4(Mathf.Abs(vector.x), Mathf.Abs(vector.y), Mathf.Abs(vector.z), Mathf.Abs(vector.w));
     }
 
+    public static int Angle(this Vector2Int vector, Vector2Int otherVector)
+    {
+        return Mathf.RoundToInt(Vector2.Angle(vector.ToFloat(), otherVector.ToFloat()));
+    }
+
+    public static int SignedAngle(this Vector2Int vector, Vector2Int otherVector)
+    {
+        return Mathf.RoundToInt(Vector2.SignedAngle(vector.ToFloat(), otherVector.ToFloat()));
+    }
+
     public static bool InBounds(this Vector2 vector, Vector2 upper, Vector2 lower = default(Vector2))
     {
         return vector.x >= lower.x && vector.y >= lower.y && vector.x <= upper.x && vector.y <= upper.y;
