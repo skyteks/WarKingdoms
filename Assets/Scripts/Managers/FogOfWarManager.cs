@@ -137,15 +137,13 @@ public class FogOfWarManager : MonoBehaviour
     public class GridTreeCell
     {
         public Vector2Int localPos;// { get; private set; }
-        public int level;// { get; private set; }
         public GridTreeCell parent { get; private set; }
         [SerializeField]
         private List<GridTreeCell> branchedOffCells;
 
-        public GridTreeCell(Vector2Int pos, int treeLevel, GridTreeCell parentCell = null)
+        public GridTreeCell(Vector2Int pos, GridTreeCell parentCell = null)
         {
             localPos = pos;
-            level = treeLevel;
             branchedOffCells = new List<GridTreeCell>();
             parent = parentCell;
             parentCell?.AddBranchCell(this);
@@ -282,11 +280,41 @@ public class FogOfWarManager : MonoBehaviour
 
         if (rootCell != null)
         {
-            DrawTreeLevel(new GridTreeCell[1] { rootCell }, Random.ColorHSV());
+            Plane floor = new Plane(Vector3.up, Vector3.zero);
+            Ray ray = Camera.current.ScreenPointToRay(new Vector3(Screen.width, Screen.height) * 0.5f);
+            float distance;
+            if (floor.Raycast(ray, out distance))
+            {
+                Vector3 hit = ray.GetPoint(distance);
+                DrawTreeLevel(new GridTreeCell[1] { rootCell }, Random.ColorHSV(), hit);
+            }
         }
+
+        /*
+        int radius = 10;
+        List<Vector2Int> circle = GetCirclePositions(Vector2Int.zero, radius);
+        Gizmos.color = Color.blue;
+        foreach (Vector2Int pos in circle)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawCube(GridPosToUnityPos(pos), (Vector3.one * 0.9f).ToWithY(0.001f));
+        }
+        Gizmos.color = Random.ColorHSV();
+        Vector2Int rnd = circle[Random.Range(0, circle.Count)];
+        List<Vector2Int> line = GetLinePositions(Vector2Int.zero, rnd);
+        foreach (Vector2Int pos in line)
+        {
+            Gizmos.DrawCube(GridPosToUnityPos(pos), (Vector3.one * 0.9f).ToWithY(0.001f));
+        }
+        Gizmos.color = Color.green;
+        Gizmos.DrawCube(GridPosToUnityPos(line[0]), (Vector3.one * 0.9f).ToWithY(0.001f));
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawCube(GridPosToUnityPos(line[line.Count - 1]), (Vector3.one * 0.9f).ToWithY(0.001f));
+        */
+
     }
 
-    private void DrawTreeLevel(IList<GridTreeCell> cells, Color color)
+    private void DrawTreeLevel(IList<GridTreeCell> cells, Color color, Vector3 offset)
     {
         Color nextColor = Random.ColorHSV(0f, 1f, 0f, 1f, 0.5f, 0.8f);
         if (cells != null && drawQuadMesh != null)
@@ -294,8 +322,8 @@ public class FogOfWarManager : MonoBehaviour
             foreach (GridTreeCell cell in cells)
             {
                 Gizmos.color = color;
-                Gizmos.DrawMesh(drawQuadMesh, 0, GridPosToUnityPos(cell.localPos) - Random.insideUnitCircle.ToVector3XZ() * 0.5f, Quaternion.identity, (Vector3.one * 0.2f).ToWithY(0.001f));
-                DrawTreeLevel(cell.GetChildren(), nextColor);
+                Gizmos.DrawMesh(drawQuadMesh, 0, offset + GridPosToUnityPos(cell.localPos) - Random.insideUnitCircle.ToVector3XZ() * 0.5f, Quaternion.identity, (Vector3.one * 0.2f).ToWithY(0.001f));
+                DrawTreeLevel(cell.GetChildren(), nextColor, offset);
             }
         }
     }
@@ -361,78 +389,70 @@ public class FogOfWarManager : MonoBehaviour
     [ContextMenu("CreateGridSelectionTree")]
     public void CreateGridSelectionTree()//int radius)
     {
-        int radius = 5;
-        List<Vector2Int> circlePoints = GetCirclePositions(Vector2Int.zero, radius);
-        int startLenght = circlePoints.Count;
+        int radius = 7;
+        List<Vector2Int> circle = GetCirclePositions(Vector2Int.zero, radius);
+        int startLenght = circle.Count;
         for (int i = 0; i < startLenght; i++)
         {
             int j = (i + 1) % startLenght;
-            List<Vector2Int> tmp = GetLinePositions(circlePoints[i], circlePoints[j]);
+            List<Vector2Int> tmp = GetLinePositions(circle[i], circle[j]);
 
             foreach (Vector2Int lineOnCirclePos in tmp)
             {
-                if (!circlePoints.Contains(lineOnCirclePos))
+                if (!circle.Contains(lineOnCirclePos))
                 {
-                    circlePoints.Add(lineOnCirclePos);
+                    circle.Add(lineOnCirclePos);
                 }
             }
         }
-        List<List<Vector2Int>> linePointLists = new List<List<Vector2Int>>();
-        int maxListLenght = 0;
-        foreach (var outlinePos in circlePoints)
+        List<List<Vector2Int>> lines = new List<List<Vector2Int>>();
+        foreach (var outlinePos in circle)
         {
-            List<Vector2Int> linePoints = GetLinePositions(Vector2Int.zero, outlinePos);
-            linePoints.RemoveAt(0);
-            if (linePoints.Count > 0)
+            List<Vector2Int> line = GetLinePositions(Vector2Int.zero, outlinePos);
+            line.RemoveAt(0);
+            if (line.Count > 0)
             {
-                linePointLists.Add(linePoints);
-            }
-            if (maxListLenght < linePoints.Count)
-            {
-                maxListLenght = linePoints.Count;
+                lines.Add(line);
             }
         }
 
-        int treeLevel = 0;
-        rootCell = new GridTreeCell(Vector2Int.zero, treeLevel);
+        rootCell = new GridTreeCell(Vector2Int.zero);
 
-        AddGridSelectionTreeLevel(treeLevel + 1, linePointLists, rootCell);
+        AddGridSelectionTreeLevel(lines, rootCell, 0);
     }
 
-    private void AddGridSelectionTreeLevel(int treeLevel, List<List<Vector2Int>> linePointLists, GridTreeCell cell)
+    private void AddGridSelectionTreeLevel(List<List<Vector2Int>> linePointLists, GridTreeCell cell, int level)
     {
-        List<GridTreeCell> levelCells = new List<GridTreeCell>();
-
-        List<List<Vector2Int>> linesWithPointInIt = new List<List<Vector2Int>>();
-        for (int i = 0; i < linePointLists.Count; i++)
+        List<KeyValuePair<Vector2Int, List<List<Vector2Int>>>> firstPointDict = new List<KeyValuePair<Vector2Int, List<List<Vector2Int>>>>();
+        for (int i = linePointLists.Count - 1; i >= 0; i--)
         {
-            List<Vector2Int> list = linePointLists[i];
-            Vector2Int linePos = list[0];
-            //list.RemoveAt(0);
-            if (!cell.ContainsChildAt(linePos))
+            List<Vector2Int> line = linePointLists[i];
+            Vector2Int linePos = line[0];
+
+            List<List<Vector2Int>> lines = firstPointDict.Find(pair => pair.Key == linePos).Value;
+            if (lines == null || lines.Count == 0)
             {
-                GridTreeCell branchCell = new GridTreeCell(linePos, treeLevel, cell);
-                levelCells.Add(branchCell);
+                lines = new List<List<Vector2Int>>();
+                firstPointDict.Add(new KeyValuePair<Vector2Int, List<List<Vector2Int>>>(linePos, lines));
             }
-            if (list.Count <= 1)
+
+            line.RemoveAt(0);
+            linePointLists.RemoveAt(i);
+            if (line.Count > 0)
             {
-                linePointLists.RemoveAt(i);
-                i--;
+                lines.Add(line);
             }
         }
-        foreach (GridTreeCell branchCell in levelCells)
+
+        //Color color = Random.ColorHSV();
+        for (int i = 0; i < firstPointDict.Count; i++)
         {
-            for (int i = 0; i < linePointLists.Count; i++)
-            {
-                List<Vector2Int> list = linePointLists[i];
-                if (list[0] == branchCell.localPos)
-                {
-                    List<Vector2Int> pointsList = new List<Vector2Int>(list);
-                    pointsList.RemoveAt(0);
-                    linesWithPointInIt.Add(pointsList);
-                }
-            }
-            AddGridSelectionTreeLevel(treeLevel + 1, linesWithPointInIt, branchCell);
+            Vector2Int linePos = firstPointDict[i].Key;
+            List<List<Vector2Int>> lines = firstPointDict[i].Value;
+            GridTreeCell brachCell = new GridTreeCell(linePos, cell);
+
+            //Debug.DrawLine(GridPosToUnityPos(cell.localPos), GridPosToUnityPos(brachCell.localPos), color, 3f);
+            AddGridSelectionTreeLevel(lines, brachCell, level + 1);
         }
     }
 
@@ -530,8 +550,6 @@ public class FogOfWarManager : MonoBehaviour
         {
             int j = (i + 1) % startLenght;
             List<Vector2Int> tmp = GetLinePositions(circle[i], circle[j]);
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawLine(GridPosToUnityPos(circle[i]), GridPosToUnityPos(circle[j]));
             foreach (Vector2Int lineOnCirclePos in tmp)
             {
                 if (!circle.Contains(lineOnCirclePos))
