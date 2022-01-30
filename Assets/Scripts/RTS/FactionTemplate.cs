@@ -9,7 +9,7 @@ using UnityEngine;
 public class FactionTemplate : ScriptableObject
 {
     [System.Flags]
-    public enum PlayerId : int
+    public enum PlayerID : int
     {
         None,
         _01 = (1 << 0),
@@ -47,8 +47,8 @@ public class FactionTemplate : ScriptableObject
     [System.Serializable]
     public class FactionInfo
     {
-        public PlayerId playerId;
-        public byte allianceId = 0;
+        public PlayerID playerID;
+        public byte allianceID = 0;
 
         public List<Unit> units { get; private set; }
         public List<Building> buildings { get; private set; }
@@ -130,7 +130,7 @@ public class FactionTemplate : ScriptableObject
 
     public static bool IsAlliedWith(FactionTemplate faction1, FactionTemplate faction2)
     {
-        return faction1 != faction2 && (faction1 == null || faction2 == null || faction1.data.allianceId == 0 || faction2.data.allianceId == 0) ? false : faction1.data.allianceId == faction2.data.allianceId;
+        return faction1 != faction2 && (faction1 == null || faction2 == null || faction1.data.allianceID == 0 || faction2.data.allianceID == 0) ? false : faction1.data.allianceID == faction2.data.allianceID;
     }
 
     public Building GetClosestBuildingWithResourceDropoff(Vector3 position, ResourceSource.ResourceType resourceType)
