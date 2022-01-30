@@ -12,15 +12,14 @@ public class RegisterSubsciber : MonoBehaviour
         public MonoBehaviour objectToAdd;
     }
 
-    [UnityEngine.Serialization.FormerlySerializedAs("lists")]
     public RegistersAndObjectsToAdd[] registers;
 
-    private void OnEnable()
+    void OnEnable()
     {
         Add();
     }
 
-    private void OnDisable()
+    void OnDisable()
     {
         Remove();
     }

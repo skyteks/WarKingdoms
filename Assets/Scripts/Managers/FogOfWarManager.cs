@@ -90,7 +90,7 @@ public class FogOfWarManager : MonoBehaviour
 
         // array of size width * height, has the terrain level of the 
         // grid entry. 
-        private int[] height;
+        private byte[] height;
 
         public Terrain(Vector2Int gridSize, Vector3 unityPos)
         {
@@ -103,7 +103,7 @@ public class FogOfWarManager : MonoBehaviour
             LayerMask layerMask = new LayerMask().Add("Terrain");
             float heightOffset = unityPos.y;
             int length = size.x * size.y;
-            height = new int[length];
+            height = new byte[length];
             Vector2Int gridOffset = new Vector2Int(Mathf.RoundToInt(unityPos.x), Mathf.RoundToInt(unityPos.z));
             for (int i = 0; i < length; i++)
             {
@@ -113,7 +113,7 @@ public class FogOfWarManager : MonoBehaviour
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit, 32f, layerMask, QueryTriggerInteraction.Ignore))
                 {
-                    height[i] = Mathf.RoundToInt(hit.point.y);
+                    height[i] = (byte)Mathf.RoundToInt(hit.point.y);
                 }
             }
         }
@@ -156,7 +156,7 @@ public class FogOfWarManager : MonoBehaviour
 
         public bool ContainsChildAt(Vector2Int pos)
         {
-            return pos == localPos || branchedOffCells.Exists(cell => cell.localPos == pos) || parent != null && parent.ContainsChildAt(pos);
+            return pos == localPos || branchedOffCells.Exists(cell => cell.localPos == pos);// || parent != null && parent.ContainsChildAt(pos);
         }
 
         public List<GridTreeCell> GetChildren()
@@ -435,7 +435,6 @@ public class FogOfWarManager : MonoBehaviour
             }
         }
 
-        //Color color = Random.ColorHSV();
         for (int i = 0; i < firstPointDict.Count; i++)
         {
             Vector2Int linePos = firstPointDict[i].Key;
@@ -563,8 +562,7 @@ public class FogOfWarManager : MonoBehaviour
         int sign_y = dy > 0 ? 1 : -1;
 
         Vector2Int p = p0;
-        List<Vector2Int> line = new List<Vector2Int>();
-        line.Add(p);
+        List<Vector2Int> line = new List<Vector2Int> { p };
 
         for (int ix = 0, iy = 0; ix < nx || iy < ny;)
         {
@@ -583,7 +581,7 @@ public class FogOfWarManager : MonoBehaviour
             }
             else
             {
-                if ((2 * ix - 0) * ny < (2 * iy + 1) * nx)
+                if ((2 * ix + 0) * ny < (2 * iy + 1) * nx)
                 {
                     p.x += sign_x;
                     ix++;

@@ -40,7 +40,7 @@ public class RegisterObject : ScriptableObject
         else
         {
             System.Type objType = obj.GetType();
-            if (typeOfListObjects.BaseType == objType.BaseType && objType.BaseType != typeof(MonoBehaviour) && objType.BaseType != typeof(Object))
+            if (typeOfListObjects.BaseType == objType.BaseType && objType.BaseType != typeof(MonoBehaviour))
             {
                 typeOfListObjects = typeOfListObjects.BaseType;
             }
