@@ -2,20 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 [CreateAssetMenu(fileName = "new ListHolderObject", menuName = "List Holder Object")]
 public class RegisterObject : ScriptableObject
 {
-    public System.Type typeOfListObjects = null;
-    private List<MonoBehaviour> list = new List<MonoBehaviour>();
+    //public class MonoBehaviourEvent : UnityEvent<MonoBehaviour, System.Type> { }
+    public System.Type typeOfListObjects { get; private set; } = null;
+    protected List<MonoBehaviour> list = new List<MonoBehaviour>();
+#if UNITY_EDITOR
+    public List<MonoBehaviour> listForEditor => list;
+#endif
 
-    public int Count
-    {
-        get
-        {
-            return list.Count;
-        }
-    }
+    public delegate void MonobehaviorEvent(MonoBehaviour monoBehaviour, System.Type type);
+    public event MonobehaviorEvent onAdded;
+    public event MonobehaviorEvent onRemoved;
+
+    public int Count => list.Count;
 
     void OnEnable()
     {
@@ -40,7 +43,7 @@ public class RegisterObject : ScriptableObject
         else
         {
             System.Type objType = obj.GetType();
-            if (typeOfListObjects.BaseType == objType.BaseType && objType.BaseType != typeof(MonoBehaviour))
+            if (typeOfListObjects.BaseType == objType.BaseType && objType.BaseType != typeof(MonoBehaviour) && objType != typeof(Object))
             {
                 typeOfListObjects = typeOfListObjects.BaseType;
             }
@@ -51,6 +54,7 @@ public class RegisterObject : ScriptableObject
         }
 
         list.Add(obj);
+        onAdded?.Invoke(obj, typeOfListObjects);
         return true;
     }
 
@@ -60,8 +64,12 @@ public class RegisterObject : ScriptableObject
         {
             throw new System.NullReferenceException();
         }
-
-        return list.Remove(obj);
+        bool removed = list.Remove(obj);
+        if (removed)
+        {
+            onRemoved?.Invoke(obj, typeOfListObjects);
+        }
+        return removed;
     }
 
     public bool ContainsObject(MonoBehaviour obj)
@@ -82,8 +90,4 @@ public class RegisterObject : ScriptableObject
     {
         return list.AsEnumerable();
     }
-
-#if UNITY_EDITOR
-    public List<MonoBehaviour> listForEditor { get { return list; } }
-#endif
 }

@@ -9,7 +9,7 @@ using UnityEngine;
 public class FactionTemplate : ScriptableObject
 {
     [System.Flags]
-    public enum PlayerID : int
+    public enum PlayerID : byte
     {
         None,
         _01 = (1 << 0),

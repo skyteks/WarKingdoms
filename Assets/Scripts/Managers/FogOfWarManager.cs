@@ -2,32 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[DefaultExecutionOrder(-100)]
 public class FogOfWarManager : MonoBehaviour
 {
     [System.Serializable]
-    public struct UnitVision
-    {
-        // A bit mask representing a group of players inside the vision system.
-        public FactionTemplate.PlayerID playerID;
-
-        // The range of the vision (in world coordinates)
-        public int visionRange;
-
-        // the position (in world coordinates)
-        public Vector2Int position;
-
-        // used for blocking vision
-        //public int terrainHeight;
-
-        public UnitVision(FactionTemplate.PlayerID player, int range, Vector2Int pos, int height)
-        {
-            playerID = player;
-            visionRange = range;
-            position = pos;
-            //terrainHeight = height;
-        }
-    }
-
     public class VisionGrid
     {
         // the width and height of the grid (needed to access the arrays)
@@ -35,23 +13,32 @@ public class FogOfWarManager : MonoBehaviour
 
         // array of size width * height, each entry has an int with the 
         // bits representing which players have this entry in vision.
-        private int[] values = null;
+        private byte[] values = null;
 
         // similar to the values but it just stores if a player visited
         // that entry at some point in time.
-        private int[] visited = null;
+        //private byte[] visited = null;
 
         public VisionGrid(Vector2Int gridSize)
         {
             size = gridSize;
-            values = new int[size.x * size.y];
-            visited = new int[size.x * size.y];
+            values = new byte[size.x * size.y];
+            //visited = new byte[size.x * size.y];
         }
 
-        public void SetVisible(Vector2Int pos, FactionTemplate.PlayerID players)
+        public void SetVisible(Vector2Int pos, FactionTemplate.PlayerID players, bool value)
         {
-            values[pos.x + pos.y * size.y] |= (int)players;
-            visited[pos.x + pos.y * size.y] |= (int)players;
+            if (value)
+            {
+
+                values[pos.x + pos.y * size.y] |= (byte)players;
+                //visited[pos.x + pos.y * size.y] |= (byte)players;
+            }
+            else
+            {
+                players = ~players;
+                values[pos.x + pos.y * size.y] ^= (byte)players;
+            }
         }
 
         public void Clear()
@@ -64,23 +51,25 @@ public class FogOfWarManager : MonoBehaviour
 
         public bool IsVisible(int index, FactionTemplate.PlayerID players)
         {
-            return (values[index] & (int)players) > 0;
+            return (values[index] & (byte)players) > 0;
         }
 
         public bool IsVisible(Vector2Int pos, FactionTemplate.PlayerID players)
         {
-            return (values[pos.x + pos.y * size.y] & (int)players) > 0;
+            return (values[pos.x + pos.y * size.y] & (byte)players) > 0;
         }
 
+        /*
         public bool WasVisible(int index, FactionTemplate.PlayerID players)
         {
-            return (visited[index] & (int)players) > 0;
+            return (visited[index] & (byte)players) > 0;
         }
 
         public bool WasVisible(Vector2Int pos, FactionTemplate.PlayerID players)
         {
             return (visited[pos.x + pos.y * size.y] & (int)players) > 0;
         }
+        */
     }
 
     public class Terrain
@@ -171,11 +160,16 @@ public class FogOfWarManager : MonoBehaviour
     private RectInt gridBounds;
 
     private Texture2D texture;
-    private Color[] colors;
+    private Color[] fadeouts;
+    private Color[] targets;
+    private List<int> activeList = new List<int>();
+    private BitArray activeCells;
+
     public Material material;
     public Projector projector;
     private Color fowUnexplored = Color.black;
     private Color fowNotViewed = Color.black.ToWithA(0.6f);
+    public float decline = 1f;
 
     [Space]
 
@@ -189,9 +183,11 @@ public class FogOfWarManager : MonoBehaviour
 
     public RegisterObject units;
     public RegisterObject buildings;
+    private List<ClickableObject> queueCurrent = new List<ClickableObject>();
+    private int queueIndex = 0;
+    public int perFrame = 10;
 
     public FactionTemplate.PlayerID activePlayers;
-    private List<UnitVision> unitVisions = new List<UnitVision>();
 
     private float lastCheck;
 
@@ -212,13 +208,33 @@ public class FogOfWarManager : MonoBehaviour
         gridBounds = new RectInt(Vector2Int.zero, gridSize);
         visionGrid = new VisionGrid(gridSize);
         SetTerrain();
+        int length = gridSize.x * gridSize.y;
 
-        colors = new Color[gridSize.x * gridSize.y];
+        fadeouts = new Color[length];
+        targets = new Color[length];
+        for (int i = 0; i < length; i++)
+        {
+            fadeouts[i] = Color.black;
+            targets[i] = Color.clear;
+        }
+        activeCells = new BitArray(length, false);
 
         texture = new Texture2D(gridSize.x, gridSize.y);
         texture.name = "FOW grid";
         material.SetTexture("_MainTex", texture);
         projector.material = material;
+    }
+
+    void OnEnable()
+    {
+        units.onAdded += OnUnitAdd;
+        buildings.onAdded += OnUnitAdd;
+    }
+
+    void OnDisable()
+    {
+        units.onRemoved += OnUnitRemove;
+        buildings.onRemoved += OnUnitRemove;
     }
 
     void OnDrawGizmos()
@@ -263,6 +279,7 @@ public class FogOfWarManager : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
+        /*
         if (visionGrid != null)
         {
             int gridLenght = gridSize.x * gridSize.y;
@@ -278,6 +295,7 @@ public class FogOfWarManager : MonoBehaviour
                 }
             }
         }
+        */
 
         /*
         int radius = 10;
@@ -304,13 +322,17 @@ public class FogOfWarManager : MonoBehaviour
 
     void LateUpdate()
     {
-        if (Time.realtimeSinceStartup - lastCheck < 0.05f)
+        if (Time.realtimeSinceStartup - lastCheck < 0.2f)
         {
-            return;
+            //return;
         }
-        CalculateVision();
+        bool fullIteration = CalculateVision();
+
         DrawVision();
-        lastCheck = Time.realtimeSinceStartup;
+        if (fullIteration)
+        {
+            lastCheck = Time.realtimeSinceStartup;
+        }
     }
 
     [ContextMenu("SetTerrain")]
@@ -319,34 +341,26 @@ public class FogOfWarManager : MonoBehaviour
         terrainGrid = new Terrain(gridSize, transform.position);
     }
 
-    private void CalculateVision()
+    private bool CalculateVision()
     {
-        visionGrid.Clear();
-        unitVisions.Clear();
-
-        for (int i = 0; i < units.Count; i++)
+        if (queueIndex == 0)
         {
-            Unit unit = units.GetByIndex(i) as Unit;
-            Vector2Int unitPos = UnityPosToGridPos(unit.transform.position);
-            int height = terrainGrid.GetHeight(unitPos);
-            UnitVision vision = new UnitVision(unit.faction.data.playerID, Mathf.RoundToInt(unit.template.guardDistance), unitPos, height);
-            unitVisions.Add(vision);
-        }
-        for (int i = 0; i < buildings.Count; i++)
-        {
-            Building unit = buildings.GetByIndex(i) as Building;
-            Vector2Int unitPos = UnityPosToGridPos(unit.transform.position);
-            int height = terrainGrid.GetHeight(unitPos);
-            UnitVision vision = new UnitVision(unit.faction.data.playerID, Mathf.RoundToInt(unit.template.guardDistance), unitPos, height);
-            unitVisions.Add(vision);
+            //visionGrid.Clear();
         }
 
-        foreach (var unit in unitVisions)
+        int length = queueCurrent.Count;
+        for (int i = queueIndex; i < queueIndex + perFrame; i++)
         {
-            int terrainHeight = terrainGrid.GetHeight(unit.position);
-            Vector2Int position = unit.position;
-            int visionRange = unit.visionRange;
-            FactionTemplate.PlayerID playerID = unit.playerID;
+            if (i == length)
+            {
+                queueIndex = 0;
+                return true;
+            }
+            ClickableObject unit = queueCurrent[i];
+            Vector2Int position = UnityPosToGridPos(unit.transform.position);
+            int terrainHeight = terrainGrid.GetHeight(position);
+            int visionRange = Mathf.RoundToInt(unit.template.guardDistance);
+            FactionTemplate.PlayerID playerID = unit.faction.data.playerID;
 
             GridTreeCell rootCell = null;
             if (!trees.TryGetValue(visionRange, out rootCell))
@@ -356,25 +370,37 @@ public class FogOfWarManager : MonoBehaviour
             }
             CheckVisionWithTree(rootCell, position, terrainHeight, playerID);
         }
+        queueIndex += perFrame;
+        return false;
     }
 
-    public void CheckVisionWithTree(GridTreeCell cell, Vector2Int offset, int terrainHeight, FactionTemplate.PlayerID playerID)
+    public void CheckVisionWithTree(GridTreeCell cell, Vector2Int offset, int terrainHeight, FactionTemplate.PlayerID players)
     {
         Vector2Int pos = cell.localPos + offset;
         if (!gridBounds.Contains(pos))
         {
             return;
         }
+        int index = pos.ToIndex(gridSize.y);
         if (terrainGrid.GetHeight(pos) > terrainHeight)
         {
+            activeCells.Set(index, false);
+            visionGrid.SetVisible(pos, players, false);
             return;
         }
-        visionGrid.SetVisible(pos, playerID);
+
+        visionGrid.SetVisible(pos, players, true);
+        if (!activeCells.Get(index))
+        {
+            activeCells.Set(index, true);
+            activeList.Add(index);
+        }
+        fadeouts[index].a = 100f / 255f;
 
         List<GridTreeCell> children = cell.GetChildren();
         foreach (GridTreeCell childCell in children)
         {
-            CheckVisionWithTree(childCell, offset, terrainHeight, playerID);
+            CheckVisionWithTree(childCell, offset, terrainHeight, players);
         }
     }
 
@@ -441,23 +467,20 @@ public class FogOfWarManager : MonoBehaviour
             List<List<Vector2Int>> lines = firstPointDict[i].Value;
             GridTreeCell brachCell = new GridTreeCell(linePos, cell);
 
-            //Debug.DrawLine(GridPosToUnityPos(cell.localPos), GridPosToUnityPos(brachCell.localPos), color, 3f);
             AddGridSelectionTreeLevel(lines, brachCell, level + 1);
         }
     }
 
     private void DrawVision()
     {
+        /*
         int length = gridSize.x * gridSize.y;
         for (int i = 0; i < length; i++)
         {
-            //int x = i % gridSize.x;
-            //int y = i / gridSize.x;
             if (colors[i] != fowUnexplored)
             {
                 colors[i] = fowUnexplored;
             }
-
             if (visionGrid.IsVisible(i, activePlayers))
             {
                 colors[i] = Color.clear;
@@ -467,7 +490,32 @@ public class FogOfWarManager : MonoBehaviour
                 colors[i] = fowNotViewed;
             }
         }
-        texture.SetPixels(colors);
+        */
+
+        for (int i = 0, j = activeList.Count - 1; j >= 0; j--)
+        {
+            i = activeList[j];
+            Color fadeout = fadeouts[i];
+            if (fadeout.a > decline)
+            {
+                fadeout.a -= decline;
+                fadeouts[i] = fadeout;
+                continue;
+            }
+
+            Color target = targets[i];
+            target.a += decline;
+            if (fadeout.a >= fowNotViewed.a)
+            {
+                fadeouts[i] = fowNotViewed;
+                activeCells.Set(i, false);
+
+                activeList[j] = activeList[activeList.Count - 1];
+                activeList.RemoveAt(activeList.Count - 1);
+            }
+        }
+
+        texture.SetPixels(targets);
         texture.Apply();
     }
 
@@ -608,5 +656,32 @@ public class FogOfWarManager : MonoBehaviour
         gridPos += gridOffset;
         Vector3 position = new Vector3(gridPos.x + 0.5f, transform.position.y, gridPos.y + 0.5f);
         return position;
+    }
+
+    public void OnUnitAdd(MonoBehaviour monoBehaviour, System.Type type)
+    {
+        if (monoBehaviour is ClickableObject)
+        {
+            ClickableObject clickableObject = monoBehaviour as ClickableObject;
+            queueCurrent.Add(clickableObject);
+        }
+        else
+        {
+            throw new System.ArrayTypeMismatchException();
+        }
+    }
+
+    public void OnUnitRemove(MonoBehaviour monoBehaviour, System.Type type)
+    {
+        if (monoBehaviour is ClickableObject)
+        {
+            ClickableObject clickableObject = monoBehaviour as ClickableObject;
+            queueCurrent.Remove(clickableObject);
+            queueIndex--;
+        }
+        else
+        {
+            throw new System.ArrayTypeMismatchException();
+        }
     }
 }

@@ -21,6 +21,19 @@ public static class Float_Extension
         return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
     }
 
+    public static float ClampedLerp(this float value, float min, float max)
+    {
+        if (value > max)
+        {
+            return max;
+        }
+        if (value < min)
+        {
+            return min;
+        }
+        return Mathf.Lerp(min, max, value);
+    }
+
     /// <summary>
     /// Returns the sine of angle in degrees
     /// </summary>
