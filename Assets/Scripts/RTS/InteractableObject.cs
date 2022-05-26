@@ -22,7 +22,6 @@ public class InteractableObject : MonoBehaviour
     public Attackable attackable { get; protected set; }
 
     private UnityEngine.AI.NavMeshObstacle navObstacle;
-    private Pathfinding.NavmeshCut navCut;
 
     protected readonly float decayIntoGroundDistance = -7f;
 
@@ -44,7 +43,6 @@ public class InteractableObject : MonoBehaviour
         attackable = GetComponent<Attackable>();
 
         navObstacle = GetComponent<UnityEngine.AI.NavMeshObstacle>();
-        navCut = GetComponent<Pathfinding.NavmeshCut>();
 
         SetLayers();
     }
@@ -130,7 +128,6 @@ public class InteractableObject : MonoBehaviour
         anim?.SetBool("DoDeath", true);
 
         navObstacle?.SetEnabled(false);
-        navCut?.SetEnabled(false);
 
         //To avoid the object participating in any Raycast or tag search
         //gameObject.tag = "Untagged";
