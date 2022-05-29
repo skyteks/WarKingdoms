@@ -2664,7 +2664,9 @@ MonoBehaviour:
   units: {fileID: 11400000, guid: 01c7bc88a8159d34f9070b8e426410e6, type: 2}
   buildings: {fileID: 11400000, guid: 776b0c3caab84df46a0edfec83178832, type: 2}
   perFrame: 100
-  activePlayers: 0
+  activePlayers: 1
+  interpolateColorSpeed: 6
+  previousVision: 1
 --- !u!4 &457413008
 Transform:
   m_ObjectHideFlags: 0
@@ -7714,7 +7716,6 @@ GameObject:
   - component: {fileID: 1333418284}
   - component: {fileID: 1333418283}
   - component: {fileID: 1333418282}
-  - component: {fileID: 1333418285}
   m_Layer: 8
   m_Name: Terrain
   m_TagString: Untagged
@@ -7781,24 +7782,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1333418285
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1333418281}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 220345cbaa167417bbe806f230f68615, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 1
-  bounds:
-    m_Center: {x: 64, y: 0, z: 64}
-    m_Extent: {x: 64, y: 0, z: 64}
-  dynamic: 1
-  area: 0
 --- !u!1001 &1334834648
 PrefabInstance:
   m_ObjectHideFlags: 0
