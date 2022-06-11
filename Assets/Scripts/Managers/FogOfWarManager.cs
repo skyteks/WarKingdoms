@@ -17,13 +17,13 @@ public class FogOfWarManager : MonoBehaviour
 
         // similar to the values but it just stores if a player visited
         // that entry at some point in time.
-        //private byte[] visited = null;
+        private byte[] visited = null;
 
         public VisionGrid(Vector2Int gridSize)
         {
             size = gridSize;
             values = new byte[size.x * size.y];
-            //visited = new byte[size.x * size.y];
+            visited = new byte[size.x * size.y];
         }
 
         public void SetVisible(Vector2Int pos, FactionTemplate.PlayerID players, bool value)
@@ -32,7 +32,7 @@ public class FogOfWarManager : MonoBehaviour
             {
 
                 values[pos.x + pos.y * size.y] |= (byte)players;
-                //visited[pos.x + pos.y * size.y] |= (byte)players;
+                visited[pos.x + pos.y * size.y] |= (byte)players;
             }
             else
             {
@@ -59,7 +59,6 @@ public class FogOfWarManager : MonoBehaviour
             return (values[pos.x + pos.y * size.y] & (byte)players) > 0;
         }
 
-        /*
         public bool WasVisible(int index, FactionTemplate.PlayerID players)
         {
             return (visited[index] & (byte)players) > 0;
@@ -69,7 +68,6 @@ public class FogOfWarManager : MonoBehaviour
         {
             return (visited[pos.x + pos.y * size.y] & (int)players) > 0;
         }
-        */
     }
 
     public class Terrain
@@ -168,6 +166,7 @@ public class FogOfWarManager : MonoBehaviour
     public Projector projector;
     private Color fowUnexplored = Color.black;
     private Color fowNotViewed = Color.black.ToWithA(0.6f);
+    private Color fowViewed = Color.white.ToWithA(0f);
     public float decline = 1f;
 
     [Space]
@@ -189,6 +188,8 @@ public class FogOfWarManager : MonoBehaviour
     public FactionTemplate.PlayerID activePlayers;
 
     private float lastCheck;
+
+    public float interpolateColorSpeed = 6f;
 
     public Vector2Int gridOffset
     {
@@ -342,7 +343,7 @@ public class FogOfWarManager : MonoBehaviour
     {
         if (queueIndex == 0)
         {
-            //visionGrid.Clear();
+            visionGrid.Clear();
         }
 
         int length = queueCurrent.Count;
@@ -469,11 +470,8 @@ public class FogOfWarManager : MonoBehaviour
 
     private void DrawVision()
     {
-        float interpolateColorSpeed = 6;
-        bool interpolationEnabled = interpolateColorSpeed > Mathf.Epsilon;
-        float alpha = Time.deltaTime * interpolateColorSpeed;
-
         float lenght = gridSize.x * gridSize.y;
+
         for (int i = 0; i < lenght; i++)
         {
             bool isVisible = visionGrid.IsVisible(i, activePlayers);
@@ -482,18 +480,30 @@ public class FogOfWarManager : MonoBehaviour
 
             if (isVisible)
             {
-                newColor = Color.clear;
+                newColor = fowViewed;
             }
-            else if (visionGrid.IsVisible(i, activePlayers))
+            else if (visionGrid.WasVisible(i, activePlayers))
             {
                 newColor = fowNotViewed;
             }
 
-            if (interpolationEnabled)
+            if (interpolateColorSpeed > float.Epsilon)
             {
-                newColor.r = Mathf.LerpUnclamped(colors[i].r, newColor.r, alpha);
+                float alpha = Time.deltaTime * interpolateColorSpeed;
+                newColor.a = Mathf.LerpUnclamped(colors[i].a, newColor.a, alpha);
+                if (newColor.a > 0f)
+                {
+                    newColor.r = fowNotViewed.r;
+                    newColor.g = fowNotViewed.g;
+                    newColor.b = fowNotViewed.b;
+                }
+                else
+                {
+                    newColor.r = fowViewed.r;
+                    newColor.g = fowViewed.g;
+                    newColor.b = fowViewed.b;
+                }
             }
-
             colors[i] = newColor;
         }
 
