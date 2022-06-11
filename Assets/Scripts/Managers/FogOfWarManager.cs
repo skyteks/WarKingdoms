@@ -160,8 +160,7 @@ public class FogOfWarManager : MonoBehaviour
     private RectInt gridBounds;
 
     private Texture2D texture;
-    private Color[] fadeouts;
-    private Color[] targets;
+    private Color[] colors;
     private List<int> activeList = new List<int>();
     private BitArray activeCells;
 
@@ -210,12 +209,10 @@ public class FogOfWarManager : MonoBehaviour
         SetTerrain();
         int length = gridSize.x * gridSize.y;
 
-        fadeouts = new Color[length];
-        targets = new Color[length];
+        colors = new Color[length];
         for (int i = 0; i < length; i++)
         {
-            fadeouts[i] = Color.black;
-            targets[i] = Color.clear;
+            colors[i] = Color.clear;
         }
         activeCells = new BitArray(length, false);
 
@@ -395,7 +392,6 @@ public class FogOfWarManager : MonoBehaviour
             activeCells.Set(index, true);
             activeList.Add(index);
         }
-        fadeouts[index].a = 100f / 255f;
 
         List<GridTreeCell> children = cell.GetChildren();
         foreach (GridTreeCell childCell in children)
@@ -473,49 +469,35 @@ public class FogOfWarManager : MonoBehaviour
 
     private void DrawVision()
     {
-        /*
-        int length = gridSize.x * gridSize.y;
-        for (int i = 0; i < length; i++)
+        float interpolateColorSpeed = 6;
+        bool interpolationEnabled = interpolateColorSpeed > Mathf.Epsilon;
+        float alpha = Time.deltaTime * interpolateColorSpeed;
+
+        float lenght = gridSize.x * gridSize.y;
+        for (int i = 0; i < lenght; i++)
         {
-            if (colors[i] != fowUnexplored)
-            {
-                colors[i] = fowUnexplored;
-            }
-            if (visionGrid.IsVisible(i, activePlayers))
-            {
-                colors[i] = Color.clear;
-            }
-            else if (visionGrid.WasVisible(i, activePlayers))
-            {
-                colors[i] = fowNotViewed;
-            }
-        }
-        */
+            bool isVisible = visionGrid.IsVisible(i, activePlayers);
 
-        for (int i = 0, j = activeList.Count - 1; j >= 0; j--)
-        {
-            i = activeList[j];
-            Color fadeout = fadeouts[i];
-            if (fadeout.a > decline)
+            Color newColor = fowUnexplored;
+
+            if (isVisible)
             {
-                fadeout.a -= decline;
-                fadeouts[i] = fadeout;
-                continue;
+                newColor = Color.clear;
+            }
+            else if (visionGrid.IsVisible(i, activePlayers))
+            {
+                newColor = fowNotViewed;
             }
 
-            Color target = targets[i];
-            target.a += decline;
-            if (fadeout.a >= fowNotViewed.a)
+            if (interpolationEnabled)
             {
-                fadeouts[i] = fowNotViewed;
-                activeCells.Set(i, false);
-
-                activeList[j] = activeList[activeList.Count - 1];
-                activeList.RemoveAt(activeList.Count - 1);
+                newColor.r = Mathf.LerpUnclamped(colors[i].r, newColor.r, alpha);
             }
+
+            colors[i] = newColor;
         }
 
-        texture.SetPixels(targets);
+        texture.SetPixels(colors);
         texture.Apply();
     }
 
