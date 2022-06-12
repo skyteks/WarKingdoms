@@ -163,6 +163,7 @@ public class FogOfWarManager : MonoBehaviour
     private BitArray activeCells;
 
     public Material material;
+    public FilterMode filter = FilterMode.Bilinear;
     public Projector projector;
     private Color fowUnexplored = Color.black;
     private Color fowNotViewed = Color.black.ToWithA(0.6f);
@@ -217,7 +218,9 @@ public class FogOfWarManager : MonoBehaviour
         }
         activeCells = new BitArray(length, false);
 
-        texture = new Texture2D(gridSize.x, gridSize.y);
+        texture = new Texture2D(gridSize.x, gridSize.y, TextureFormat.Alpha8, false);//Alpha8
+        texture.filterMode = filter;
+        texture.wrapMode = TextureWrapMode.Clamp;
         texture.name = "FOW grid";
         material.SetTexture("_MainTex", texture);
         projector.material = material;
@@ -472,25 +475,31 @@ public class FogOfWarManager : MonoBehaviour
     {
         float lenght = gridSize.x * gridSize.y;
 
+        Unity.Collections.NativeArray<byte> data = texture.GetRawTextureData<byte>();
+
         for (int i = 0; i < lenght; i++)
         {
             bool isVisible = visionGrid.IsVisible(i, activePlayers);
 
             Color newColor = fowUnexplored;
+            float newValue = 1f;
 
             if (isVisible)
             {
                 newColor = fowViewed;
+                newValue = 0f;
             }
             else if (visionGrid.WasVisible(i, activePlayers))
             {
                 newColor = fowNotViewed;
+                newValue = 0.6f;
             }
 
-            if (interpolateColorSpeed > float.Epsilon)
+            if (false && interpolateColorSpeed > float.Epsilon)
             {
                 float alpha = Time.deltaTime * interpolateColorSpeed;
                 newColor.a = Mathf.LerpUnclamped(colors[i].a, newColor.a, alpha);
+                /*
                 if (newColor.a > 0f)
                 {
                     newColor.r = fowNotViewed.r;
@@ -503,11 +512,14 @@ public class FogOfWarManager : MonoBehaviour
                     newColor.g = fowViewed.g;
                     newColor.b = fowViewed.b;
                 }
+                */
+                //newValue = Mathf.LerpUnclamped(data[i], newValue, alpha);
             }
-            colors[i] = newColor;
+            //colors[i] = newColor;
+            data[i] = (byte)Mathf.FloorToInt(newValue * 255f + 0.5f);
         }
 
-        texture.SetPixels(colors);
+        //texture.SetPixels(colors);
         texture.Apply();
     }
 
