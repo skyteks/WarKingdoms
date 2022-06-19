@@ -2,10 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[DefaultExecutionOrder(-100)]
-public class FogOfWarManager : MonoBehaviour
+public class FogOfWarManagerOLD : MonoBehaviour
 {
     [System.Serializable]
+    public struct UnitVision
+    {
+        // A bit mask representing a group of players inside the vision system.
+        public FactionTemplate.PlayerID playerId;
+
+        // The range of the vision (in world coordinates)
+        public int visionRange;
+
+        // the position (in world coordinates)
+        public Vector2Int position;
+
+        // used for blocking vision
+        //public int terrainHeight;
+
+        public UnitVision(FactionTemplate.PlayerID player, int range, Vector2Int pos, int height)
+        {
+            playerId = player;
+            visionRange = range;
+            position = pos;
+            //terrainHeight = height;
+        }
+    }
+
     public class VisionGrid
     {
         // the width and height of the grid (needed to access the arrays)
@@ -13,32 +35,23 @@ public class FogOfWarManager : MonoBehaviour
 
         // array of size width * height, each entry has an int with the 
         // bits representing which players have this entry in vision.
-        private byte[] values = null;
+        private int[] values = null;
 
         // similar to the values but it just stores if a player visited
         // that entry at some point in time.
-        private byte[] visited = null;
+        private int[] visited = null;
 
         public VisionGrid(Vector2Int gridSize)
         {
             size = gridSize;
-            values = new byte[size.x * size.y];
-            visited = new byte[size.x * size.y];
+            values = new int[size.x * size.y];
+            visited = new int[size.x * size.y];
         }
 
-        public void SetVisible(Vector2Int pos, FactionTemplate.PlayerID players, bool value)
+        public void SetVisible(Vector2Int pos, FactionTemplate.PlayerID players)
         {
-            if (value)
-            {
-
-                values[pos.x + pos.y * size.y] |= (byte)players;
-                visited[pos.x + pos.y * size.y] |= (byte)players;
-            }
-            else
-            {
-                players = ~players;
-                values[pos.x + pos.y * size.y] ^= (byte)players;
-            }
+            values[pos.x + pos.y * size.y] |= (int)players;
+            visited[pos.x + pos.y * size.y] |= (int)players;
         }
 
         public void Clear()
@@ -51,17 +64,17 @@ public class FogOfWarManager : MonoBehaviour
 
         public bool IsVisible(int index, FactionTemplate.PlayerID players)
         {
-            return (values[index] & (byte)players) > 0;
+            return (values[index] & (int)players) > 0;
         }
 
         public bool IsVisible(Vector2Int pos, FactionTemplate.PlayerID players)
         {
-            return (values[pos.x + pos.y * size.y] & (byte)players) > 0;
+            return (values[pos.x + pos.y * size.y] & (int)players) > 0;
         }
 
         public bool WasVisible(int index, FactionTemplate.PlayerID players)
         {
-            return (visited[index] & (byte)players) > 0;
+            return (visited[index] & (int)players) > 0;
         }
 
         public bool WasVisible(Vector2Int pos, FactionTemplate.PlayerID players)
@@ -70,55 +83,16 @@ public class FogOfWarManager : MonoBehaviour
         }
     }
 
-    [System.Serializable]
-    public class GridTreeCell
-    {
-        public Vector2Int localPos;// { get; private set; }
-        public GridTreeCell parent { get; private set; }
-        [SerializeField]
-        private List<GridTreeCell> branchedOffCells;
-
-        public GridTreeCell(Vector2Int pos, GridTreeCell parentCell = null)
-        {
-            localPos = pos;
-            branchedOffCells = new List<GridTreeCell>();
-            parent = parentCell;
-            parentCell?.AddBranchCell(this);
-        }
-
-        public void AddBranchCell(GridTreeCell branchCell)
-        {
-            branchedOffCells.Add(branchCell);
-        }
-
-        public bool ContainsChildAt(Vector2Int pos)
-        {
-            return pos == localPos || branchedOffCells.Exists(cell => cell.localPos == pos);// || parent != null && parent.ContainsChildAt(pos);
-        }
-
-        public List<GridTreeCell> GetChildren()
-        {
-            return branchedOffCells;
-        }
-    }
-
     public Vector2Int gridSize = new Vector2Int(128, 128);
     private VisionGrid visionGrid;
     private TerrainHeightMap terrainGrid;
-    private RectInt gridBounds;
 
     private Texture2D texture;
     private Color[] colors;
-    private List<int> activeList = new List<int>();
-    private BitArray activeCells;
-
     public Material material;
-    public FilterMode filter = FilterMode.Bilinear;
     public Projector projector;
     private Color fowUnexplored = Color.black;
     private Color fowNotViewed = Color.black.ToWithA(0.6f);
-    private Color fowViewed = Color.white.ToWithA(0f);
-    public float decline = 1f;
 
     [Space]
 
@@ -132,15 +106,11 @@ public class FogOfWarManager : MonoBehaviour
 
     public RegisterObject units;
     public RegisterObject buildings;
-    private List<ClickableObject> queueCurrent = new List<ClickableObject>();
-    private int queueIndex = 0;
-    public int perFrame = 10;
 
     public FactionTemplate.PlayerID activePlayers;
+    private List<UnitVision> unitVisions = new List<UnitVision>();
 
     private float lastCheck;
-
-    public float interpolateColorSpeed = 6f;
 
     public Vector2Int gridOffset
     {
@@ -150,42 +120,20 @@ public class FogOfWarManager : MonoBehaviour
         }
     }
 
-    public Dictionary<int, GridTreeCell> trees = new Dictionary<int, GridTreeCell>();
-
     void Start()
     {
         activePlayers = GameManager.Instance.playerFaction.data.playerID;
 
-        gridBounds = new RectInt(Vector2Int.zero, gridSize);
+
         visionGrid = new VisionGrid(gridSize);
         SetTerrain();
-        int length = gridSize.x * gridSize.y;
 
-        colors = new Color[length];
-        for (int i = 0; i < length; i++)
-        {
-            colors[i] = Color.clear;
-        }
-        activeCells = new BitArray(length, false);
+        colors = new Color[gridSize.x * gridSize.y];
 
-        texture = new Texture2D(gridSize.x, gridSize.y, TextureFormat.Alpha8, false);//Alpha8
-        texture.filterMode = filter;
-        texture.wrapMode = TextureWrapMode.Clamp;
-        texture.name = "FOW grid (Generated)";
+        texture = new Texture2D(gridSize.x, gridSize.y);
+        texture.name = "FOW grid";
         material.SetTexture("_MainTex", texture);
         projector.material = material;
-    }
-
-    void OnEnable()
-    {
-        units.onAdded += OnUnitAdd;
-        buildings.onAdded += OnUnitAdd;
-    }
-
-    void OnDisable()
-    {
-        units.onRemoved += OnUnitRemove;
-        buildings.onRemoved += OnUnitRemove;
     }
 
     void OnDrawGizmos()
@@ -230,7 +178,6 @@ public class FogOfWarManager : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
-        /*
         if (visionGrid != null)
         {
             int gridLenght = gridSize.x * gridSize.y;
@@ -246,7 +193,6 @@ public class FogOfWarManager : MonoBehaviour
                 }
             }
         }
-        */
 
         /*
         int radius = 10;
@@ -269,21 +215,18 @@ public class FogOfWarManager : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawCube(GridPosToUnityPos(line[line.Count - 1]), (Vector3.one * 0.9f).ToWithY(0.001f));
         */
+
     }
 
     void LateUpdate()
     {
-        if (Time.realtimeSinceStartup - lastCheck < 0.2f)
+        if (Time.realtimeSinceStartup - lastCheck < 0.05f)
         {
-            //return;
+            return;
         }
-        bool fullIteration = CalculateVision();
-
+        CalculateVision();
         DrawVision();
-        if (fullIteration)
-        {
-            lastCheck = Time.realtimeSinceStartup;
-        }
+        lastCheck = Time.realtimeSinceStartup;
     }
 
     [ContextMenu("SetTerrain")]
@@ -292,184 +235,69 @@ public class FogOfWarManager : MonoBehaviour
         terrainGrid = new TerrainHeightMap(gridSize, transform.position);
     }
 
-    private bool CalculateVision()
+    private void CalculateVision()
     {
-        if (queueIndex == 0)
+        visionGrid.Clear();
+        unitVisions.Clear();
+
+        for (int i = 0; i < units.Count; i++)
         {
-            visionGrid.Clear();
+            Unit unit = units.GetByIndex(i) as Unit;
+            Vector2Int unitPos = UnityPosToGridPos(unit.transform.position);
+            int height = terrainGrid.GetHeight(unitPos);
+            UnitVision vision = new UnitVision(unit.faction.data.playerID, Mathf.RoundToInt(unit.template.guardDistance), unitPos, height);
+            unitVisions.Add(vision);
+        }
+        for (int i = 0; i < buildings.Count; i++)
+        {
+            Building unit = buildings.GetByIndex(i) as Building;
+            Vector2Int unitPos = UnityPosToGridPos(unit.transform.position);
+            int height = terrainGrid.GetHeight(unitPos);
+            UnitVision vision = new UnitVision(unit.faction.data.playerID, Mathf.RoundToInt(unit.template.guardDistance), unitPos, height);
+            unitVisions.Add(vision);
         }
 
-        int length = queueCurrent.Count;
-        for (int i = queueIndex; i < queueIndex + perFrame; i++)
+        foreach (var unit in unitVisions)
         {
-            if (i == length)
+            int terrainHeight = terrainGrid.GetHeight(unit.position);
+            List<Vector2Int> visionRange = GetCirclePositions(unit.position, unit.visionRange);
+            foreach (var outlinePos in visionRange)
             {
-                queueIndex = 0;
-                return true;
-            }
-            ClickableObject unit = queueCurrent[i];
-            Vector2Int position = UnityPosToGridPos(unit.transform.position);
-            int terrainHeight = terrainGrid.GetHeight(position);
-            int visionRange = Mathf.RoundToInt(unit.template.guardDistance);
-            FactionTemplate.PlayerID playerID = unit.faction.data.playerID;
-
-            GridTreeCell rootCell = null;
-            if (!trees.TryGetValue(visionRange, out rootCell))
-            {
-                rootCell = CreateGridSelectionTree(visionRange);
-                trees.Add(visionRange, rootCell);
-            }
-            CheckVisionWithTree(rootCell, position, terrainHeight, playerID);
-        }
-        queueIndex += perFrame;
-        return false;
-    }
-
-    public void CheckVisionWithTree(GridTreeCell cell, Vector2Int offset, int terrainHeight, FactionTemplate.PlayerID players)
-    {
-        Vector2Int pos = cell.localPos + offset;
-        if (!gridBounds.Contains(pos))
-        {
-            return;
-        }
-        int index = pos.ToIndex(gridSize.y);
-        if (terrainGrid.GetHeight(pos) > terrainHeight)
-        {
-            activeCells.Set(index, false);
-            visionGrid.SetVisible(pos, players, false);
-            return;
-        }
-
-        visionGrid.SetVisible(pos, players, true);
-        if (!activeCells.Get(index))
-        {
-            activeCells.Set(index, true);
-            activeList.Add(index);
-        }
-
-        List<GridTreeCell> children = cell.GetChildren();
-        foreach (GridTreeCell childCell in children)
-        {
-            CheckVisionWithTree(childCell, offset, terrainHeight, players);
-        }
-    }
-
-    [ContextMenu("CreateGridSelectionTree")]
-    public GridTreeCell CreateGridSelectionTree(int radius)
-    {
-        List<Vector2Int> circle = GetCirclePositions(Vector2Int.zero, radius);
-        int startLenght = circle.Count;
-        for (int i = 0; i < startLenght; i++)
-        {
-            int j = (i + 1) % startLenght;
-            List<Vector2Int> tmp = GetLinePositions(circle[i], circle[j]);
-
-            foreach (Vector2Int lineOnCirclePos in tmp)
-            {
-                if (!circle.Contains(lineOnCirclePos))
+                List<Vector2Int> line = GetLinePositions(unit.position, outlinePos);
+                foreach (var linePos in line)
                 {
-                    circle.Add(lineOnCirclePos);
+                    if (terrainGrid.GetHeight(linePos) > terrainHeight)// unit.terrainHeight
+                    {
+                        break;
+                    }
+                    visionGrid.SetVisible(linePos, unit.playerId);
                 }
             }
-        }
-        List<List<Vector2Int>> lines = new List<List<Vector2Int>>();
-        foreach (var outlinePos in circle)
-        {
-            List<Vector2Int> line = GetLinePositions(Vector2Int.zero, outlinePos);
-            line.RemoveAt(0);
-            if (line.Count > 0)
-            {
-                lines.Add(line);
-            }
-        }
-
-        GridTreeCell rootCell = new GridTreeCell(Vector2Int.zero);
-        AddGridSelectionTreeLevel(lines, rootCell, 0);
-        return rootCell;
-    }
-
-    private void AddGridSelectionTreeLevel(List<List<Vector2Int>> linePointLists, GridTreeCell cell, int level)
-    {
-        List<KeyValuePair<Vector2Int, List<List<Vector2Int>>>> firstPointDict = new List<KeyValuePair<Vector2Int, List<List<Vector2Int>>>>();
-        for (int i = linePointLists.Count - 1; i >= 0; i--)
-        {
-            List<Vector2Int> line = linePointLists[i];
-            Vector2Int linePos = line[0];
-
-            List<List<Vector2Int>> lines = firstPointDict.Find(pair => pair.Key == linePos).Value;
-            if (lines == null || lines.Count == 0)
-            {
-                lines = new List<List<Vector2Int>>();
-                firstPointDict.Add(new KeyValuePair<Vector2Int, List<List<Vector2Int>>>(linePos, lines));
-            }
-
-            line.RemoveAt(0);
-            linePointLists.RemoveAt(i);
-            if (line.Count > 0)
-            {
-                lines.Add(line);
-            }
-        }
-
-        for (int i = 0; i < firstPointDict.Count; i++)
-        {
-            Vector2Int linePos = firstPointDict[i].Key;
-            List<List<Vector2Int>> lines = firstPointDict[i].Value;
-            GridTreeCell brachCell = new GridTreeCell(linePos, cell);
-
-            AddGridSelectionTreeLevel(lines, brachCell, level + 1);
         }
     }
 
     private void DrawVision()
     {
-        float lenght = gridSize.x * gridSize.y;
-
-        Unity.Collections.NativeArray<byte> data = texture.GetRawTextureData<byte>();
-
-        for (int i = 0; i < lenght; i++)
+        int length = gridSize.x * gridSize.y;
+        for (int i = 0; i < length; i++)
         {
-            bool isVisible = visionGrid.IsVisible(i, activePlayers);
-
-            Color newColor = fowUnexplored;
-            float newValue = 1f;
-
-            if (isVisible)
+            //int x = i % gridSize.x;
+            //int y = i / gridSize.x;
+            if (colors[i] != fowUnexplored)
             {
-                newColor = fowViewed;
-                newValue = 0f;
+                colors[i] = fowUnexplored;
+            }
+
+            if (visionGrid.IsVisible(i, activePlayers))
+            {
+                colors[i] = Color.clear;
             }
             else if (visionGrid.WasVisible(i, activePlayers))
             {
-                newColor = fowNotViewed;
-                newValue = 0.6f;
+                colors[i] = fowNotViewed;
             }
-
-            if (false && interpolateColorSpeed > float.Epsilon)
-            {
-                float alpha = Time.deltaTime * interpolateColorSpeed;
-                newColor.a = Mathf.LerpUnclamped(colors[i].a, newColor.a, alpha);
-                /*
-                if (newColor.a > 0f)
-                {
-                    newColor.r = fowNotViewed.r;
-                    newColor.g = fowNotViewed.g;
-                    newColor.b = fowNotViewed.b;
-                }
-                else
-                {
-                    newColor.r = fowViewed.r;
-                    newColor.g = fowViewed.g;
-                    newColor.b = fowViewed.b;
-                }
-                */
-                //newValue = Mathf.LerpUnclamped(data[i], newValue, alpha);
-            }
-            //colors[i] = newColor;
-            data[i] = (byte)Mathf.FloorToInt(newValue * 255f + 0.5f);
         }
-
-        //texture.SetPixels(colors);
+        texture.SetPixels(colors);
         texture.Apply();
     }
 
@@ -564,7 +392,8 @@ public class FogOfWarManager : MonoBehaviour
         int sign_y = dy > 0 ? 1 : -1;
 
         Vector2Int p = p0;
-        List<Vector2Int> line = new List<Vector2Int> { p };
+        List<Vector2Int> line = new List<Vector2Int>();
+        line.Add(p);
 
         for (int ix = 0, iy = 0; ix < nx || iy < ny;)
         {
@@ -583,7 +412,7 @@ public class FogOfWarManager : MonoBehaviour
             }
             else
             {
-                if ((2 * ix + 0) * ny < (2 * iy + 1) * nx)
+                if ((2 * ix - 0) * ny < (2 * iy + 1) * nx)
                 {
                     p.x += sign_x;
                     ix++;
@@ -610,32 +439,5 @@ public class FogOfWarManager : MonoBehaviour
         gridPos += gridOffset;
         Vector3 position = new Vector3(gridPos.x + 0.5f, transform.position.y, gridPos.y + 0.5f);
         return position;
-    }
-
-    public void OnUnitAdd(MonoBehaviour monoBehaviour, System.Type type)
-    {
-        if (monoBehaviour is ClickableObject)
-        {
-            ClickableObject clickableObject = monoBehaviour as ClickableObject;
-            queueCurrent.Add(clickableObject);
-        }
-        else
-        {
-            throw new System.ArrayTypeMismatchException();
-        }
-    }
-
-    public void OnUnitRemove(MonoBehaviour monoBehaviour, System.Type type)
-    {
-        if (monoBehaviour is ClickableObject)
-        {
-            ClickableObject clickableObject = monoBehaviour as ClickableObject;
-            queueCurrent.Remove(clickableObject);
-            queueIndex--;
-        }
-        else
-        {
-            throw new System.ArrayTypeMismatchException();
-        }
     }
 }

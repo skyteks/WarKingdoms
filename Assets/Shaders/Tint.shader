@@ -65,7 +65,7 @@
                 o.Albedo = c.rgb;
                 o.Metallic = _Metallic;
                 o.Smoothness = _Glossiness;
-                o.Alpha = clamp(c.a, 0, 1);
+                o.Alpha = saturate(c.a);
             }
             else
             {
