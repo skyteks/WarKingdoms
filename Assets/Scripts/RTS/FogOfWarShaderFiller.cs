@@ -12,6 +12,7 @@ public class FogOfWarShaderFiller : MonoBehaviour
 
     public Vector2Int gridSize = new Vector2Int(128, 128);
     public Material material;
+    public Projector projector;
     private TerrainHeightMap terrainGrid;
     [ReadOnly, SerializeField]
     private Texture2D terrainHeightMap;
@@ -20,6 +21,7 @@ public class FogOfWarShaderFiller : MonoBehaviour
     void Start()
     {
         SetTerrain();
+        projector.material = material;
     }
 
     void Update()
@@ -42,7 +44,7 @@ public class FogOfWarShaderFiller : MonoBehaviour
             for (int a = 1; a < 361; a++)
             {
                 Vector3 off = unit.transform.position + Quaternion.Euler(0f, a, 0f) * Vector3.forward * range;
-                Debug.DrawLine(lastOff, off, Color.red);
+                //Debug.DrawLine(lastOff, off, Color.red);
                 lastOff = off;
             }
         }

@@ -1,4 +1,4 @@
-Shader "Custom/FogOfWarCalculationShader"
+Shader "Custom/FogOfWarCalculation"
 {
 	Properties
 	{

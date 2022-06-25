@@ -2654,7 +2654,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 457413006}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 06faf9462d1bad5408f767ce5438fb00, type: 3}
   m_Name: 
@@ -2696,7 +2696,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 457413006}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: effd8fe499c908f4fbb19b09ae61ba1e, type: 3}
   m_Name: 
@@ -2706,6 +2706,7 @@ MonoBehaviour:
   activePlayers: 1
   gridSize: {x: 128, y: 128}
   material: {fileID: 2100000, guid: 4b61783a5588c674e8c628dca17ed305, type: 2}
+  projector: {fileID: 1076779881}
   terrainHeightMap: {fileID: 0}
 --- !u!1001 &458140795
 PrefabInstance:
@@ -6368,7 +6369,7 @@ Projector:
   m_AspectRatio: 1
   m_Orthographic: 1
   m_OrthographicSize: 64
-  m_Material: {fileID: 2100000, guid: 4b61783a5588c674e8c628dca17ed305, type: 2}
+  m_Material: {fileID: 0}
   m_IgnoreLayers:
     serializedVersion: 2
     m_Bits: 1572

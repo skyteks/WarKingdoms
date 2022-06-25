@@ -158,7 +158,7 @@ public class FogOfWarManager : MonoBehaviour
 
         gridBounds = new RectInt(Vector2Int.zero, gridSize);
         visionGrid = new VisionGrid(gridSize);
-        SetTerrain();
+        CreateTerrainHeightmap();
         int length = gridSize.x * gridSize.y;
 
         colors = new Color[length];
@@ -167,12 +167,7 @@ public class FogOfWarManager : MonoBehaviour
             colors[i] = Color.clear;
         }
         activeCells = new BitArray(length, false);
-
-        texture = new Texture2D(gridSize.x, gridSize.y, TextureFormat.Alpha8, false);//Alpha8
-        texture.filterMode = filter;
-        texture.wrapMode = TextureWrapMode.Clamp;
-        texture.name = "FOW grid (Generated)";
-        material.SetTexture("_MainTex", texture);
+        CreateTexture();
         projector.material = material;
     }
 
@@ -204,6 +199,7 @@ public class FogOfWarManager : MonoBehaviour
                 UnityEditor.Handles.DrawAAPolyLine(new Vector3(0f + gridOffset.x, heightOffset, y + gridOffset.y), new Vector3(gridSize.x + gridOffset.x, heightOffset, y + gridOffset.y));
             }
         }
+
         if (drawHeightValues && terrainGrid != null)
         {
             float heightOffset = transform.position.y;
@@ -230,7 +226,6 @@ public class FogOfWarManager : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
-        /*
         if (visionGrid != null)
         {
             int gridLenght = gridSize.x * gridSize.y;
@@ -246,9 +241,7 @@ public class FogOfWarManager : MonoBehaviour
                 }
             }
         }
-        */
 
-        /*
         int radius = 10;
         List<Vector2Int> circle = GetCirclePositions(Vector2Int.zero, radius);
         Gizmos.color = Color.blue;
@@ -268,7 +261,6 @@ public class FogOfWarManager : MonoBehaviour
         Gizmos.DrawCube(GridPosToUnityPos(line[0]), (Vector3.one * 0.9f).ToWithY(0.001f));
         Gizmos.color = Color.yellow;
         Gizmos.DrawCube(GridPosToUnityPos(line[line.Count - 1]), (Vector3.one * 0.9f).ToWithY(0.001f));
-        */
     }
 
     void LateUpdate()
@@ -279,17 +271,26 @@ public class FogOfWarManager : MonoBehaviour
         }
         bool fullIteration = CalculateVision();
 
-        DrawVision();
+        DrawVisionOnTexture();
         if (fullIteration)
         {
             lastCheck = Time.realtimeSinceStartup;
         }
     }
 
-    [ContextMenu("SetTerrain")]
-    private void SetTerrain()
+    [ContextMenu("Create TerrainHeightmap")]
+    private void CreateTerrainHeightmap()
     {
         terrainGrid = new TerrainHeightMap(gridSize, transform.position);
+    }
+
+    private void CreateTexture()
+    {
+        texture = new Texture2D(gridSize.x, gridSize.y, TextureFormat.Alpha8, false);
+        texture.filterMode = filter;
+        texture.wrapMode = TextureWrapMode.Clamp;
+        texture.name = "FOW grid (Generated)";
+        material.SetTexture("_MainTex", texture);
     }
 
     private bool CalculateVision()
@@ -421,7 +422,7 @@ public class FogOfWarManager : MonoBehaviour
         }
     }
 
-    private void DrawVision()
+    private void DrawVisionOnTexture()
     {
         float lenght = gridSize.x * gridSize.y;
 
@@ -466,10 +467,12 @@ public class FogOfWarManager : MonoBehaviour
                 //newValue = Mathf.LerpUnclamped(data[i], newValue, alpha);
             }
             //colors[i] = newColor;
+
             data[i] = (byte)Mathf.FloorToInt(newValue * 255f + 0.5f);
         }
 
         //texture.SetPixels(colors);
+
         texture.Apply();
     }
 
