@@ -54,4 +54,10 @@ public class Healthpoints : Attackable
         }
         return true;
     }
+
+    [ContextMenu("Debug Kill")]
+    private void DebugKill()
+    {
+        SufferAttack(clickableObject.template.health, null);
+    }
 }
