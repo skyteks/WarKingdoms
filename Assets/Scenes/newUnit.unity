@@ -1743,6 +1743,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Human Worker (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 729119159435421255, guid: 27612a38bb9d3224794c36fa857a45f3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 832002160600473819, guid: 27612a38bb9d3224794c36fa857a45f3,
         type: 3}
       propertyPath: faction
@@ -2664,13 +2669,14 @@ MonoBehaviour:
   filter: 1
   projector: {fileID: 1076779881}
   decline: 1
+  drawFunction: 1
   drawGrid: 0
   drawHeightValues: 0
   drawQuadMesh: {fileID: 4300002, guid: d8f273339e498cb478c9d1c8130478eb, type: 3}
   units: {fileID: 11400000, guid: 01c7bc88a8159d34f9070b8e426410e6, type: 2}
   buildings: {fileID: 11400000, guid: 776b0c3caab84df46a0edfec83178832, type: 2}
   perFrame: 100
-  activePlayers: 1
+  activePlayersFlag: 1
   interpolateColorSpeed: 6
 --- !u!4 &457413008
 Transform:
@@ -2718,7 +2724,7 @@ PrefabInstance:
     - target: {fileID: 553342399969728552, guid: 80b70e096f974a74d8b31f0a2b24c6a8,
         type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 553342399969728552, guid: 80b70e096f974a74d8b31f0a2b24c6a8,
         type: 3}
@@ -2774,6 +2780,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Human Lumberjack (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 553342399969728554, guid: 80b70e096f974a74d8b31f0a2b24c6a8,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 553342399969728558, guid: 80b70e096f974a74d8b31f0a2b24c6a8,
         type: 3}
@@ -2935,6 +2946,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Human Worker (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 729119159435421255, guid: 27612a38bb9d3224794c36fa857a45f3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 832002160600473819, guid: 27612a38bb9d3224794c36fa857a45f3,
         type: 3}
@@ -3509,7 +3525,7 @@ Transform:
   - {fileID: 1059672541}
   - {fileID: 936028947}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &636668869
 PrefabInstance:
@@ -4420,6 +4436,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Human Worker (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 729119159435421255, guid: 27612a38bb9d3224794c36fa857a45f3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 832002160600473819, guid: 27612a38bb9d3224794c36fa857a45f3,
         type: 3}
@@ -5653,7 +5674,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1001555644
 Transform:
   m_ObjectHideFlags: 0
@@ -7522,6 +7543,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Orc Grunt (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 6143523602997217605, guid: 9a6476a774e7514469db4f7665d98ac2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6147639645433565755, guid: 9a6476a774e7514469db4f7665d98ac2,
         type: 3}
       propertyPath: m_RootOrder
@@ -8292,7 +8318,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1456349040
 Transform:
   m_ObjectHideFlags: 0
@@ -9195,6 +9221,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Human Worker (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 729119159435421255, guid: 27612a38bb9d3224794c36fa857a45f3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 832002160600473819, guid: 27612a38bb9d3224794c36fa857a45f3,
         type: 3}
       propertyPath: faction
@@ -9987,6 +10018,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Human Worker (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 729119159435421255, guid: 27612a38bb9d3224794c36fa857a45f3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 832002160600473819, guid: 27612a38bb9d3224794c36fa857a45f3,
         type: 3}
@@ -11401,7 +11437,7 @@ PrefabInstance:
     - target: {fileID: 3390953933686350916, guid: 051ab337fa4d8ec4e8d693f632005e4c,
         type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3390953933686350916, guid: 051ab337fa4d8ec4e8d693f632005e4c,
         type: 3}
@@ -11457,6 +11493,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Human Smith (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3390953933686350918, guid: 051ab337fa4d8ec4e8d693f632005e4c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6432399747085267130, guid: 051ab337fa4d8ec4e8d693f632005e4c,
         type: 3}
