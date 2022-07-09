@@ -125,6 +125,7 @@ public class FogOfWarManager : MonoBehaviour
     }
 
     public Vector2Int gridSize = new Vector2Int(128, 128);
+    public int cellSize = 1;
     private VisionGrid visionGrid;
     private TerrainHeightMap terrainGrid;
     private RectInt gridBounds;
@@ -319,7 +320,7 @@ public class FogOfWarManager : MonoBehaviour
     [ContextMenu("Create TerrainHeightmap")]
     private void CreateTerrainHeightmap()
     {
-        terrainGrid = new TerrainHeightMap(gridSize, transform.position);
+        terrainGrid = new TerrainHeightMap(gridSize, cellSize, transform.position);
     }
 
     private void CreateTexture()
@@ -349,11 +350,10 @@ public class FogOfWarManager : MonoBehaviour
             ClickableObject unit = queueCurrent[i];
             Vector2Int unitPos = UnityPosToGridPos(unit.transform.position);
             int unitLocationHeight = terrainGrid.GetHeight(unitPos);
-            int unitVisionRange = Mathf.RoundToInt(unit.template.guardDistance);
+            int unitVisionRange = Mathf.RoundToInt(unit.template.guardDistance / cellSize);
             FactionTemplate.PlayerID playersFlag = unit.faction.data.playerID;
 
-            GridTreeCell rootCell = null;
-            if (!trees.TryGetValue(unitVisionRange, out rootCell))
+            if (!trees.TryGetValue(unitVisionRange, out GridTreeCell rootCell))
             {
                 rootCell = CreateGridSelectionTree(unitVisionRange);
                 trees.Add(unitVisionRange, rootCell);
@@ -393,7 +393,6 @@ public class FogOfWarManager : MonoBehaviour
         }
     }
 
-    [ContextMenu("CreateGridSelectionTree")]
     public GridTreeCell CreateGridSelectionTree(int radius)
     {
         List<Vector2Int> circle = GetCirclePositions(Vector2Int.zero, radius);
@@ -706,14 +705,14 @@ public class FogOfWarManager : MonoBehaviour
 
     private Vector2Int UnityPosToGridPos(Vector3 position)
     {
-        Vector2Int gridPos = new Vector2Int(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.z)) - gridOffset;
+        Vector2Int gridPos = new Vector2Int(Mathf.FloorToInt(position.x) / cellSize, Mathf.FloorToInt(position.z) / cellSize) - gridOffset;
         return gridPos;
     }
 
     private Vector3 GridPosToUnityPos(Vector2Int gridPos)
     {
         gridPos += gridOffset;
-        Vector3 position = new Vector3(gridPos.x + 0.5f, transform.position.y, gridPos.y + 0.5f);
+        Vector3 position = new Vector3(gridPos.x * cellSize + 0.5f, transform.position.y, gridPos.y * cellSize + 0.5f);
         return position;
     }
 

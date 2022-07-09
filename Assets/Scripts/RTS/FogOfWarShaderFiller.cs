@@ -73,7 +73,7 @@ public class FogOfWarShaderFiller : MonoBehaviour
     [ContextMenu("SetTerrain")]
     private void SetTerrain()
     {
-        terrainGrid = new TerrainHeightMap(gridSize, transform.position);
+        terrainGrid = new TerrainHeightMap(gridSize, 1,transform.position);
         CreateTexture();
         SetTextureData();
     }
