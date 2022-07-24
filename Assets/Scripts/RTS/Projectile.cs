@@ -38,6 +38,7 @@ public class Projectile : MonoBehaviour
     private int damage;
     private Unit owner;
     private bool hitSuccess;
+    private Vector3 lastPos;
 
     private Rigidbody rigid;
     private Renderer render;
@@ -64,6 +65,11 @@ public class Projectile : MonoBehaviour
             UpdateTrackStep();
         }
         AdjustAngleToRotationMode();
+    }
+
+    void LateUpdate()
+    {
+        lastPos = transform.position;
     }
 
     void OnTriggerEnter(Collider other)
@@ -190,8 +196,8 @@ public class Projectile : MonoBehaviour
                         transform.rotation = Quaternion.LookRotation(rigid.velocity.normalized, Vector3.up);
                         break;
                     case ProjectileFlyModes.Tracking:
-                        Vector3 distanceVector = (targetObject.position - transform.position);
-                        if (distanceVector.normalized.magnitude > 0f)
+                        Vector3 distanceVector = maxCurveHeight > 0f ? transform.position - lastPos : targetObject.position - transform.position;
+                        if (distanceVector.magnitude > 0f)
                         {
                             transform.rotation = Quaternion.LookRotation(distanceVector.normalized, Vector3.up);
                         }
@@ -242,6 +248,16 @@ public class Projectile : MonoBehaviour
     private void UpdateTrackStep()
     {
         transform.position = Vector3.MoveTowards(transform.position, targetObject.position, Time.deltaTime * trackSpeed);
+
+        if (maxCurveHeight > 0f)
+        {
+            float totalDistance = Vector3.Distance(owner.projectileFirePoint.position.ToWithY(0f), targetObject.position.ToWithY(0f));
+            float distanceToTarget = Vector3.Distance(transform.position.ToWithY(0f), targetObject.position.ToWithY(0f));
+            float doneLerp = (totalDistance - distanceToTarget) / totalDistance;
+
+            transform.position = transform.position.ToWithY(owner.projectileFirePoint.position.y + (doneLerp * 180f).Sin() * maxCurveHeight);
+        }
+
         if (Vector3.Distance(transform.position, targetObject.position) < 0.001f)
         {
             subParticleSpawner?.TriggerEnter();

@@ -71,6 +71,30 @@ public static class Float_Extension
     }
 
     /// <summary>
+    /// Returns the arc-sine of f - the angle in radians whose cosine is f
+    /// </summary>
+    /// <param name="f"></param>
+    /// <returns></returns>
+    public static float ASin(this float f)
+    {
+        float tmp = Mathf.Asin(f);
+        float deg = tmp * Mathf.Rad2Deg;
+        return deg;
+    }
+
+    /// <summary>
+    /// Returns the arc-cosine of f - the angle in radians whose cosine is f
+    /// </summary>
+    /// <param name="f"></param>
+    /// <returns></returns>
+    public static float ACos(this float f)
+    {
+        float tmp = Mathf.Acos(f);
+        float deg = tmp * Mathf.Rad2Deg;
+        return deg;
+    }
+
+    /// <summary>
     /// Returns the arc-tangent of an angle - the angle in degrees whose tangent is tan
     /// </summary>
     /// <param name="tan"></param>
@@ -91,19 +115,6 @@ public static class Float_Extension
     public static float ATan2(this float y, float x)
     {
         float tmp = Mathf.Atan2(y, x);
-        float deg = tmp * Mathf.Rad2Deg;
-        return deg;
-    }
-
-    /// <summary>
-    /// Returns the arc-cosine of f - the angle in radians whose cosine is f
-    /// </summary>
-    /// <param name="y"></param>
-    /// <param name="x"></param>
-    /// <returns></returns>
-    public static float ACos(this float f)
-    {
-        float tmp = Mathf.Acos(f);
         float deg = tmp * Mathf.Rad2Deg;
         return deg;
     }
