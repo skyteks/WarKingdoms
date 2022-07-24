@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [DefaultExecutionOrder(-100)]
-public class FogOfWarManager : MonoBehaviour
+public class FogOfWarManagerDalt : MonoBehaviour
 {
     [System.Serializable]
     public class VisionGrid
@@ -13,76 +13,78 @@ public class FogOfWarManager : MonoBehaviour
 
         // array of size width * height, each entry has an int with the 
         // bits representing which players have this entry in vision.
-        private FactionTemplate.PlayerID[] values = null;
+        private byte[] target = null;
 
         // similar to the values but it just stores if a player visited
         // that entry at some point in time.
-        private FactionTemplate.PlayerID[] visited = null;
+        private byte[] fadeout = null;
 
-        private BitArray changed = null;
+        private bool[] activeCells = null;
+        public List<int> activeCellList = null;
 
         public VisionGrid(Vector2Int gridSize)
         {
             size = gridSize;
-            int lenght = size.x * size.y;
-            values = new FactionTemplate.PlayerID[lenght];
-            visited = new FactionTemplate.PlayerID[lenght];
+            int length = size.x * size.y;
+            target = new byte[length];
+            fadeout = new byte[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                target[i] = 0;
+                fadeout[i] = 255;
+            }
+
+            activeCells = new bool[length];
+            activeCellList = new List<int>(length);
         }
 
-        public void SetVisible(Vector2Int pos, FactionTemplate.PlayerID players, bool value)
+        public void SetVisible(Vector2Int pos)
         {
-            int index = pos.x + pos.y * size.y;
-            if (value)
+            int cell = pos.x + pos.y * size.y;
+            if (activeCells[cell] == false)
             {
-                if ((values[index] & players) == 0)
+                activeCells[cell] = true;
+                activeCellList.Add(cell);
+            }
+
+            fadeout[cell] = 100;
+        }
+
+        public void Update(byte decline)
+        {
+            for (var i = activeCellList.Count - 1; i >= 0; i--)
+            {
+                var targetIdx = activeCellList[i];
+                var fade = fadeout[targetIdx];
+                if (fade > decline)
                 {
-                    changed?.Set(index, true);
+                    fade -= decline;
+                    fadeout[targetIdx] = fade;
+                    continue;
                 }
 
-                values[index] |= players;
-                visited[index] |= players;
-            }
-            else
-            {
-                if ((values[index] & players) > 0)
+                var targetValue = target[targetIdx];
+                targetValue += decline;
+                // we are not fading out to no-visibility at all
+                if (targetValue >= 215)
                 {
-                    changed?.Set(index, true);
-                }
+                    target[targetIdx] = 215;
+                    activeCells[targetIdx] = false;
 
-                values[index] ^= ~players;
-                //values[index] &= ~players;
+                    activeCellList[i] = activeCellList[activeCellList.Count - 1];
+                    activeCellList.RemoveAt(activeCellList.Count - 1);
+                }
+                else
+                {
+                    target[targetIdx] = targetValue;
+                }
             }
         }
 
-        public void ClearViewed()
+        public byte this[int key]
         {
-            int lenght = size.x * size.y;
-            System.Array.Clear(values, 0, lenght);
-        }
-
-        public void ClearChangedMarks()
-        {
-            changed?.SetAll(false);
-        }
-
-        public bool IsVisible(int index, FactionTemplate.PlayerID players)
-        {
-            return (values[index] & players) > 0;
-        }
-
-        public bool IsVisible(Vector2Int pos, FactionTemplate.PlayerID players)
-        {
-            return (values[pos.x + pos.y * size.y] & players) > 0;
-        }
-
-        public bool WasVisible(int index, FactionTemplate.PlayerID players)
-        {
-            return (visited[index] & players) > 0;
-        }
-
-        public bool WasVisible(Vector2Int pos, FactionTemplate.PlayerID players)
-        {
-            return (visited[pos.x + pos.y * size.y] & players) > 0;
+            get => fadeout[key];
         }
     }
 
@@ -126,16 +128,11 @@ public class FogOfWarManager : MonoBehaviour
 
     private Texture2D texture;
     private Color[] colors;
-    private List<int> activeCellList = new List<int>();
-    private BitArray activeCells;
 
     public Material material;
     public FilterMode filter = FilterMode.Bilinear;
     public Projector projector;
-    private Color fowUnexplored = Color.black;
-    private Color fowNotViewed = Color.black.ToWithA(0.6f);
-    private Color fowViewed = Color.white.ToWithA(0f);
-    public float decline = 1f;
+    public byte decline = 6;
 
     [Space]
 
@@ -184,9 +181,9 @@ public class FogOfWarManager : MonoBehaviour
         {
             colors[i] = Color.clear;
         }
-        activeCells = new BitArray(length, false);
+
         CreateTexture();
-        projector.material = material;
+        SetupProjector();
     }
 
     void OnEnable()
@@ -201,86 +198,6 @@ public class FogOfWarManager : MonoBehaviour
         buildings.onRemoved += OnUnitRemove;
     }
 
-    void OnDrawGizmos()
-    {
-        if (drawGrid)
-        {
-            float heightOffset = transform.position.y;
-
-            UnityEditor.Handles.color = Color.grey;
-            for (int x = 0; x <= gridSize.x; x++)
-            {
-                UnityEditor.Handles.DrawAAPolyLine(new Vector3(x + gridOffset.x, heightOffset, 0 + gridOffset.y), new Vector3(x + gridOffset.x, heightOffset, gridSize.y + gridOffset.y));
-            }
-            for (int y = 0; y <= gridSize.y; y++)
-            {
-                UnityEditor.Handles.DrawAAPolyLine(new Vector3(0f + gridOffset.x, heightOffset, y + gridOffset.y), new Vector3(gridSize.x + gridOffset.x, heightOffset, y + gridOffset.y));
-            }
-        }
-
-        if (drawHeightValues && terrainGrid != null)
-        {
-            float heightOffset = transform.position.y;
-
-            GUIStyle style = new GUIStyle();
-            style.fontSize = 20;
-            int length = terrainGrid.size.x * terrainGrid.size.y;
-            Camera cam = UnityEditor.SceneView.currentDrawingSceneView != null ? UnityEditor.SceneView.currentDrawingSceneView.camera : Camera.current;
-            for (int i = 0; i < length; i++)
-            {
-                int height = terrainGrid.GetHeight(i);
-                int x = i % gridSize.x;
-                int y = i / gridSize.x;
-                Vector3 point = new Vector3(x + 0.5f + gridOffset.x, heightOffset, y + 0.5f + gridOffset.y);
-                Vector3 tmp = cam.WorldToViewportPoint(point);
-                if (tmp.x.IsPercent() && tmp.y.IsPercent() && tmp.z > 0f && Vector3.Distance(cam.transform.position, point) < 30f)
-                {
-                    style.normal.textColor = Color.Lerp(Color.cyan, Color.blue, ((float)height).LinearRemap(0, 10));
-                    UnityEditor.Handles.Label(point, height.ToString(), style);
-                }
-            }
-        }
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        if (visionGrid != null)
-        {
-            int gridLenght = gridSize.x * gridSize.y;
-            FactionTemplate.PlayerID playerId = GameManager.Instance.playerFaction.data.playerID;
-            for (int i = 0; i < gridLenght; i++)
-            {
-                int x = i % gridSize.x;
-                int y = i / gridSize.x;
-                if (visionGrid.IsVisible(new Vector2Int(x, y), playerId))
-                {
-                    Gizmos.color = Color.cyan;
-                    Gizmos.DrawCube(GridPosToUnityPos(new Vector2Int(x, y)), (Vector3.one * 0.9f).ToWithY(0.001f));
-                }
-            }
-        }
-
-        int radius = 10;
-        List<Vector2Int> circle = GetCirclePositions(Vector2Int.zero, radius);
-        Gizmos.color = Color.blue;
-        foreach (Vector2Int pos in circle)
-        {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawCube(GridPosToUnityPos(pos), (Vector3.one * 0.9f).ToWithY(0.001f));
-        }
-        Gizmos.color = Random.ColorHSV();
-        Vector2Int rnd = circle[Random.Range(0, circle.Count)];
-        List<Vector2Int> line = GetLinePositions(Vector2Int.zero, rnd);
-        foreach (Vector2Int pos in line)
-        {
-            Gizmos.DrawCube(GridPosToUnityPos(pos), (Vector3.one * 0.9f).ToWithY(0.001f));
-        }
-        Gizmos.color = Color.green;
-        Gizmos.DrawCube(GridPosToUnityPos(line[0]), (Vector3.one * 0.9f).ToWithY(0.001f));
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawCube(GridPosToUnityPos(line[line.Count - 1]), (Vector3.one * 0.9f).ToWithY(0.001f));
-    }
-
     void LateUpdate()
     {
         if (Time.realtimeSinceStartup - lastCheck < 0.2f)
@@ -290,25 +207,20 @@ public class FogOfWarManager : MonoBehaviour
 
         bool fullIteration = CalculateVision();
 
-        switch (drawFunction)
-        {
-            case 0:
-                DrawVisionOnTextureWithColorArray();
-                break;
-            case 1:
-                DrawVisionOnTextureByChange();
-                break;
-            case 2:
-                DrawVisionOnTextureWithRawData();
-                break;
-        }
+        DrawVisionOnTextureWithRawData();
 
         if (fullIteration)
         {
             lastCheck = Time.realtimeSinceStartup;
         }
+    }
 
-        visionGrid.ClearChangedMarks(); // TODO: figure out why this breaks the viewed area rendering
+    private void SetupProjector()
+    {
+        projector.transform.position = new Vector3(gridSize.x * cellSize / 2f, 32 - 8, gridSize.y * cellSize / 2f);
+        projector.orthographic = true;
+        projector.orthographicSize = Mathf.Max(gridSize.x, gridSize.y) / 2f;
+        projector.material = material;
     }
 
     [ContextMenu("Create TerrainHeightmap")]
@@ -328,11 +240,6 @@ public class FogOfWarManager : MonoBehaviour
 
     private bool CalculateVision()
     {
-        if (queueIndex == 0)
-        {
-            visionGrid.ClearViewed();
-        }
-
         int length = queueCurrent.Count;
         for (int i = queueIndex; i < queueIndex + perFrame; i++)
         {
@@ -342,10 +249,15 @@ public class FogOfWarManager : MonoBehaviour
                 return true;
             }
             ClickableObject unit = queueCurrent[i];
+            FactionTemplate.PlayerID playersFlag = unit.faction.data.playerID;
+
+            if (!playersFlag.HasFlag(activePlayersFlag))
+            {
+                continue;
+            }
             Vector2Int unitPos = UnityPosToGridPos(unit.transform.position);
             int unitLocationHeight = terrainGrid.GetHeight(unitPos);
             int unitVisionRange = Mathf.RoundToInt(unit.template.guardDistance / cellSize);
-            FactionTemplate.PlayerID playersFlag = unit.faction.data.playerID;
 
             if (!trees.TryGetValue(unitVisionRange, out GridTreeCell rootCell))
             {
@@ -368,17 +280,10 @@ public class FogOfWarManager : MonoBehaviour
         int index = pos.ToIndex(gridSize.y);
         if (terrainGrid.GetHeight(pos) > unitLocationHeight)
         {
-            activeCells.Set(index, false);
-            visionGrid.SetVisible(pos, playersFlag, false);
             return;
         }
 
-        visionGrid.SetVisible(pos, playersFlag, true);
-        if (!activeCells.Get(index))
-        {
-            activeCells.Set(index, true);
-            activeCellList.Add(index);
-        }
+        visionGrid.SetVisible(pos);
 
         List<GridTreeCell> children = cell.GetChildren();
         foreach (GridTreeCell childCell in children)
@@ -453,116 +358,17 @@ public class FogOfWarManager : MonoBehaviour
         }
     }
 
-    private void DrawVisionOnTextureWithColorArray()
-    {
-        float lenght = gridSize.x * gridSize.y;
-
-        for (int i = 0; i < lenght; i++)
-        {
-            Color newColor;
-
-            if (visionGrid.IsVisible(i, activePlayersFlag))
-            {
-                newColor = fowViewed;
-            }
-            else if (visionGrid.WasVisible(i, activePlayersFlag))
-            {
-                newColor = fowNotViewed;
-            }
-            else
-            {
-                newColor = fowUnexplored;
-            }
-
-            if (false && interpolateColorSpeed > float.Epsilon)
-            {
-                float alpha = Time.deltaTime * interpolateColorSpeed;
-                newColor.a = Mathf.LerpUnclamped(colors[i].a, newColor.a, alpha);
-                if (newColor.a > 0f)
-                {
-                    newColor.r = fowNotViewed.r;
-                    newColor.g = fowNotViewed.g;
-                    newColor.b = fowNotViewed.b;
-                }
-                else
-                {
-                    newColor.r = fowViewed.r;
-                    newColor.g = fowViewed.g;
-                    newColor.b = fowViewed.b;
-                }
-            }
-
-            colors[i] = newColor;
-        }
-
-        texture.SetPixels(colors);
-        texture.Apply();
-    }
-
-    private void DrawVisionOnTextureByChange()
-    {
-        float lenght = gridSize.x * gridSize.y;
-
-        int changeCounter = 0;
-
-        for (int j = activeCellList.Count - 1; j >= 0; j--)
-        {
-            int i = activeCellList[j];
-
-            Color newColor;
-
-            if (visionGrid.IsVisible(i, activePlayersFlag))
-            {
-                newColor = fowViewed;
-            }
-            else if (visionGrid.WasVisible(i, activePlayersFlag))
-            {
-                newColor = fowNotViewed;
-            }
-            else
-            {
-                newColor = fowUnexplored;
-            }
-
-            Vector2Int pos = i.ToGridPosition(gridSize.y);
-            texture.SetPixel(pos.x, pos.y, newColor);
-            changeCounter++;
-        }
-
-        texture.Apply();
-        //Debug.Log("SetPixel() calls: " + changeCounter);
-    }
-
     private void DrawVisionOnTextureWithRawData()
     {
         float lenght = gridSize.x * gridSize.y;
 
         Unity.Collections.NativeArray<byte> data = texture.GetRawTextureData<byte>();
 
+        visionGrid.Update(decline);
+
         for (int i = 0; i < lenght; i++)
         {
-            Color newColor;
-
-            if (visionGrid.IsVisible(i, activePlayersFlag))
-            {
-                newColor = fowViewed;
-            }
-            else if (visionGrid.WasVisible(i, activePlayersFlag))
-            {
-                newColor = fowNotViewed;
-            }
-            else
-            {
-                newColor = fowUnexplored;
-            }
-
-            if (false && interpolateColorSpeed > float.Epsilon)
-            {
-                float alpha = Time.deltaTime * interpolateColorSpeed;
-                newColor.a = Mathf.LerpUnclamped(data[i], newColor.a, alpha);
-            }
-
-            data[i] = (byte)Mathf.FloorToInt(newColor.a * 255f + 0.5f);
+            data[i] = visionGrid[i];
         }
 
         texture.Apply();
