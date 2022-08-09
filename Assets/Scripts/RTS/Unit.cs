@@ -609,7 +609,7 @@ public class Unit : ClickableObject
         navigation.enabled = false;
 
         AttackAnim(false);
-        animation.SetTrigger(UnitAnimation.StateNames.DoDeath);
+        //animation.SetTrigger(UnitAnimation.StateNames.DoDeath);
 
         ///Remove itself from the selection Platoon
         GameManager.Instance.RemoveFromSelection(this);
@@ -627,7 +627,7 @@ public class Unit : ClickableObject
     private void SetWalkingSpeed()
     {
         float navMeshAgentSpeed = navigation.velocity.magnitude;
-        animation?.SetFloat(UnitAnimation.StateNames.Speed, navMeshAgentSpeed * 0.05f);
+        //animation?.SetFloat(UnitAnimation.StateNames.Speed, navMeshAgentSpeed * 0.05f);
     }
 
     private void FaceTarget()
@@ -677,44 +677,44 @@ public class Unit : ClickableObject
 
     public bool SetCombatReady(bool state)
     {
-            if (animation.CheckParameterExistance(UnitAnimation.StateNames.DoCombatReady))
-            {
-                float value = animation.GetFloat(UnitAnimation.StateNames.DoCombatReady);
-                float stat = state.ToFloat();
-                if (value != stat)
-                {
-                    if (lerpingCombatReady != null)
-                    {
-                        StopCoroutine(lerpingCombatReady);
-                    }
-                    lerpingCombatReady = StartCoroutine(LerpCombatReadyAnim(state.ToFloat()));
-                    return true;
-                }
-            }
+        //if (animation.CheckParameterExistance(UnitAnimation.StateNames.DoCombatReady))
+        //{
+        //    float value = animation.GetFloat(UnitAnimation.StateNames.DoCombatReady);
+        //    float stat = state.ToFloat();
+        //    if (value != stat)
+        //    {
+        //        if (lerpingCombatReady != null)
+        //        {
+        //            StopCoroutine(lerpingCombatReady);
+        //        }
+        //        lerpingCombatReady = StartCoroutine(LerpCombatReadyAnim(state.ToFloat()));
+        //        return true;
+        //    }
+        //}
         return false;
     }
 
-    private IEnumerator LerpCombatReadyAnim(float state)
-    {
-        float start = animation.GetFloat(UnitAnimation.StateNames.DoCombatReady);
-        float key = start;
-        float value;
-        for (; ; )
-        {
-            key = Mathf.MoveTowards(key, state, Time.deltaTime * combatReadySwitchTime);
-            value = combatReadyAnimCurve.Evaluate(key);
-            animation.SetFloat(UnitAnimation.StateNames.DoCombatReady, value);
-            if (key != state)
-            {
-                yield return null;
-            }
-            else
-            {
-                lerpingCombatReady = null;
-                yield break;
-            }
-        }
-    }
+    //private IEnumerator LerpCombatReadyAnim(float state)
+    //{
+    //    float start = animation.GetFloat(UnitAnimation.StateNames.DoCombatReady);
+    //    float key = start;
+    //    float value;
+    //    for (; ; )
+    //    {
+    //        key = Mathf.MoveTowards(key, state, Time.deltaTime * combatReadySwitchTime);
+    //        value = combatReadyAnimCurve.Evaluate(key);
+    //        animation.SetFloat(UnitAnimation.StateNames.DoCombatReady, value);
+    //        if (key != state)
+    //        {
+    //            yield return null;
+    //        }
+    //        else
+    //        {
+    //            lerpingCombatReady = null;
+    //            yield break;
+    //        }
+    //    }
+    //}
 
     private void AttackAnim(bool state)
     {
@@ -731,7 +731,7 @@ public class Unit : ClickableObject
         }
         else if (lerpingAttackEvent != null)
         {
-            animation?.SetBool(UnitAnimation.StateNames.DoAttack, false);
+            //animation?.SetBool(UnitAnimation.StateNames.DoAttack, false);
             StopCoroutine(lerpingAttackEvent);
             lerpingAttackEvent = null;
         }
@@ -739,10 +739,10 @@ public class Unit : ClickableObject
 
     private IEnumerator LerpAttackEvent()
     {
-        animation?.SetBool(UnitAnimation.StateNames.DoAttack, false);
+        //animation?.SetBool(UnitAnimation.StateNames.DoAttack, false);
         yield return null;
         yield return null;
-        animation?.SetBool(UnitAnimation.StateNames.DoAttack, true);
+        //animation?.SetBool(UnitAnimation.StateNames.DoAttack, true);
 
         float lenght = float.NaN;
         if (animation != null)

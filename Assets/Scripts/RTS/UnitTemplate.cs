@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Stores unit stats as asset file
 /// </summary>
-[CreateAssetMenu(fileName = "new Unit Template", menuName = "RTS/Unit Template", order = 1)]
+[CreateAssetMenu(fileName = "new Unit Template", menuName = "RTS/Unit Template")]
 public class UnitTemplate : ScriptableObject
 {
     public UnitTemplate original { get; private set; }
@@ -26,7 +26,7 @@ public class UnitTemplate : ScriptableObject
     [Tooltip("Damage dealt each attack")]
     public Vector2Int damage = new Vector2Int(9, 11);
 
-    [Tooltip("The attack rate. The higher, the faster the Unit is in attacking. 1 second/attackSpeed = time it takes for a single attack")]
+    [Tooltip("Attacks per second (0.5 = one attack takes 2 seconds)")]
     public float attackSpeed = 1f;
 
     [Range(0f, 1f)]
