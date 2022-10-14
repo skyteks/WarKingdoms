@@ -6,7 +6,6 @@ using UnityEngine;
 /// <summary>
 /// Creates mesh from field of view raycasts
 /// </summary>
-[RequireComponent(typeof(MeshFilter))]
 public class FieldOfView : MonoBehaviour
 {
     private struct ViewCastInfo

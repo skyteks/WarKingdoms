@@ -10,6 +10,8 @@ public class UnitAnimation : MonoBehaviour
 
     private Animator animator;
 
+    private static readonly AnimationCurve easeInEaseOutCurve = new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, 1f, 0f, 0f));
+
     void Awake()
     {
         animator = GetComponentInChildren<Animator>();

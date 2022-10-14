@@ -177,8 +177,6 @@ public class UIManager : Singleton<UIManager>
         {
             selectedPortraitUI.SetupButton(newSelectedUnit, healthColorGreen, healthColorOrange, healthColorRed, manaColor);
             newSelectedUnit.OnDeath += RemoveFromSelection;
-
-            SetupSkillButtons(newSelectedUnit);
         }
         else
         {
@@ -190,19 +188,6 @@ public class UIManager : Singleton<UIManager>
 
         UnitButton button = Instantiate<GameObject>(selectedUnitUIPrefab, selectionLayoutGroup.transform).GetComponent<UnitButton>();
         button.SetupButton(newSelectedUnit, healthColorGreen, healthColorOrange, healthColorRed, manaColor);
-    }
-
-    private void SetupSkillButtons(ClickableObject newSelectedUnit)
-    {
-        BuildingBuilder builder = newSelectedUnit.GetComponent<BuildingBuilder>();
-        if (builder != null)
-        {
-            foreach (var building in builder.buildingsToBuild)
-            {
-                BuildSkillButton button = Instantiate<GameObject>(skillButtonUIPrefab, skillsLayoutGroup.transform).GetComponent<BuildSkillButton>();
-                button.SetupButton(building);
-            }
-        }
     }
 
     private void ClearSkillButtons()

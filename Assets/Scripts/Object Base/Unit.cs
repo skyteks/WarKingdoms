@@ -36,9 +36,6 @@ public class Unit : ClickableObject
     protected Vector3? targetOfMovement;
     protected Vector3? returnPoint;
 
-    private static readonly float combatReadySwitchTime = 3f;
-    private static readonly AnimationCurve combatReadyAnimCurve = new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, 1f, 0f, 0f));
-
     private Coroutine lerpingCombatReady;
     private Coroutine lerpingAttackEvent;
 
