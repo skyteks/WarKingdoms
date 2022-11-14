@@ -2,11 +2,9 @@
 {
     Properties
     {
-        _MainTex("Albedo (RGB)", 2D) = "white" {}
-        _Color("Color", Color) = (1,1,1,1)
+        [MainTexture] _MainTex("Albedo (RGB)", 2D) = "white" {}
+        [MainColor] _Color("Color", Color) = (1,1,1,1)
         _Cutoff("Alpha cutoff", Range(0,1)) = 0.5
-        _Glossiness("Smoothness", Range(0,1)) = 0.0
-        _Metallic("Metallic", Range(0,1)) = 0.0
 
         _TintMaskMap("Tint Mask (B/W)", 2D) = "black" {}
         _TintRColor("Tint (R Channel)", Color) = (1,1,1,1)
@@ -27,8 +25,6 @@
         sampler2D _MainTex;
         sampler2D _TintMaskMap;
         float _Cutoff;
-        float _Glossiness;
-        float _Metallic;
 
         struct Input
         {
@@ -63,8 +59,6 @@
             if (c.a > _Cutoff)
             {
                 o.Albedo = c.rgb;
-                o.Metallic = _Metallic;
-                o.Smoothness = _Glossiness;
                 o.Alpha = saturate(c.a);
             }
             else
