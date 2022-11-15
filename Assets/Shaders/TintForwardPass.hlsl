@@ -23,6 +23,9 @@ RasterizerData vert (VertexData input)
 {
     RasterizerData output = (RasterizerData) 0;
     
+    UNITY_SETUP_INSTANCE_ID(input);
+    UNITY_TRANSFER_INSTANCE_ID(input, output);
+
     VertexPositionInputs vertexInput = GetVertexPositionInputs(input.positionOS.xyz);
     VertexNormalInputs normalInput = GetVertexNormalInputs(input.normalOS, input.tangetOS);
     
@@ -37,20 +40,66 @@ RasterizerData vert (VertexData input)
 
 float4 frag (RasterizerData input) : SV_Target
 {
-    float4 c = tex2D(_MainTex, input.uv1.xy) * UNITY_ACCESS_INSTANCED_PROP(Props, _Color);
-    clip(c.w - _Cutoff);
+    //sample texture and tint-mask
+    float4 albedo = tex2D(_MainTex, input.uv1.xy) * UNITY_ACCESS_INSTANCED_PROP(Props, _Color);
+    clip(albedo.a - _Cutoff);
     float4 m = tex2D(_TintMaskMap, input.uv1.xy);
 
+    //ger tint-colors
     float3 tintR = UNITY_ACCESS_INSTANCED_PROP(Props, _TintRColor).rgb;
     float3 tintG = UNITY_ACCESS_INSTANCED_PROP(Props, _TintGColor).rgb;
     float3 tintB = UNITY_ACCESS_INSTANCED_PROP(Props, _TintBColor).rgb;
 
-    c.rgb = lerp(c.rgb, c.rgb * tintR, m.r);
-    c.rgb = lerp(c.rgb, c.rgb * tintG, m.g);
-    c.rgb = lerp(c.rgb, c.rgb * tintB, m.b);
+    //fill in tint-colors
+    albedo.rgb = lerp(albedo.rgb, albedo.rgb * tintR, m.r);
+    albedo.rgb = lerp(albedo.rgb, albedo.rgb * tintG, m.g);
+    albedo.rgb = lerp(albedo.rgb, albedo.rgb * tintB, m.b);
 
-    float4 render = float4(c.xyz, 1);
+    float metallic = 0;
+    float3 specular = float3(0,0,0);
+    float smoothness = 0;
+    float alpha = 1;
+    float3 normalTS = float3(0,0,1);
 
-    return render;
+    //setup render structure
+    //surface data
+    BRDFData brdfData;
+    InitializeBRDFData(albedo.rgb, metallic, specular, smoothness, alpha, brdfData);
+
+    //geometry data
+    GeometryData geometryData;
+    InitializeGeometryData(input, normalTS, geometryData);
+
+    //global illumination data
+    GlobalIlluminationData globalIlluData;
+    InitializeGlobalIlluminationData(geometryData, 1, globalIlluData);
+
+    //get light source
+    #if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
+    Light mainLight = GetMainLight(input.shadowCoord);
+    #else
+    Light mainLight = GetMainLight();
+    #endif
+
+    //render stuff starts here
+    float3 render = float3(0,0,0);
+
+    //add global illumination
+    render += GlobalIllumination(brdfData, globalIlluData.diffuseGI, globalIlluData.occlusion, geometryData.normalWS, geometryData.view);
+    
+    //add main light
+    render += LightingPhysicallyBased(brdfData, mainLight, geometryData.normalWS, geometryData.view);
+
+    //add additional lights
+    #ifdef _ADDITIONAL_LIGHTS
+    uint pixelLightCount = GetAdditionalLightsCount();
+    for (uint lightIndex = 0u; lightIndex < pixelLightCount; ++lightIndex)
+    {
+        Light light = GetAdditionalLight(lightIndex, geometryData.positonWS);
+        render += LightingPhysicallyBased(brdfData, light, geometryData.normalPerturbedWS, geometryData.view);
+    }
+    #endif
+
+    return float4(render, 1);
 }
 #endif
