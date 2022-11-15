@@ -41,7 +41,7 @@ RasterizerData vert (VertexData input)
 float4 frag (RasterizerData input) : SV_Target
 {
     //sample texture and tint-mask
-    float4 albedo = tex2D(_MainTex, input.uv1.xy) * UNITY_ACCESS_INSTANCED_PROP(Props, _Color);
+    float4 albedo = tex2D(_MainTex, input.uv1.xy) * float4(UNITY_ACCESS_INSTANCED_PROP(Props, _Color).rgb, 1);
     clip(albedo.a - _Cutoff);
     float4 m = tex2D(_TintMaskMap, input.uv1.xy);
 

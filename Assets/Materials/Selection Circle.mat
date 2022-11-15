@@ -2,14 +2,17 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Selection Circle
-  m_Shader: {fileID: 4800000, guid: 6f065353e4553394e9e654928f0c17f1, type: 3}
-  m_ShaderKeywords: _ALPHABLEND_ON _COLOROVERLAY_ON
+  m_Shader: {fileID: 4800000, guid: 28b56e9e0928cb645aa26016b6fb588b, type: 3}
+  m_ValidKeywords: []
+  m_InvalidKeywords:
+  - _ALPHABLEND_ON
+  - _COLOROVERLAY_ON
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -64,6 +67,7 @@ Material:
         m_Texture: {fileID: 10307, guid: 0000000000000000f000000000000000, type: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - PixelSnap: 0
     - _BlendOp: 0
@@ -102,6 +106,7 @@ Material:
     - _RadiusWidth: 0.1
     - _ScreenHeight: 480
     - _ScreenWidth: 640
+    - _Smoothness: 0.001
     - _SmoothnessTextureChannel: 0
     - _SoftParticlesEnabled: 0
     - _SoftParticlesFarFadeDistance: 1
@@ -128,3 +133,4 @@ Material:
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
     - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
     - _TintColor: {r: 0.33333334, g: 0.33333334, b: 0, a: 1}
+  m_BuildTextureStacks: []
