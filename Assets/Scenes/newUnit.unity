@@ -993,7 +993,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 280289599e0bcaa49a73affe39249b26, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2644,7 +2644,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 457413008}
-  - component: {fileID: 457413007}
   - component: {fileID: 457413009}
   m_Layer: 10
   m_Name: FOW
@@ -2653,33 +2652,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &457413007
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 457413006}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 06faf9462d1bad5408f767ce5438fb00, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gridSize: {x: 128, y: 128}
-  cellSize: 1
-  material: {fileID: 2100000, guid: c0a8043192927e04fa318d947a56f549, type: 2}
-  filter: 1
-  projector: {fileID: 1076779881}
-  decline: 1
-  drawFunction: 0
-  drawGrid: 0
-  drawHeightValues: 0
-  drawQuadMesh: {fileID: 4300002, guid: d8f273339e498cb478c9d1c8130478eb, type: 3}
-  units: {fileID: 11400000, guid: 01c7bc88a8159d34f9070b8e426410e6, type: 2}
-  buildings: {fileID: 11400000, guid: 776b0c3caab84df46a0edfec83178832, type: 2}
-  perFrame: 100
-  activePlayersFlag: 1
-  interpolateColorSpeed: 6
 --- !u!4 &457413008
 Transform:
   m_ObjectHideFlags: 0
@@ -2689,10 +2661,9 @@ Transform:
   m_GameObject: {fileID: 457413006}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.01, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 128, y: 128, z: 128}
   m_ConstrainProportionsScale: 1
-  m_Children:
-  - {fileID: 1076779882}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2703,26 +2674,17 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 457413006}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed9463ae6c80d574f8aa7d5ea1f51579, type: 3}
+  m_Script: {fileID: 11500000, guid: 489a7af63e05b9841aaeaf71758264d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSize: {x: 128, y: 128}
-  cellSize: 1
-  material: {fileID: 2100000, guid: c0a8043192927e04fa318d947a56f549, type: 2}
-  filter: 1
-  projector: {fileID: 1076779881}
-  decline: 6
-  drawFunction: 0
-  drawGrid: 0
-  drawHeightValues: 0
-  drawQuadMesh: {fileID: 4300002, guid: d8f273339e498cb478c9d1c8130478eb, type: 3}
-  units: {fileID: 11400000, guid: 01c7bc88a8159d34f9070b8e426410e6, type: 2}
-  buildings: {fileID: 11400000, guid: 776b0c3caab84df46a0edfec83178832, type: 2}
-  perFrame: 10
-  activePlayersFlag: 1
-  interpolateColorSpeed: 6
+  renderTexture: {fileID: 8400000, guid: 2b36403ba7cbe4146bd7b5d54ab01061, type: 2}
+  registers:
+  - {fileID: 11400000, guid: 01c7bc88a8159d34f9070b8e426410e6, type: 2}
+  - {fileID: 11400000, guid: 776b0c3caab84df46a0edfec83178832, type: 2}
+  texture: {fileID: -8263159290881847951, guid: 26bea55934790184f99ddd7274514057,
+    type: 2}
 --- !u!1001 &458140795
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6378,57 +6340,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1062275079}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1076779880
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1076779882}
-  - component: {fileID: 1076779881}
-  m_Layer: 10
-  m_Name: Projector
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!119 &1076779881
-Projector:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1076779880}
-  m_Enabled: 1
-  serializedVersion: 2
-  m_NearClipPlane: 0
-  m_FarClipPlane: 32
-  m_FieldOfView: 100
-  m_AspectRatio: 1
-  m_Orthographic: 1
-  m_OrthographicSize: 64
-  m_Material: {fileID: 0}
-  m_IgnoreLayers:
-    serializedVersion: 2
-    m_Bits: 1572
---- !u!4 &1076779882
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1076779880}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 64, y: 24, z: 64}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 457413008}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1001 &1095373954
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7835,7 +7746,7 @@ Terrain:
   m_DrawTreesAndFoliage: 1
   m_StaticShadowCaster: 0
   m_ReflectionProbeUsage: 1
-  m_MaterialTemplate: {fileID: 2100000, guid: 594ea882c5a793440b60ff72d896021e, type: 2}
+  m_MaterialTemplate: {fileID: 2100000, guid: 280289599e0bcaa49a73affe39249b26, type: 2}
   m_BakeLightProbesForTrees: 1
   m_PreserveTreePrototypeLayers: 0
   m_DeringLightProbesForTrees: 1
@@ -8167,7 +8078,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 280289599e0bcaa49a73affe39249b26, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9168,7 +9079,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 280289599e0bcaa49a73affe39249b26, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

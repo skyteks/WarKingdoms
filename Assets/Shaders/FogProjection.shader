@@ -58,7 +58,7 @@
 				fixed a = lerp(aPrev, aCurr, _Blend);
 
 				// weird things happen to minimap if alpha value gets negative
-				_Color.a = max(0, _Color.a - a);
+				_Color.a = saturate(_Color.a - a);
 				return _Color;
 			}
 			ENDCG

@@ -3,13 +3,7 @@ Shader "WarKingdoms/UnitTint"
     Properties
     {
         [MainTexture] _MainTex("Albedo (RGB)", 2D) = "white" {}
-        [MainColor] _Color("Color", Color) = (1,1,1,1)
         _Cutoff("Alpha cutoff", Range(0,1)) = 0.5
-
-        _TintMaskMap("Tint Mask (B/W)", 2D) = "black" {}
-        _TintRColor("Tint (R Channel)", Color) = (1,1,1,1)
-        _TintGColor("Tint (G Channel)", Color) = (1,1,1,1)
-        _TintBColor("Tint (B Channel)", Color) = (1,1,1,1)
 
         [ToggleUI] _ReceiveShadows("Receive Shadows", Float) = 1.0
     }
@@ -90,7 +84,7 @@ Shader "WarKingdoms/UnitTint"
             #pragma vertex vert
             #pragma fragment frag
 
-            #include "Assets/Shaders/UnitTintForwardPass.hlsl"
+            #include "Assets/Shaders/TerrainForwardPass.hlsl"
             ENDHLSL
         }
 

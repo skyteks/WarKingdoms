@@ -1,22 +1,18 @@
-#ifndef TINT_FORWARD_PASS
-#define TINT_FORWARD_PASS
+#ifndef TERRAIN_FORWARD_PASS
+#define TERRAIN_FORWARD_PASS
 
 #include "Assets/ShaderLibrary/RenderUtils.hlsl"
+#include "Assets/ShaderLibrary/FogOfWar.hlsl"
 
 uniform sampler2D _MainTex;
 uniform float4  _MainTex_ST;
 uniform float _Cutoff;
-uniform sampler2D _TintMaskMap;
 
 // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
 // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
 // #pragma instancing_options assumeuniformscaling
 UNITY_INSTANCING_BUFFER_START(Props)
 // put more per-instance properties here
-    UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
-    UNITY_DEFINE_INSTANCED_PROP(float4, _TintRColor)
-    UNITY_DEFINE_INSTANCED_PROP(float4, _TintGColor)
-    UNITY_DEFINE_INSTANCED_PROP(float4, _TintBColor)
 UNITY_INSTANCING_BUFFER_END(Props)
 
 RasterizerData vert (VertexData input)
@@ -30,8 +26,8 @@ RasterizerData vert (VertexData input)
     VertexNormalInputs normalInput = GetVertexNormalInputs(input.normalOS, input.tangetOS);
     
     InitializeRasterizerData (input, vertexInput, normalInput, output);
-    output.uv1.xy = input.uv1;
-    output.uv1.zw = input.uv2;
+    output.uv1.xy = input.uv1 * _MainTex_ST.xy + _MainTex_ST.zw;
+    output.uv1.zw = GetFowCoords(vertexInput.positionWS);
     output.uv2.xy = input.uv3;
     output.uv2.zw = input.uv4;
     
@@ -41,19 +37,7 @@ RasterizerData vert (VertexData input)
 float4 frag (RasterizerData input) : SV_Target
 {
     //sample texture and tint-mask
-    float4 albedo = tex2D(_MainTex, input.uv1.xy) * float4(UNITY_ACCESS_INSTANCED_PROP(Props, _Color).rgb, 1);
-    clip(albedo.a - _Cutoff);
-    float4 m = tex2D(_TintMaskMap, input.uv1.xy);
-
-    //ger tint-colors
-    float3 tintR = UNITY_ACCESS_INSTANCED_PROP(Props, _TintRColor).rgb;
-    float3 tintG = UNITY_ACCESS_INSTANCED_PROP(Props, _TintGColor).rgb;
-    float3 tintB = UNITY_ACCESS_INSTANCED_PROP(Props, _TintBColor).rgb;
-
-    //fill in tint-colors
-    albedo.rgb = lerp(albedo.rgb, albedo.rgb * tintR, m.r);
-    albedo.rgb = lerp(albedo.rgb, albedo.rgb * tintG, m.g);
-    albedo.rgb = lerp(albedo.rgb, albedo.rgb * tintB, m.b);
+    float4 albedo = tex2D(_MainTex, input.uv1.xy);
 
     float metallic = 0;
     float3 specular = float3(0,0,0);
@@ -99,6 +83,9 @@ float4 frag (RasterizerData input) : SV_Target
         render += LightingPhysicallyBased(brdfData, light, geometryData.normalPerturbedWS, geometryData.view);
     }
     #endif
+
+    //apply Fog of War
+    render = ApplyFow(render, input.uv1.zw);
 
     return float4(render, 1);
 }
