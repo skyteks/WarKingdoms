@@ -26,13 +26,11 @@ public class FogOfWarRenderPass : ScriptableRenderPass
             component = GameObject.FindObjectOfType<FogOfWar>();
         }
 
-
         if (component)
         {
             commandBuffer.SetViewProjectionMatrices(component.transform.worldToLocalMatrix, Matrix4x4.identity);
 
             int instanceCount = 0;
-            Debug.Log("registers count " + component.registers.Length);
             for (int i = 0; i < component.registers.Length; i++)
             {
                 int count = component.registers[i].Count;
@@ -50,7 +48,6 @@ public class FogOfWarRenderPass : ScriptableRenderPass
 
             commandBuffer.ClearRenderTarget(true, true, new Color(1, 0, 0, 0));
 
-            Debug.Log("instance count " + instanceCount);
             commandBuffer.DrawMeshInstanced(mesh, 0, material, 0, transforms, instanceCount);
 
             Graphics.ExecuteCommandBuffer(commandBuffer);

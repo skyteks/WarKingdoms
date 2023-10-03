@@ -20,8 +20,8 @@ public class FogOfWar : MonoBehaviour
     void OnDrawGizmos()
     {
         Gizmos.matrix = transform.localToWorldMatrix;
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(Vector3.zero, Vector3.one);
-        Gizmos.DrawCube(Vector3.zero, Vector3.one);
+        Gizmos.color = Color.gray.ToWithA(0.2f);
+        Bounds box = new Bounds(Vector3.zero, Vector3.one);
+        Gizmos.DrawWireCube(box.max, Vector3.one);
     }
 }
