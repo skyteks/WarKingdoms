@@ -5,15 +5,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "new Unit Animation Config", menuName = "RTS/Unit Anim Config")]
 public class UnitAnimationConfig : ScriptableObject
 {
-    [Header("Parameters")]
-
-    private float movementSpeed;
-    private bool combatReady;
-
     public bool hasSelectedIdle => idleSelected != null;
     public bool hasSelectedWalk => walkSelected != null;
-
-    [Header("Animation Clips")]
 
     [SerializeField]
     private AnimationClip idle;

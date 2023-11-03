@@ -607,6 +607,7 @@ public class Unit : ClickableObject
 
         AttackAnim(false);
         //animation.SetTrigger(UnitAnimation.StateNames.DoDeath);
+        animation.Death();
 
         ///Remove itself from the selection Platoon
         GameManager.Instance.RemoveFromSelection(this);
@@ -625,6 +626,14 @@ public class Unit : ClickableObject
     {
         float navMeshAgentSpeed = navigation.velocity.magnitude;
         //animation?.SetFloat(UnitAnimation.StateNames.Speed, navMeshAgentSpeed * 0.05f);
+        if (navMeshAgentSpeed > 0.001f)
+        {
+            animation.Walk(template.movementSpeed, currentlySelected);
+        }
+        else
+        {
+            animation.Idle(currentlySelected);
+        }
     }
 
     private void FaceTarget()

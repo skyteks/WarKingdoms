@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Playables;
 
 public class UnitAnimation : MonoBehaviour
 {
@@ -9,6 +9,7 @@ public class UnitAnimation : MonoBehaviour
     private UnitAnimationConfig unitAnimations;
 
     private Animator animator;
+    private UnitAnimator unitAnimator;
 
     private static readonly AnimationCurve easeInEaseOutCurve = new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, 1f, 0f, 0f));
 
@@ -19,10 +20,41 @@ public class UnitAnimation : MonoBehaviour
         {
             throw new System.NullReferenceException(string.Concat("Animator missing on ", gameObject));
         }
+        unitAnimator = new UnitAnimator();
+    }
+
+    void Start()
+    {
+        unitAnimator.Configure(animator, unitAnimations);
+    }
+
+    void Update()
+    {
+        unitAnimator.GameUpdate();
     }
 
     public float GetCurrentAnimationLenght()
     {
         return animator != null ? animator.GetCurrentAnimatorStateInfo(0).length : 0f;
+    }
+
+    public void Idle(bool selected = false)
+    {
+        unitAnimator.PlayIdle(selected);
+    }
+
+    public void Walk(float speed, bool selected = false)
+    {
+        unitAnimator.PlayWalk(speed, selected);
+    }
+
+    public void Attack()
+    {
+        unitAnimator.PlayAttack();
+    }
+
+    public void Death()
+    {
+        unitAnimator.PlayDeath();
     }
 }

@@ -5,8 +5,7 @@ using UnityEngine.Playables;
 [System.Serializable]
 public struct UnitAnimator
 {
-
-    public enum Clip
+    public enum Clips
     {
         Idle,
         Walk,
@@ -22,7 +21,7 @@ public struct UnitAnimator
 
     AnimationMixerPlayable mixer;
 
-    Clip previousClip;
+    Clips previousClip;
 
     float transitionProgress;
 
@@ -30,7 +29,7 @@ public struct UnitAnimator
     double clipTime;
 #endif
 
-    public Clip CurrentClip { get; private set; }
+    public Clips CurrentClip { get; private set; }
 
     public bool IsDone => GetPlayable(CurrentClip).IsDone();
 
@@ -40,49 +39,49 @@ public struct UnitAnimator
 
     public void Configure(Animator animator, UnitAnimationConfig config)
     {
-
-        graph = PlayableGraph.Create();
+        graph = PlayableGraph.Create(config.name);
         graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
-        mixer = AnimationMixerPlayable.Create(graph, System.Enum.GetValues(typeof(Clip)).Length);
-
-
+        mixer = AnimationMixerPlayable.Create(graph, System.Enum.GetValues(typeof(Clips)).Length);
 
         var clip = AnimationClipPlayable.Create(graph, config.clipIdle);
+        // No duration, because looping
         //clip.SetDuration(config.clipIdle.length);
         clip.Pause();
-        mixer.ConnectInput((int)Clip.Idle, clip, 0);
+        mixer.ConnectInput((int)Clips.Idle, clip, 0);
 
         clip = AnimationClipPlayable.Create(graph, config.walkIdle);
+        // No duration, because looping
         //clip.SetDuration(config.walkIdle.length);
         clip.Pause();
-        mixer.ConnectInput((int)Clip.Walk, clip, 0);
+        mixer.ConnectInput((int)Clips.Walk, clip, 0);
 
         clip = AnimationClipPlayable.Create(graph, config.attackIdle);
         clip.SetDuration(config.attackIdle.length);
         clip.Pause();
-        mixer.ConnectInput((int)Clip.Attack, clip, 0);
+        mixer.ConnectInput((int)Clips.Attack, clip, 0);
 
         clip = AnimationClipPlayable.Create(graph, config.deathIdle);
         clip.SetDuration(config.deathIdle.length);
         clip.Pause();
-        mixer.ConnectInput((int)Clip.Death, clip, 0);
+        mixer.ConnectInput((int)Clips.Death, clip, 0);
 
         if (config.hasSelectedIdle)
         {
             clip = AnimationClipPlayable.Create(graph, config.clipIdleSelected);
+            // No duration, because looping
             //clip.SetDuration(config.clipIdleSelected.length);
             clip.Pause();
-            mixer.ConnectInput((int)Clip.IdleSelected, clip, 0);
+            mixer.ConnectInput((int)Clips.IdleSelected, clip, 0);
         }
 
         if (config.hasSelectedWalk)
         {
             clip = AnimationClipPlayable.Create(graph, config.clipWalkSelected);
+            // No duration, because looping
             //clip.SetDuration(config.clipWalkSelected.length);
             clip.Pause();
-            mixer.ConnectInput((int)Clip.WalkSelected, clip, 0);
+            mixer.ConnectInput((int)Clips.WalkSelected, clip, 0);
         }
-
 
         var output = AnimationPlayableOutput.Create(graph, "Enemy", animator);
         output.SetSourcePlayable(mixer);
@@ -109,31 +108,52 @@ public struct UnitAnimator
 #if UNITY_EDITOR
         clipTime = GetPlayable(CurrentClip).GetTime();
 #endif
+        graph.Play();
     }
 
-    public void PlayIdle()
+    public void PlayIdle(bool selected)
     {
-        SetWeight(Clip.Idle, 1f);
-        GetPlayable(Clip.Idle).Play();
-        CurrentClip = Clip.Idle;
-        graph.Play();
+        Clips clipType = selected ? Clips.IdleSelected : Clips.Idle;
+        SetWeight(clipType, 1f);
+        // no transition
+        GetPlayable(clipType).Play();
+        CurrentClip = clipType;
         transitionProgress = -1f;
     }
 
-    public void PlayWalk(float speed)
+    public void PlayWalk(float speed, bool selected)
     {
-        GetPlayable(Clip.Walk).SetSpeed(speed);
-        BeginTransition(Clip.Walk);
+        Clips clipType = selected ? Clips.WalkSelected : Clips.Walk;
+        GetPlayable(clipType).SetSpeed(speed);
+        BeginTransition(clipType);
     }
 
     public void PlayAttack()
     {
-        BeginTransition(Clip.Attack);
+        BeginTransition(Clips.Attack);
     }
 
     public void PlayDeath()
     {
-        BeginTransition(Clip.Death);
+        BeginTransition(Clips.Death);
+    }
+
+    private void BeginTransition(Clips nextClip)
+    {
+        previousClip = CurrentClip;
+        CurrentClip = nextClip;
+        transitionProgress = 0f;
+        GetPlayable(nextClip).Play();
+    }
+
+    private Playable GetPlayable(Clips clip)
+    {
+        return mixer.GetInput((int)clip);
+    }
+
+    private void SetWeight(Clips clip, float weight)
+    {
+        mixer.SetInputWeight((int)clip, weight);
     }
 
     public void Stop()
@@ -144,23 +164,5 @@ public struct UnitAnimator
     public void Destroy()
     {
         graph.Destroy();
-    }
-
-    void BeginTransition(Clip nextClip)
-    {
-        previousClip = CurrentClip;
-        CurrentClip = nextClip;
-        transitionProgress = 0f;
-        GetPlayable(nextClip).Play();
-    }
-
-    Playable GetPlayable(Clip clip)
-    {
-        return mixer.GetInput((int)clip);
-    }
-
-    void SetWeight(Clip clip, float weight)
-    {
-        mixer.SetInputWeight((int)clip, weight);
     }
 }

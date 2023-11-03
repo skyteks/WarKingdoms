@@ -23,6 +23,8 @@ public class UnitTemplate : ScriptableObject
 
     public int armor = 0;
 
+    public float movementSpeed = 1f;
+
     [Tooltip("Damage dealt each attack")]
     public Vector2Int damage = new Vector2Int(9, 11);
 

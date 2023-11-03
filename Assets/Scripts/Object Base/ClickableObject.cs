@@ -13,6 +13,8 @@ public abstract class ClickableObject : InteractableObject
     [Space]
 #endif
 
+    protected bool currentlySelected;
+
     public FactionTemplate faction;
     public UnitTemplate template;
 
@@ -147,7 +149,8 @@ public abstract class ClickableObject : InteractableObject
     {
         UIManager uiManager = UIManager.Instance;
 
-        Color tmpColor = uiManager.GetUIColorForColorMode(faction, selected);
+        currentlySelected = selected;
+        Color tmpColor = uiManager.GetUIColorForColorMode(faction, currentlySelected);
 
         MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
         selectionCircle.GetPropertyBlock(materialPropertyBlock, 0);

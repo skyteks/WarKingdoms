@@ -23,19 +23,20 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4595176066250190389}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0.0808}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3576258809462165324}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &656571853315285888
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 6147680020135051707}
     m_Modifications:
     - target: {fileID: -8867477870038081954, guid: 34b3fb9543944b24da1093e29548b3a2,
@@ -607,6 +608,17 @@ PrefabInstance:
     - {fileID: 474652054126222938, guid: 34b3fb9543944b24da1093e29548b3a2, type: 3}
     - {fileID: 7183723637200330480, guid: 34b3fb9543944b24da1093e29548b3a2, type: 3}
     - {fileID: -8787103354609013133, guid: 34b3fb9543944b24da1093e29548b3a2, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4088688947297397964, guid: 34b3fb9543944b24da1093e29548b3a2,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 332322173210303545}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 34b3fb9543944b24da1093e29548b3a2,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4557671891328439682}
   m_SourcePrefab: {fileID: 100100000, guid: 34b3fb9543944b24da1093e29548b3a2, type: 3}
 --- !u!1 &422763658929348305 stripped
 GameObject:
@@ -616,7 +628,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &4557671891328439682
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -633,7 +645,14 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!4 &1051069216852919403 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 34b3fb9543944b24da1093e29548b3a2,
+    type: 3}
+  m_PrefabInstance: {fileID: 656571853315285888}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3576258809462165324 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4088688947297397964, guid: 34b3fb9543944b24da1093e29548b3a2,
@@ -645,6 +664,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1107782487055510, guid: 2928e101c1e5b6e4c915c5893e1a830e, type: 3}
@@ -833,6 +853,17 @@ PrefabInstance:
     - {fileID: 23054023064138366, guid: 2928e101c1e5b6e4c915c5893e1a830e, type: 3}
     - {fileID: 33042359569260364, guid: 2928e101c1e5b6e4c915c5893e1a830e, type: 3}
     - {fileID: 136947702010847266, guid: 2928e101c1e5b6e4c915c5893e1a830e, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4842006218740840, guid: 2928e101c1e5b6e4c915c5893e1a830e,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1051069216852919403}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1107782487055510, guid: 2928e101c1e5b6e4c915c5893e1a830e,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7539926286301045494}
   m_SourcePrefab: {fileID: 100100000, guid: 2928e101c1e5b6e4c915c5893e1a830e, type: 3}
 --- !u!1 &6143523602997217605 stripped
 GameObject:
@@ -848,9 +879,17 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6143523602997217605}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 1
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Size: {x: 1.5, y: 1, z: 2}
   m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!4 &6147680020135051707 stripped
