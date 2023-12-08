@@ -9,6 +9,7 @@ public class UnitAnimation : MonoBehaviour
     private UnitAnimationConfig unitAnimations;
 
     private Animator animator;
+    [SerializeField, ReadOnly]
     private UnitAnimator unitAnimator;
 
     private static readonly AnimationCurve easeInEaseOutCurve = new AnimationCurve(new Keyframe(0f, 0f, 0f, 0f), new Keyframe(1f, 1f, 0f, 0f));
@@ -26,6 +27,11 @@ public class UnitAnimation : MonoBehaviour
     void Start()
     {
         unitAnimator.Configure(animator, unitAnimations);
+    }
+
+    void OnDestroy()
+    {
+        unitAnimator.Destroy();
     }
 
     void Update()

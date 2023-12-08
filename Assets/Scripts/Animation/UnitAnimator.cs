@@ -7,7 +7,8 @@ public struct UnitAnimator
 {
     public enum Clips
     {
-        Idle,
+        NONE = 0,
+        Idle = 1,
         Walk,
         IdleSelected,
         WalkSelected,
@@ -21,17 +22,20 @@ public struct UnitAnimator
 
     AnimationMixerPlayable mixer;
 
-    Clips previousClip;
-
+    [SerializeField, ReadOnly]
     float transitionProgress;
 
 #if UNITY_EDITOR
+    [SerializeField, ReadOnly]
     double clipTime;
 #endif
 
-    public Clips CurrentClip { get; private set; }
+    [SerializeField, ReadOnly]
+    private Clips previousClip;
+    [SerializeField, ReadOnly]
+    private Clips currentClip;
 
-    public bool IsDone => GetPlayable(CurrentClip).IsDone();
+    public bool IsDone => GetPlayable(currentClip).IsDone();
 
 #if UNITY_EDITOR
     public bool IsValid => graph.IsValid();
@@ -39,19 +43,20 @@ public struct UnitAnimator
 
     public void Configure(Animator animator, UnitAnimationConfig config)
     {
+        previousClip = (Clips)0;
+        currentClip = (Clips)0;
+
         graph = PlayableGraph.Create(config.name);
         graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
         mixer = AnimationMixerPlayable.Create(graph, System.Enum.GetValues(typeof(Clips)).Length);
 
         var clip = AnimationClipPlayable.Create(graph, config.clipIdle);
         // No duration, because looping
-        //clip.SetDuration(config.clipIdle.length);
         clip.Pause();
         mixer.ConnectInput((int)Clips.Idle, clip, 0);
 
         clip = AnimationClipPlayable.Create(graph, config.walkIdle);
         // No duration, because looping
-        //clip.SetDuration(config.walkIdle.length);
         clip.Pause();
         mixer.ConnectInput((int)Clips.Walk, clip, 0);
 
@@ -69,7 +74,6 @@ public struct UnitAnimator
         {
             clip = AnimationClipPlayable.Create(graph, config.clipIdleSelected);
             // No duration, because looping
-            //clip.SetDuration(config.clipIdleSelected.length);
             clip.Pause();
             mixer.ConnectInput((int)Clips.IdleSelected, clip, 0);
         }
@@ -78,7 +82,6 @@ public struct UnitAnimator
         {
             clip = AnimationClipPlayable.Create(graph, config.clipWalkSelected);
             // No duration, because looping
-            //clip.SetDuration(config.clipWalkSelected.length);
             clip.Pause();
             mixer.ConnectInput((int)Clips.WalkSelected, clip, 0);
         }
@@ -95,18 +98,18 @@ public struct UnitAnimator
             if (transitionProgress >= 1f)
             {
                 transitionProgress = -1f;
-                SetWeight(CurrentClip, 1f);
+                SetWeight(currentClip, 1f);
                 SetWeight(previousClip, 0f);
                 GetPlayable(previousClip).Pause();
             }
             else
             {
-                SetWeight(CurrentClip, transitionProgress);
+                SetWeight(currentClip, transitionProgress);
                 SetWeight(previousClip, 1f - transitionProgress);
             }
         }
 #if UNITY_EDITOR
-        clipTime = GetPlayable(CurrentClip).GetTime();
+        clipTime = GetPlayable(currentClip).GetTime();
 #endif
         graph.Play();
     }
@@ -114,11 +117,19 @@ public struct UnitAnimator
     public void PlayIdle(bool selected)
     {
         Clips clipType = selected ? Clips.IdleSelected : Clips.Idle;
+        BeginTransition(clipType);
+        /*
+        previousClip = currentClip;
+        currentClip = clipType;
+        if (previousClip != currentClip)
+        {
+            SetWeight(previousClip, 0f);
+            GetPlayable(previousClip).Pause();
+        }
         SetWeight(clipType, 1f);
-        // no transition
         GetPlayable(clipType).Play();
-        CurrentClip = clipType;
         transitionProgress = -1f;
+        */
     }
 
     public void PlayWalk(float speed, bool selected)
@@ -140,8 +151,12 @@ public struct UnitAnimator
 
     private void BeginTransition(Clips nextClip)
     {
-        previousClip = CurrentClip;
-        CurrentClip = nextClip;
+        if (nextClip == currentClip)
+        {
+            return;
+        }
+        previousClip = currentClip;
+        currentClip = nextClip;
         transitionProgress = 0f;
         GetPlayable(nextClip).Play();
     }
