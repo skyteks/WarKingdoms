@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
@@ -8,11 +9,17 @@ public struct UnitAnimator
     public enum Clips
     {
         NONE = 0,
-        Idle = 1,
+        Idle,
         Walk,
         IdleSelected,
         WalkSelected,
+        IdleCarry1,
+        WalkCarry1,
+        IdleCarry2,
+        WalkCarry2,
         Attack,
+        AttackCarry1,
+        AttackCarry2,
         Death,
     }
 
@@ -41,8 +48,12 @@ public struct UnitAnimator
     public bool IsValid => graph.IsValid();
 #endif
 
+    private UnitAnimationConfig animationConfig;
+
     public void Configure(Animator animator, UnitAnimationConfig config)
     {
+        animationConfig = config;
+
         previousClip = (Clips)0;
         currentClip = (Clips)0;
 
@@ -55,18 +66,18 @@ public struct UnitAnimator
         clip.Pause();
         mixer.ConnectInput((int)Clips.Idle, clip, 0);
 
-        clip = AnimationClipPlayable.Create(graph, config.walkIdle);
+        clip = AnimationClipPlayable.Create(graph, config.clipWalk);
         // No duration, because looping
         clip.Pause();
         mixer.ConnectInput((int)Clips.Walk, clip, 0);
 
-        clip = AnimationClipPlayable.Create(graph, config.attackIdle);
-        clip.SetDuration(config.attackIdle.length);
+        clip = AnimationClipPlayable.Create(graph, config.clipAttack);
+        clip.SetDuration(config.clipAttack.length);
         clip.Pause();
         mixer.ConnectInput((int)Clips.Attack, clip, 0);
 
-        clip = AnimationClipPlayable.Create(graph, config.deathIdle);
-        clip.SetDuration(config.deathIdle.length);
+        clip = AnimationClipPlayable.Create(graph, config.clipDeath);
+        clip.SetDuration(config.clipDeath.length);
         clip.Pause();
         mixer.ConnectInput((int)Clips.Death, clip, 0);
 
@@ -84,6 +95,54 @@ public struct UnitAnimator
             // No duration, because looping
             clip.Pause();
             mixer.ConnectInput((int)Clips.WalkSelected, clip, 0);
+        }
+
+        if (config.hasCarry1Idle)
+        {
+            clip = AnimationClipPlayable.Create(graph, config.clipIdleCarry1);
+            // No duration, because looping
+            clip.Pause();
+            mixer.ConnectInput((int)Clips.IdleCarry1, clip, 0);
+        }
+
+        if (config.hasCarry1Walk)
+        {
+            clip = AnimationClipPlayable.Create(graph, config.clipWalkCarry1);
+            // No duration, because looping
+            clip.Pause();
+            mixer.ConnectInput((int)Clips.WalkCarry1, clip, 0);
+        }
+
+        if (config.hasCarry1Attack)
+        {
+            clip = AnimationClipPlayable.Create(graph, config.clipAttackCarry1);
+            clip.SetDuration(config.clipAttackCarry1.length);
+            clip.Pause();
+            mixer.ConnectInput((int)Clips.AttackCarry1, clip, 0);
+        }
+
+        if (config.hasCarry2Idle)
+        {
+            clip = AnimationClipPlayable.Create(graph, config.clipIdleCarry2);
+            // No duration, because looping
+            clip.Pause();
+            mixer.ConnectInput((int)Clips.IdleCarry2, clip, 0);
+        }
+
+        if (config.hasCarry2Walk)
+        {
+            clip = AnimationClipPlayable.Create(graph, config.clipWalkCarry2);
+            // No duration, because looping
+            clip.Pause();
+            mixer.ConnectInput((int)Clips.WalkCarry2, clip, 0);
+        }
+
+        if (config.hasCarry2Attack)
+        {
+            clip = AnimationClipPlayable.Create(graph, config.clipAttackCarry2);
+            clip.SetDuration(config.clipAttackCarry2.length);
+            clip.Pause();
+            mixer.ConnectInput((int)Clips.AttackCarry2, clip, 0);
         }
 
         var output = AnimationPlayableOutput.Create(graph, "Enemy", animator);
@@ -114,34 +173,91 @@ public struct UnitAnimator
         graph.Play();
     }
 
-    public void PlayIdle(bool selected)
+    public void PlayIdle(bool selected, int carry)
     {
-        Clips clipType = selected ? Clips.IdleSelected : Clips.Idle;
-        BeginTransition(clipType);
-        /*
-        previousClip = currentClip;
-        currentClip = clipType;
-        if (previousClip != currentClip)
+        Clips clipType;
+        if (animationConfig.hasSelectedIdle)
         {
-            SetWeight(previousClip, 0f);
-            GetPlayable(previousClip).Pause();
+            clipType = selected ? Clips.IdleSelected : Clips.Idle;
         }
-        SetWeight(clipType, 1f);
-        GetPlayable(clipType).Play();
-        transitionProgress = -1f;
-        */
+        else if (animationConfig.hasCarry1Idle && animationConfig.hasCarry2Idle)
+        {
+            switch (carry)
+            {
+                default:
+                case 0:
+                    clipType = Clips.Idle;
+                    break;
+                case 1:
+                    clipType = Clips.IdleCarry1;
+                    break;
+                case 2:
+                    clipType = Clips.IdleCarry2;
+                    break;
+            }
+        }
+        else
+        {
+            clipType = Clips.Idle;
+        }
+        BeginTransition(clipType);
     }
 
-    public void PlayWalk(float speed, bool selected)
+    public void PlayWalk(float speed, bool selected, int carry)
     {
-        Clips clipType = selected ? Clips.WalkSelected : Clips.Walk;
+        Clips clipType;
+        if (animationConfig.hasSelectedWalk)
+        {
+            clipType = selected ? Clips.WalkSelected : Clips.Walk;
+        }
+        else if (animationConfig.hasCarry1Walk && animationConfig.hasCarry2Walk)
+        {
+            switch (carry)
+            {
+                default:
+                case 0:
+                    clipType = Clips.Idle;
+                    break;
+                case 1:
+                    clipType = Clips.IdleCarry1;
+                    break;
+                case 2:
+                    clipType = Clips.IdleCarry2;
+                    break;
+            }
+        }
+        else
+        {
+            clipType = Clips.Idle;
+        }
         GetPlayable(clipType).SetSpeed(speed);
         BeginTransition(clipType);
     }
 
-    public void PlayAttack()
+    public void PlayAttack(int carry)
     {
-        BeginTransition(Clips.Attack);
+        Clips clipType;
+        if (animationConfig.hasCarry1Attack && animationConfig.hasCarry2Attack)
+        {
+            switch (carry)
+            {
+                default:
+                case 0:
+                    clipType = Clips.Attack;
+                    break;
+                case 1:
+                    clipType = Clips.AttackCarry1;
+                    break;
+                case 2:
+                    clipType = Clips.AttackCarry2;
+                    break;
+            }
+        }
+        else
+        {
+            clipType = Clips.Attack;
+        }
+        BeginTransition(clipType);
     }
 
     public void PlayDeath()

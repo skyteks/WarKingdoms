@@ -44,19 +44,19 @@ public class UnitAnimation : MonoBehaviour
         return animator != null ? animator.GetCurrentAnimatorStateInfo(0).length : 0f;
     }
 
-    public void Idle(bool selected = false)
+    public void Idle(bool selected = false, int carry = 0)
     {
-        unitAnimator.PlayIdle(selected);
+        unitAnimator.PlayIdle(selected, carry);
     }
 
-    public void Walk(float speed, bool selected = false)
+    public void Walk(float speed, bool selected = false, int carry = 0)
     {
-        unitAnimator.PlayWalk(speed, selected);
+        unitAnimator.PlayWalk(speed, selected, carry);
     }
 
-    public void Attack()
+    public void Attack(int carry = 0)
     {
-        unitAnimator.PlayAttack();
+        unitAnimator.PlayAttack(carry);
     }
 
     public void Death()
